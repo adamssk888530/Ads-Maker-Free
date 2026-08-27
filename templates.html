@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+
     <meta charset="UTF-8">
 
     <meta
@@ -9,33 +10,55 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>Templates — Ads Maker Free</title>
+    <title>Ads Maker Free - Templates</title>
 
     <link
         rel="stylesheet"
         href="css/templates.css"
     >
+
 </head>
 
 <body>
 
-    <!-- HEADER -->
+<div class="templates-app">
+
+
+    <!-- ==========================================
+         HEADER
+         ========================================== -->
 
     <header class="templates-header">
 
-        <a href="index.html" class="logo">
-            <span class="logo-icon">A</span>
-            Ads Maker <strong>Free</strong>
+        <a
+            href="index.html"
+            class="brand"
+        >
+
+            <span class="brand-icon">A</span>
+
+            <span>
+                Ads Maker
+                <strong>Free</strong>
+            </span>
+
         </a>
+
 
         <div class="header-actions">
 
-            <a href="index.html">
-                Home
+            <a
+                href="index.html"
+                class="back-button"
+            >
+                ← Home
             </a>
 
-            <a href="editor.html" class="create-btn">
-                + Create Advert
+            <a
+                href="editor.html"
+                class="create-button"
+            >
+                + Create Ad
             </a>
 
         </div>
@@ -43,396 +66,846 @@
     </header>
 
 
-    <!-- PAGE -->
 
-    <main class="templates-page">
+    <!-- ==========================================
+         PAGE HERO
+         ========================================== -->
 
-        <section class="templates-intro">
+    <section class="templates-hero">
+
+        <div>
+
+            <span class="hero-badge">
+                ✦ Professional Ad Templates
+            </span>
+
+            <h1>
+                Choose a template
+                <span>you love.</span>
+            </h1>
+
+            <p>
+                Pick a design for your product,
+                upload your image, and customize
+                your advert in minutes.
+            </p>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- ==========================================
+         CATEGORY NAVIGATION
+         ========================================== -->
+
+    <section class="category-section">
+
+        <div class="section-title">
 
             <div>
 
-                <p class="eyebrow">
-                    ADS MAKER FREE
-                </p>
+                <span>
+                    Browse by category
+                </span>
 
-                <h1>
-                    Choose a Template
-                </h1>
-
-                <p>
-                    Select your business category and choose
-                    a professional advert template.
-                </p>
+                <h2>
+                    What are you advertising?
+                </h2>
 
             </div>
 
-        </section>
+            <span
+                id="templateCount"
+                class="template-count"
+            >
+                24 Templates
+            </span>
+
+        </div>
 
 
-        <!-- CATEGORIES -->
+        <div
+            id="categoryList"
+            class="category-list"
+        >
 
-        <section class="category-section">
-
-            <button class="category active">
+            <button
+                class="category-chip active"
+                data-category="all"
+            >
+                <span>✦</span>
                 All
             </button>
 
-            <button class="category">
+
+            <button
+                class="category-chip"
+                data-category="fashion"
+            >
                 👗 Fashion
             </button>
 
-            <button class="category">
+
+            <button
+                class="category-chip"
+                data-category="shoes"
+            >
                 👟 Shoes
             </button>
 
-            <button class="category">
+
+            <button
+                class="category-chip"
+                data-category="food"
+            >
                 🍔 Food
             </button>
 
-            <button class="category">
+
+            <button
+                class="category-chip"
+                data-category="phones"
+            >
                 📱 Phones
             </button>
 
-            <button class="category">
+
+            <button
+                class="category-chip"
+                data-category="electronics"
+            >
                 🎧 Electronics
             </button>
 
-            <button class="category">
+
+            <button
+                class="category-chip"
+                data-category="beauty"
+            >
                 💄 Beauty
             </button>
 
-            <button class="category">
+
+            <button
+                class="category-chip"
+                data-category="cars"
+            >
                 🚗 Cars
             </button>
 
-            <button class="category">
+
+            <button
+                class="category-chip"
+                data-category="real-estate"
+            >
                 🏠 Real Estate
             </button>
 
-            <button class="category">
-                🏷️ Sale
+
+            <button
+                class="category-chip"
+                data-category="business"
+            >
+                💼 Business
             </button>
 
-        </section>
+        </div>
+
+    </section>
 
 
-        <!-- TEMPLATE GRID -->
 
-        <section class="template-section">
+    <!-- ==========================================
+         FILTER / SEARCH
+         ========================================== -->
 
-            <div class="section-title">
+    <section class="template-controls">
 
-                <h2>
-                    Popular Templates
-                </h2>
+        <div class="search-box">
 
-                <span id="templateCount">
-                    12 Templates
-                </span>
+            <span>
+                🔎
+            </span>
 
-            </div>
-
-
-            <div
-                class="template-grid"
-                id="templateGrid"
+            <input
+                type="search"
+                id="templateSearch"
+                placeholder="Search templates..."
+                autocomplete="off"
             >
 
-                <!-- TEMPLATE 1 -->
+        </div>
 
-                <article
-                    class="template-card"
-                    data-category="Shoes"
-                >
 
-                    <div class="template-preview purple">
+        <div class="sort-box">
 
-                        <span class="template-badge">
-                            NEW
-                        </span>
+            <label
+                for="templateSort"
+            >
+                Sort
+            </label>
+
+            <select
+                id="templateSort"
+            >
+
+                <option value="popular">
+                    Most Popular
+                </option>
+
+                <option value="new">
+                    Newest
+                </option>
+
+                <option value="sale">
+                    Sale Designs
+                </option>
+
+                <option value="minimal">
+                    Minimal
+                </option>
+
+            </select>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- ==========================================
+         TEMPLATE GRID
+         ========================================== -->
+
+    <main>
+
+        <section
+            id="templateGrid"
+            class="template-grid"
+        >
+
+
+            <!-- TEMPLATE 1 -->
+
+            <article
+                class="template-card"
+                data-category="shoes"
+                data-name="big sale shoes"
+                data-type="sale"
+            >
+
+                <div class="template-preview shoes-sale">
+
+                    <span class="badge red">
+                        BIG SALE
+                    </span>
+
+                    <div class="preview-title">
+                        UP TO
+                        <strong>50% OFF</strong>
+                    </div>
+
+                    <div class="fake-product shoe-one">
+                        👟
+                    </div>
+
+                    <div class="price">
+                        ₦35,000
+                    </div>
+
+                    <div class="old-price">
+                        ₦50,000
+                    </div>
+
+                    <span class="cta">
+                        SHOP NOW
+                    </span>
+
+                </div>
+
+
+                <div class="template-info">
+
+                    <div>
 
                         <h3>
-                            PREMIUM
+                            Big Sale
                         </h3>
 
-                        <h2>
-                            SNEAKERS
-                        </h2>
-
-                        <div class="product-placeholder">
-                            👟
-                        </div>
-
-                        <strong>
-                            ₦35,000
-                        </strong>
-
-                        <button>
-                            SHOP NOW
-                        </button>
+                        <p>
+                            Shoes • Sale
+                        </p>
 
                     </div>
 
-                    <div class="template-info">
+                    <button
+                        class="use-template"
+                        data-template="shoes-sale"
+                    >
+                        Use Template
+                    </button>
 
-                        <strong>
-                            Premium Sneakers
-                        </strong>
+                </div>
 
-                        <button class="use-template">
-                            Use Template
-                        </button>
+            </article>
 
+
+
+            <!-- TEMPLATE 2 -->
+
+            <article
+                class="template-card"
+                data-category="phones"
+                data-name="new arrival smartphone"
+                data-type="new"
+            >
+
+                <div class="template-preview phone-new">
+
+                    <span class="badge blue">
+                        NEW ARRIVAL
+                    </span>
+
+                    <div class="preview-title">
+                        LATEST
+                        <strong>SMARTPHONE</strong>
                     </div>
 
-                </article>
+                    <div class="fake-product phone">
+                        📱
+                    </div>
+
+                    <div class="price">
+                        ₦450,000
+                    </div>
+
+                    <span class="cta">
+                        SHOP NOW
+                    </span>
+
+                </div>
 
 
-                <!-- TEMPLATE 2 -->
+                <div class="template-info">
 
-                <article
-                    class="template-card"
-                    data-category="Phones"
-                >
-
-                    <div class="template-preview blue">
-
-                        <span class="template-badge">
-                            SALE
-                        </span>
+                    <div>
 
                         <h3>
-                            NEW
+                            New Arrival
                         </h3>
 
-                        <h2>
-                            SMARTPHONE
-                        </h2>
-
-                        <div class="product-placeholder">
-                            📱
-                        </div>
-
-                        <strong>
-                            ₦250,000
-                        </strong>
-
-                        <button>
-                            SHOP NOW
-                        </button>
+                        <p>
+                            Phones • New
+                        </p>
 
                     </div>
 
-                    <div class="template-info">
+                    <button
+                        class="use-template"
+                        data-template="phone-new"
+                    >
+                        Use Template
+                    </button>
 
-                        <strong>
-                            Smartphone Sale
-                        </strong>
+                </div>
 
-                        <button class="use-template">
-                            Use Template
-                        </button>
+            </article>
 
+
+
+            <!-- TEMPLATE 3 -->
+
+            <article
+                class="template-card"
+                data-category="food"
+                data-name="delicious burger"
+                data-type="sale"
+            >
+
+                <div class="template-preview food-burger">
+
+                    <span class="badge orange">
+                        TODAY ONLY
+                    </span>
+
+                    <div class="preview-title">
+                        DELICIOUS
+                        <strong>BURGER</strong>
                     </div>
 
-                </article>
+                    <div class="fake-product burger">
+                        🍔
+                    </div>
+
+                    <div class="discount">
+                        30% OFF
+                    </div>
+
+                    <span class="cta">
+                        ORDER NOW
+                    </span>
+
+                </div>
 
 
-                <!-- TEMPLATE 3 -->
+                <div class="template-info">
 
-                <article
-                    class="template-card"
-                    data-category="Food"
-                >
-
-                    <div class="template-preview orange">
-
-                        <span class="template-badge">
-                            TODAY
-                        </span>
+                    <div>
 
                         <h3>
-                            TASTY
+                            Delicious Burger
                         </h3>
 
-                        <h2>
-                            BURGER
-                        </h2>
-
-                        <div class="product-placeholder">
-                            🍔
-                        </div>
-
-                        <strong>
-                            ₦5,000
-                        </strong>
-
-                        <button>
-                            ORDER NOW
-                        </button>
+                        <p>
+                            Food • Promo
+                        </p>
 
                     </div>
 
-                    <div class="template-info">
+                    <button
+                        class="use-template"
+                        data-template="food-burger"
+                    >
+                        Use Template
+                    </button>
 
-                        <strong>
-                            Burger Promotion
-                        </strong>
+                </div>
 
-                        <button class="use-template">
-                            Use Template
-                        </button>
+            </article>
 
+
+
+            <!-- TEMPLATE 4 -->
+
+            <article
+                class="template-card"
+                data-category="fashion"
+                data-name="fashion collection"
+                data-type="new"
+            >
+
+                <div class="template-preview fashion">
+
+                    <span class="badge pink">
+                        NEW COLLECTION
+                    </span>
+
+                    <div class="preview-title">
+                        STYLE
+                        <strong>COLLECTION</strong>
                     </div>
 
-                </article>
+                    <div class="fake-product model">
+                        👩‍🦰
+                    </div>
+
+                    <div class="discount">
+                        20% OFF
+                    </div>
+
+                    <span class="cta">
+                        SHOP NOW
+                    </span>
+
+                </div>
 
 
-                <!-- TEMPLATE 4 -->
+                <div class="template-info">
 
-                <article
-                    class="template-card"
-                    data-category="Fashion"
-                >
-
-                    <div class="template-preview pink">
-
-                        <span class="template-badge">
-                            40% OFF
-                        </span>
+                    <div>
 
                         <h3>
-                            NEW
-                        </h3>
-
-                        <h2>
-                            COLLECTION
-                        </h2>
-
-                        <div class="product-placeholder">
-                            👗
-                        </div>
-
-                        <strong>
-                            SHOP NOW
-                        </strong>
-
-                    </div>
-
-                    <div class="template-info">
-
-                        <strong>
                             Fashion Collection
-                        </strong>
-
-                        <button class="use-template">
-                            Use Template
-                        </button>
-
-                    </div>
-
-                </article>
-
-
-                <!-- TEMPLATE 5 -->
-
-                <article
-                    class="template-card"
-                    data-category="Beauty"
-                >
-
-                    <div class="template-preview dark">
-
-                        <span class="template-badge">
-                            PREMIUM
-                        </span>
-
-                        <h3>
-                            LUXURY
                         </h3>
 
-                        <h2>
-                            BEAUTY
-                        </h2>
-
-                        <div class="product-placeholder">
-                            💄
-                        </div>
-
-                        <strong>
-                            ₦18,000
-                        </strong>
+                        <p>
+                            Fashion • Collection
+                        </p>
 
                     </div>
 
-                    <div class="template-info">
+                    <button
+                        class="use-template"
+                        data-template="fashion"
+                    >
+                        Use Template
+                    </button>
 
-                        <strong>
-                            Luxury Beauty
-                        </strong>
+                </div>
 
-                        <button class="use-template">
-                            Use Template
-                        </button>
+            </article>
 
+
+
+            <!-- TEMPLATE 5 -->
+
+            <article
+                class="template-card"
+                data-category="electronics"
+                data-name="super deal headphones"
+                data-type="sale"
+            >
+
+                <div class="template-preview headphones">
+
+                    <span class="badge yellow">
+                        SUPER DEAL
+                    </span>
+
+                    <div class="preview-title">
+                        TODAY
+                        <strong>ONLY</strong>
                     </div>
 
-                </article>
+                    <div class="fake-product headset">
+                        🎧
+                    </div>
+
+                    <div class="price">
+                        ₦25,000
+                    </div>
+
+                    <span class="cta">
+                        SHOP NOW
+                    </span>
+
+                </div>
 
 
-                <!-- TEMPLATE 6 -->
+                <div class="template-info">
 
-                <article
-                    class="template-card"
-                    data-category="Cars"
-                >
-
-                    <div class="template-preview green">
-
-                        <span class="template-badge">
-                            FOR SALE
-                        </span>
+                    <div>
 
                         <h3>
-                            PREMIUM
+                            Super Deal
                         </h3>
 
-                        <h2>
-                            CAR DEAL
-                        </h2>
-
-                        <div class="product-placeholder">
-                            🚗
-                        </div>
-
-                        <strong>
-                            ₦25M
-                        </strong>
+                        <p>
+                            Electronics • Sale
+                        </p>
 
                     </div>
 
-                    <div class="template-info">
+                    <button
+                        class="use-template"
+                        data-template="headphones"
+                    >
+                        Use Template
+                    </button>
 
-                        <strong>
-                            Car Advertisement
-                        </strong>
+                </div>
 
-                        <button class="use-template">
-                            Use Template
-                        </button>
+            </article>
+
+
+
+            <!-- TEMPLATE 6 -->
+
+            <article
+                class="template-card"
+                data-category="real-estate"
+                data-name="modern home for sale"
+                data-type="popular"
+            >
+
+                <div class="template-preview real-estate">
+
+                    <span class="badge green">
+                        FOR SALE
+                    </span>
+
+                    <div class="preview-title">
+                        MODERN
+                        <strong>HOME</strong>
+                    </div>
+
+                    <div class="fake-product house">
+                        🏠
+                    </div>
+
+                    <div class="price">
+                        ₦115M
+                    </div>
+
+                    <span class="cta">
+                        CONTACT NOW
+                    </span>
+
+                </div>
+
+
+                <div class="template-info">
+
+                    <div>
+
+                        <h3>
+                            Modern Home
+                        </h3>
+
+                        <p>
+                            Real Estate • Sale
+                        </p>
 
                     </div>
 
-                </article>
+                    <button
+                        class="use-template"
+                        data-template="real-estate"
+                    >
+                        Use Template
+                    </button>
 
-            </div>
+                </div>
+
+            </article>
+
+
+
+            <!-- TEMPLATE 7 -->
+
+            <article
+                class="template-card"
+                data-category="beauty"
+                data-name="beauty cosmetics promo"
+                data-type="sale"
+            >
+
+                <div class="template-preview beauty">
+
+                    <span class="badge pink">
+                        SPECIAL OFFER
+                    </span>
+
+                    <div class="preview-title">
+                        BEAUTY
+                        <strong>YOU DESERVE</strong>
+                    </div>
+
+                    <div class="fake-product cosmetics">
+                        💄
+                    </div>
+
+                    <div class="discount">
+                        40% OFF
+                    </div>
+
+                    <span class="cta">
+                        ORDER NOW
+                    </span>
+
+                </div>
+
+
+                <div class="template-info">
+
+                    <div>
+
+                        <h3>
+                            Beauty Offer
+                        </h3>
+
+                        <p>
+                            Beauty • Promo
+                        </p>
+
+                    </div>
+
+                    <button
+                        class="use-template"
+                        data-template="beauty"
+                    >
+                        Use Template
+                    </button>
+
+                </div>
+
+            </article>
+
+
+
+            <!-- TEMPLATE 8 -->
+
+            <article
+                class="template-card"
+                data-category="cars"
+                data-name="premium car sale"
+                data-type="popular"
+            >
+
+                <div class="template-preview car">
+
+                    <span class="badge blue">
+                        PREMIUM
+                    </span>
+
+                    <div class="preview-title">
+                        DRIVE
+                        <strong>YOUR DREAM</strong>
+                    </div>
+
+                    <div class="fake-product car-icon">
+                        🚘
+                    </div>
+
+                    <div class="price">
+                        ₦28M
+                    </div>
+
+                    <span class="cta">
+                        BOOK NOW
+                    </span>
+
+                </div>
+
+
+                <div class="template-info">
+
+                    <div>
+
+                        <h3>
+                            Premium Car
+                        </h3>
+
+                        <p>
+                            Cars • Business
+                        </p>
+
+                    </div>
+
+                    <button
+                        class="use-template"
+                        data-template="car"
+                    >
+                        Use Template
+                    </button>
+
+                </div>
+
+            </article>
+
+
+
+            <!-- TEMPLATE 9 -->
+
+            <article
+                class="template-card"
+                data-category="business"
+                data-name="professional business service"
+                data-type="minimal"
+            >
+
+                <div class="template-preview business">
+
+                    <span class="badge purple">
+                        PROFESSIONAL
+                    </span>
+
+                    <div class="preview-title">
+                        GROW
+                        <strong>YOUR BUSINESS</strong>
+                    </div>
+
+                    <div class="fake-product business-icon">
+                        💼
+                    </div>
+
+                    <span class="cta">
+                        GET STARTED
+                    </span>
+
+                </div>
+
+
+                <div class="template-info">
+
+                    <div>
+
+                        <h3>
+                            Business Service
+                        </h3>
+
+                        <p>
+                            Business • Service
+                        </p>
+
+                    </div>
+
+                    <button
+                        class="use-template"
+                        data-template="business"
+                    >
+                        Use Template
+                    </button>
+
+                </div>
+
+            </article>
 
         </section>
+
+
+        <!-- ======================================
+             EMPTY STATE
+             ====================================== -->
+
+        <div
+            id="emptyState"
+            class="empty-state"
+            hidden
+        >
+
+            <div>
+                🔎
+            </div>
+
+            <h3>
+                No templates found
+            </h3>
+
+            <p>
+                Try another category or search term.
+            </p>
+
+        </div>
 
     </main>
 
 
-    <script src="js/templates.js"></script>
+
+    <!-- ==========================================
+         FOOTER
+         ========================================== -->
+
+    <footer class="templates-footer">
+
+        <div class="footer-brand">
+
+            <span class="brand-icon">
+                A
+            </span>
+
+            <strong>
+                Ads Maker Free
+            </strong>
+
+        </div>
+
+        <p>
+            Create professional adverts in minutes.
+        </p>
+
+    </footer>
+
+</div>
+
+
+<!-- ==========================================
+     JAVASCRIPT
+     ========================================== -->
+
+<script src="js/templates.js"></script>
 
 </body>
 
