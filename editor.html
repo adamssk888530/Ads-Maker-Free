@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+
     <meta charset="UTF-8">
 
     <meta
@@ -11,117 +12,455 @@
 
     <title>Ads Maker Free - Editor</title>
 
-    <link rel="stylesheet" href="css/editor.css">
+    <link
+        rel="stylesheet"
+        href="css/editor.css"
+    >
+
 </head>
 
 <body>
 
-    <div id="editor-app">
+<div id="editor-app">
 
-        <!-- Editor Header -->
-        <header class="editor-header">
 
-            <a href="index.html" class="editor-logo">
-                Ads Maker <span>Free</span>
-            </a>
+    <!-- ======================================
+         HEADER
+         ====================================== -->
 
-            <div class="editor-actions">
+    <header class="editor-header">
 
-                <button id="undoBtn">
-                    ↶
-                </button>
+        <a
+            href="index.html"
+            class="editor-logo"
+        >
+            Ads Maker <span>Free</span>
+        </a>
 
-                <button id="redoBtn">
-                    ↷
-                </button>
 
-                <button id="downloadBtn">
-                    ↓ Download
-                </button>
+        <div class="editor-actions">
+
+            <button
+                id="undoBtn"
+                title="Undo"
+            >
+                ↶
+            </button>
+
+            <button
+                id="redoBtn"
+                title="Redo"
+            >
+                ↷
+            </button>
+
+            <button
+                id="downloadBtn"
+            >
+                ↓ Download
+            </button>
+
+        </div>
+
+    </header>
+
+
+
+    <!-- ======================================
+         MAIN EDITOR
+         ====================================== -->
+
+    <main class="editor-main">
+
+
+        <!-- ==================================
+             LEFT TOOLBAR
+             ================================== -->
+
+        <aside class="editor-tools">
+
+
+            <button
+                id="templatesBtn"
+            >
+                <b>▦</b>
+                <span>Templates</span>
+            </button>
+
+
+            <button
+                id="uploadBtn"
+            >
+                <b>↑</b>
+                <span>Upload</span>
+            </button>
+
+
+            <button
+                id="textBtn"
+            >
+                <b>T</b>
+                <span>Text</span>
+            </button>
+
+
+            <button
+                id="elementsBtn"
+            >
+                <b>◇</b>
+                <span>Elements</span>
+            </button>
+
+
+            <button
+                id="backgroundBtn"
+            >
+                <b>◈</b>
+                <span>Background</span>
+            </button>
+
+
+            <button
+                id="logoBtn"
+            >
+                <b>◎</b>
+                <span>Logo</span>
+            </button>
+
+
+        </aside>
+
+
+
+        <!-- ==================================
+             CANVAS
+             ================================== -->
+
+        <section class="editor-canvas-area">
+
+
+            <div class="canvas-top-info">
+
+                <span>
+                    Ads Maker Free
+                </span>
+
+                <span>
+                    1080 × 1080
+                </span>
 
             </div>
 
-        </header>
+
+            <div class="canvas-container">
+
+                <canvas
+                    id="designCanvas"
+                    width="1080"
+                    height="1080"
+                ></canvas>
+
+            </div>
 
 
-        <!-- Main Editor -->
-        <main class="editor-main">
-
-            <!-- Left Tools -->
-            <aside class="editor-tools">
-
-                <button id="templatesBtn">
-                    ▦
-                    <span>Templates</span>
-                </button>
-
-                <button id="uploadBtn">
-                    ↑
-                    <span>Upload</span>
-                </button>
-
-                <button id="textBtn">
-                    T
-                    <span>Text</span>
-                </button>
-
-                <button id="elementsBtn">
-                    ◇
-                    <span>Elements</span>
-                </button>
-
-                <button id="backgroundBtn">
-                    ◈
-                    <span>Background</span>
-                </button>
-
-                <button id="logoBtn">
-                    ◎
-                    <span>Logo</span>
-                </button>
-
-            </aside>
+        </section>
 
 
-            <!-- Center Canvas Area -->
-            <section class="editor-canvas-area">
 
-                <div class="canvas-container">
+        <!-- ==================================
+             RIGHT EDITING PANEL
+             ================================== -->
 
-                    <canvas
-                        id="designCanvas"
-                        width="1080"
-                        height="1080">
-                    </canvas>
-
-                </div>
-
-            </section>
+        <aside class="editing-panel">
 
 
-            <!-- Right Editing Panel -->
-            <aside class="editing-panel">
+            <div class="panel-header">
 
                 <h2>
                     Edit Design
                 </h2>
 
-                <div id="editingContent">
+                <span>
+                    Professional Editor
+                </span>
 
-                    <p>
-                        Select an object to edit it.
-                    </p>
+            </div>
+
+
+
+            <!-- PRODUCT IMAGE -->
+
+            <section class="edit-section">
+
+                <h3>
+                    🖼️ Product Image
+                </h3>
+
+                <p class="section-description">
+                    Upload your product image
+                    and prepare it for your advert.
+                </p>
+
+
+                <button
+                    id="productUploadBtn"
+                    class="primary-action"
+                >
+                    🖼️ Upload Product Image
+                </button>
+
+
+                <input
+                    type="file"
+                    id="productImageInput"
+                    accept="image/png,image/jpeg,image/webp"
+                    hidden
+                >
+
+
+                <div
+                    id="productPreview"
+                    class="product-preview"
+                >
+
+                    <div class="preview-icon">
+                        🖼️
+                    </div>
+
+                    <span>
+                        No image selected
+                    </span>
 
                 </div>
 
-            </aside>
 
-        </main>
+                <button
+                    id="removeBackgroundBtn"
+                    class="secondary-action"
+                    disabled
+                >
+                    ✨ Remove Background
+                </button>
 
-    </div>
+
+                <button
+                    id="addProductBtn"
+                    class="secondary-action"
+                    disabled
+                >
+                    + Add To Design
+                </button>
+
+            </section>
 
 
-    <script src="js/editor.js"></script>
+
+            <!-- TEXT -->
+
+            <section class="edit-section">
+
+                <h3>
+                    ✍️ Text
+                </h3>
+
+
+                <button
+                    id="addHeadlineBtn"
+                    class="secondary-action"
+                >
+                    + Add Headline
+                </button>
+
+
+                <button
+                    id="addPriceBtn"
+                    class="secondary-action"
+                >
+                    + Add Price
+                </button>
+
+
+                <button
+                    id="addPhoneBtn"
+                    class="secondary-action"
+                >
+                    + Add WhatsApp
+                </button>
+
+            </section>
+
+
+
+            <!-- BACKGROUND -->
+
+            <section class="edit-section">
+
+                <h3>
+                    🎨 Background
+                </h3>
+
+
+                <label class="input-label">
+                    Background Color
+                </label>
+
+
+                <input
+                    type="color"
+                    id="backgroundColor"
+                    value="#ffffff"
+                    class="color-input"
+                >
+
+
+                <button
+                    id="resetBackgroundBtn"
+                    class="secondary-action"
+                >
+                    Reset Background
+                </button>
+
+            </section>
+
+
+
+            <!-- LOGO -->
+
+            <section class="edit-section">
+
+                <h3>
+                    🏷️ Logo
+                </h3>
+
+
+                <button
+                    id="uploadLogoBtn"
+                    class="secondary-action"
+                >
+                    + Upload Logo
+                </button>
+
+
+                <input
+                    type="file"
+                    id="logoInput"
+                    accept="image/png,image/jpeg,image/webp"
+                    hidden
+                >
+
+            </section>
+
+
+
+            <!-- OBJECT CONTROLS -->
+
+            <section class="edit-section">
+
+                <h3>
+                    ⚙️ Selected Object
+                </h3>
+
+
+                <button
+                    id="deleteObjectBtn"
+                    class="delete-action"
+                >
+                    🗑️ Delete Selected
+                </button>
+
+            </section>
+
+
+        </aside>
+
+    </main>
+
+
+    <!-- ======================================
+         MOBILE BOTTOM BAR
+         ====================================== -->
+
+    <nav class="mobile-editor-tools">
+
+
+        <button id="mobileTemplatesBtn">
+
+            <b>▦</b>
+
+            <span>
+                Templates
+            </span>
+
+        </button>
+
+
+        <button id="mobileUploadBtn">
+
+            <b>↑</b>
+
+            <span>
+                Upload
+            </span>
+
+        </button>
+
+
+        <button id="mobileTextBtn">
+
+            <b>T</b>
+
+            <span>
+                Text
+            </span>
+
+        </button>
+
+
+        <button id="mobileElementsBtn">
+
+            <b>◇</b>
+
+            <span>
+                Elements
+            </span>
+
+        </button>
+
+
+        <button id="mobileMoreBtn">
+
+            <b>＋</b>
+
+            <span>
+                More
+            </span>
+
+        </button>
+
+
+    </nav>
+
+
+
+    <!-- ======================================
+         FABRIC.JS
+         ====================================== -->
+
+    <script
+        src="https://cdn.jsdelivr.net/npm/fabric@6.7.1/dist/index.min.js"
+    ></script>
+
+
+    <!-- ======================================
+         OUR EDITOR JAVASCRIPT
+         ====================================== -->
+
+    <script
+        src="js/editor.js"
+    ></script>
+
+
+</div>
 
 </body>
 
