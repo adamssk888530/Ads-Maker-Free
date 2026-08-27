@@ -1,13 +1,4 @@
-// ==========================================
-// ADS MAKER FREE
-// EDITOR ENGINE
-// ==========================================
-
 document.addEventListener("DOMContentLoaded", () => {
-
-    // ------------------------------------------
-    // CANVAS
-    // ------------------------------------------
 
     const canvas = new fabric.Canvas("designCanvas", {
         width: 1080,
@@ -16,12 +7,6 @@ document.addEventListener("DOMContentLoaded", () => {
         preserveObjectStacking: true
     });
 
-
-    // ------------------------------------------
-    // VARIABLES
-    // ------------------------------------------
-
-    let uploadedProduct = null;
     let productDataUrl = null;
 
     let history = [];
@@ -29,17 +14,66 @@ document.addEventListener("DOMContentLoaded", () => {
     let restoring = false;
 
 
-    // ------------------------------------------
-    // HELPERS
-    // ------------------------------------------
+    // ==========================================
+    // STATUS MESSAGE
+    // ==========================================
+
+    function showStatus(message) {
+
+        let box = document.querySelector(".editor-status");
+
+        if (!box) {
+
+            box = document.createElement("div");
+
+            box.className = "editor-status";
+
+            box.style.position = "fixed";
+            box.style.left = "50%";
+            box.style.bottom = "80px";
+            box.style.transform = "translateX(-50%)";
+
+            box.style.background = "#171827";
+            box.style.color = "#ffffff";
+
+            box.style.padding = "11px 17px";
+
+            box.style.borderRadius = "9px";
+
+            box.style.fontSize = "12px";
+            box.style.fontWeight = "700";
+
+            box.style.zIndex = "99999";
+
+            document.body.appendChild(box);
+        }
+
+        box.textContent = message;
+
+        clearTimeout(box.timer);
+
+        box.timer = setTimeout(() => {
+
+            if (box) {
+                box.remove();
+            }
+
+        }, 3000);
+    }
+
+
+    // ==========================================
+    // HISTORY
+    // ==========================================
 
     function saveState() {
 
-        if (restoring) return;
+        if (restoring) {
+            return;
+        }
 
-        const state = JSON.stringify(
-            canvas.toJSON()
-        );
+        const state =
+            JSON.stringify(canvas.toJSON());
 
         history =
             history.slice(
@@ -53,8 +87,11 @@ document.addEventListener("DOMContentLoaded", () => {
             history.length - 1;
 
         if (history.length > 30) {
+
             history.shift();
+
             historyIndex--;
+
         }
     }
 
@@ -76,176 +113,46 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    function showStatus(message) {
-
-        let box =
-            document.querySelector(
-                ".editor-status"
-            );
-
-        if (!box) {
-
-            box =
-                document.createElement("div");
-
-            box.className =
-                "editor-status";
-
-            box.style.position = "fixed";
-            box.style.left = "50%";
-            box.style.bottom = "80px";
-            box.style.transform =
-                "translateX(-50%)";
-
-            box.style.background =
-                "#171827";
-
-            box.style.color =
-                "#ffffff";
-
-            box.style.padding =
-                "10px 16px";
-
-            box.style.borderRadius =
-                "9px";
-
-            box.style.fontSize =
-                "12px";
-
-            box.style.fontWeight =
-                "700";
-
-            box.style.zIndex =
-                "99999";
-
-            box.style.boxShadow =
-                "0 8px 25px rgba(0,0,0,.2)";
-
-            document.body.appendChild(box);
-        }
-
-        box.textContent = message;
-
-        clearTimeout(box.timer);
-
-        box.timer =
-            setTimeout(() => {
-
-                box.remove();
-
-            }, 2500);
-    }
-
-
-    // ------------------------------------------
-    // UNDO
-    // ------------------------------------------
-
     document
         .getElementById("undoBtn")
-        ?.addEventListener(
-            "click",
-            () => {
+        ?.addEventListener("click", () => {
 
-                if (historyIndex <= 0) {
-                    return;
-                }
-
-                historyIndex--;
-
-                restoreState(
-                    history[historyIndex]
-                );
-
+            if (historyIndex <= 0) {
+                return;
             }
-        );
 
+            historyIndex--;
 
-    // ------------------------------------------
-    // REDO
-    // ------------------------------------------
+            restoreState(
+                history[historyIndex]
+            );
+
+        });
+
 
     document
         .getElementById("redoBtn")
-        ?.addEventListener(
-            "click",
-            () => {
+        ?.addEventListener("click", () => {
 
-                if (
-                    historyIndex >=
-                    history.length - 1
-                ) {
-                    return;
-                }
-
-                historyIndex++;
-
-                restoreState(
-                    history[historyIndex]
-                );
-
+            if (
+                historyIndex >=
+                history.length - 1
+            ) {
+                return;
             }
-        );
 
+            historyIndex++;
 
-    // ------------------------------------------
-    // OLD UPLOAD BUTTON
-    // ------------------------------------------
-
-    const uploadBtn =
-        document.getElementById(
-            "uploadBtn"
-        );
-
-
-    const oldInput =
-        document.createElement("input");
-
-    oldInput.type = "file";
-
-    oldInput.accept =
-        "image/png,image/jpeg,image/webp";
-
-    oldInput.hidden = true;
-
-    document.body.appendChild(
-        oldInput
-    );
-
-
-    uploadBtn?.addEventListener(
-        "click",
-        () => {
-
-            oldInput.click();
-
-        }
-    );
-
-
-    oldInput.addEventListener(
-        "change",
-        () => {
-
-            const file =
-                oldInput.files[0];
-
-            if (!file) return;
-
-            readImage(
-                file,
-                true
+            restoreState(
+                history[historyIndex]
             );
 
-            oldInput.value = "";
-
-        }
-    );
+        });
 
 
-    // ------------------------------------------
-    // PRODUCT UPLOAD
-    // ------------------------------------------
+    // ==========================================
+    // PRODUCT IMAGE
+    // ==========================================
 
     const productUploadBtn =
         document.getElementById(
@@ -290,12 +197,13 @@ document.addEventListener("DOMContentLoaded", () => {
             const file =
                 productImageInput.files[0];
 
-            if (!file) return;
+            if (!file) {
+                return;
+            }
+
 
             if (
-                !file.type.startsWith(
-                    "image/"
-                )
+                !file.type.startsWith("image/")
             ) {
 
                 showStatus(
@@ -310,54 +218,54 @@ document.addEventListener("DOMContentLoaded", () => {
                 new FileReader();
 
 
-            reader.onload =
-                (event) => {
+            reader.onload = (event) => {
 
-                    productDataUrl =
-                        event.target.result;
-
-
-                    uploadedProduct =
-                        file;
+                productDataUrl =
+                    event.target.result;
 
 
-                    // Preview
-                    productPreview.innerHTML = "";
+                productPreview.innerHTML = "";
 
-                    const img =
-                        document.createElement(
-                            "img"
-                        );
 
-                    img.src =
-                        productDataUrl;
-
-                    img.style.width =
-                        "100%";
-
-                    img.style.height =
-                        "130px";
-
-                    img.style.objectFit =
-                        "contain";
-
-                    productPreview.appendChild(
-                        img
+                const image =
+                    document.createElement(
+                        "img"
                     );
 
+                image.src =
+                    productDataUrl;
 
-                    removeBackgroundBtn.disabled =
-                        false;
-
-                    addProductBtn.disabled =
-                        false;
+                image.alt =
+                    "Product preview";
 
 
-                    showStatus(
-                        "Product image loaded."
-                    );
+                image.style.width =
+                    "100%";
 
-                };
+                image.style.height =
+                    "130px";
+
+                image.style.objectFit =
+                    "contain";
+
+
+                productPreview.appendChild(
+                    image
+                );
+
+
+                removeBackgroundBtn.disabled =
+                    false;
+
+                addProductBtn.disabled =
+                    false;
+
+
+                showStatus(
+                    "Product image uploaded."
+                );
+
+            };
 
 
             reader.readAsDataURL(file);
@@ -368,13 +276,13 @@ document.addEventListener("DOMContentLoaded", () => {
     );
 
 
-    // ------------------------------------------
-    // REMOVE BACKGROUND
-    // ------------------------------------------
+    // ==========================================
+    // REAL BACKGROUND REMOVAL
+    // ==========================================
 
     removeBackgroundBtn?.addEventListener(
         "click",
-        () => {
+        async () => {
 
             if (!productDataUrl) {
 
@@ -386,28 +294,135 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
 
-            /*
-             * IMPORTANT:
-             *
-             * This is intentionally NOT
-             * pretending to remove the background.
-             *
-             * Real background removal will be
-             * connected to an image-processing API
-             * in the next stage.
-             */
+            removeBackgroundBtn.disabled =
+                true;
 
-            showStatus(
-                "Real background removal will be connected next."
-            );
+            addProductBtn.disabled =
+                true;
+
+
+            removeBackgroundBtn.textContent =
+                "✨ Removing Background...";
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        "/api/remove-background",
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body:
+                                JSON.stringify({
+                                    image:
+                                        productDataUrl
+                                })
+                        }
+                    );
+
+
+                const result =
+                    await response.json();
+
+
+                if (
+                    !response.ok ||
+                    !result.success ||
+                    !result.image
+                ) {
+
+                    throw new Error(
+                        result.error ||
+                        "Background removal failed."
+                    );
+
+                }
+
+
+                // Replace original image
+                productDataUrl =
+                    result.image;
+
+
+                // Update preview
+                productPreview.innerHTML = "";
+
+
+                const image =
+                    document.createElement(
+                        "img"
+                    );
+
+
+                image.src =
+                    productDataUrl;
+
+
+                image.alt =
+                    "Background removed product";
+
+
+                image.style.width =
+                    "100%";
+
+                image.style.height =
+                    "130px";
+
+                image.style.objectFit =
+                    "contain";
+
+
+                productPreview.appendChild(
+                    image
+                );
+
+
+                addProductBtn.disabled =
+                    false;
+
+
+                showStatus(
+                    "Background removed successfully."
+                );
+
+
+            } catch (error) {
+
+                console.error(
+                    "Background removal error:",
+                    error
+                );
+
+
+                showStatus(
+                    error.message ||
+                    "Background removal failed."
+                );
+
+
+            } finally {
+
+                removeBackgroundBtn.disabled =
+                    false;
+
+                removeBackgroundBtn.textContent =
+                    "✨ Remove Background";
+
+            }
 
         }
     );
 
 
-    // ------------------------------------------
-    // ADD PRODUCT TO CANVAS
-    // ------------------------------------------
+    // ==========================================
+    // ADD PRODUCT TO DESIGN
+    // ==========================================
 
     addProductBtn?.addEventListener(
         "click",
@@ -423,117 +438,84 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
 
-            addImageToCanvas(
-                productDataUrl
+            fabric.Image.fromURL(
+                productDataUrl,
+                (image) => {
+
+                    const maxWidth = 650;
+                    const maxHeight = 620;
+
+
+                    const scale =
+                        Math.min(
+                            maxWidth /
+                                image.width,
+
+                            maxHeight /
+                                image.height
+                        );
+
+
+                    image.set({
+
+                        left:
+                            (
+                                canvas.width -
+                                image.width *
+                                scale
+                            ) / 2,
+
+                        top: 250,
+
+                        scaleX: scale,
+
+                        scaleY: scale,
+
+                        cornerColor:
+                            "#7135f2",
+
+                        cornerStrokeColor:
+                            "#7135f2",
+
+                        borderColor:
+                            "#7135f2",
+
+                        transparentCorners:
+                            false
+
+                    });
+
+
+                    canvas.add(image);
+
+                    canvas.setActiveObject(
+                        image
+                    );
+
+                    canvas.renderAll();
+
+                    saveState();
+
+
+                    showStatus(
+                        "Product added to your advert."
+                    );
+
+                },
+
+                {
+                    crossOrigin:
+                        "anonymous"
+                }
             );
 
         }
     );
 
 
-    // ------------------------------------------
-    // ADD IMAGE
-    // ------------------------------------------
-
-    function addImageToCanvas(
-        dataUrl
-    ) {
-
-        fabric.Image.fromURL(
-            dataUrl,
-            (img) => {
-
-                const maxSize = 650;
-
-                let scale =
-                    Math.min(
-                        maxSize / img.width,
-                        maxSize / img.height
-                    );
-
-
-                if (scale > 1) {
-                    scale = 1;
-                }
-
-
-                img.set({
-
-                    left:
-                        (
-                            canvas.width -
-                            img.width * scale
-                        ) / 2,
-
-                    top:
-                        230,
-
-                    scaleX:
-                        scale,
-
-                    scaleY:
-                        scale,
-
-                    cornerColor:
-                        "#7135f2",
-
-                    cornerStrokeColor:
-                        "#7135f2",
-
-                    borderColor:
-                        "#7135f2",
-
-                    transparentCorners:
-                        false
-
-                });
-
-
-                canvas.add(img);
-
-                canvas.setActiveObject(
-                    img
-                );
-
-                canvas.renderAll();
-
-                saveState();
-
-
-                showStatus(
-                    "Product added to design."
-                );
-
-            },
-
-            {
-                crossOrigin:
-                    "anonymous"
-            }
-        );
-
-    }
-
-
-    // ------------------------------------------
+    // ==========================================
     // TEXT
-    // ------------------------------------------
-
-    document
-        .getElementById("textBtn")
-        ?.addEventListener(
-            "click",
-            addHeadline
-        );
-
-
-    document
-        .getElementById("addHeadlineBtn")
-        ?.addEventListener(
-            "click",
-            addHeadline
-        );
-
+    // ==========================================
 
     function addHeadline() {
 
@@ -585,9 +567,25 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    // ------------------------------------------
+    document
+        .getElementById("textBtn")
+        ?.addEventListener(
+            "click",
+            addHeadline
+        );
+
+
+    document
+        .getElementById("addHeadlineBtn")
+        ?.addEventListener(
+            "click",
+            addHeadline
+        );
+
+
+    // ==========================================
     // PRICE
-    // ------------------------------------------
+    // ==========================================
 
     document
         .getElementById("addPriceBtn")
@@ -633,9 +631,9 @@ document.addEventListener("DOMContentLoaded", () => {
         );
 
 
-    // ------------------------------------------
+    // ==========================================
     // WHATSAPP
-    // ------------------------------------------
+    // ==========================================
 
     document
         .getElementById("addPhoneBtn")
@@ -678,9 +676,9 @@ document.addEventListener("DOMContentLoaded", () => {
         );
 
 
-    // ------------------------------------------
-    // BACKGROUND COLOR
-    // ------------------------------------------
+    // ==========================================
+    // BACKGROUND
+    // ==========================================
 
     const backgroundColor =
         document.getElementById(
@@ -702,10 +700,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     );
 
-
-    // ------------------------------------------
-    // RESET BACKGROUND
-    // ------------------------------------------
 
     document
         .getElementById(
@@ -729,9 +723,29 @@ document.addEventListener("DOMContentLoaded", () => {
         );
 
 
-    // ------------------------------------------
-    // DELETE OBJECT
-    // ------------------------------------------
+    // ==========================================
+    // DELETE
+    // ==========================================
+
+    function deleteSelected() {
+
+        const active =
+            canvas.getActiveObject();
+
+        if (!active) {
+            return;
+        }
+
+        canvas.remove(active);
+
+        canvas.discardActiveObject();
+
+        canvas.renderAll();
+
+        saveState();
+
+    }
+
 
     document
         .getElementById(
@@ -747,15 +761,11 @@ document.addEventListener("DOMContentLoaded", () => {
         "keydown",
         (event) => {
 
-            const active =
-                canvas.getActiveObject();
-
-            if (!active) return;
-
-
             if (
-                event.key ===
-                "Delete"
+                event.key === "Delete" &&
+                !event.target.matches(
+                    "input, textarea"
+                )
             ) {
 
                 deleteSelected();
@@ -766,27 +776,9 @@ document.addEventListener("DOMContentLoaded", () => {
     );
 
 
-    function deleteSelected() {
-
-        const active =
-            canvas.getActiveObject();
-
-        if (!active) return;
-
-        canvas.remove(active);
-
-        canvas.discardActiveObject();
-
-        canvas.renderAll();
-
-        saveState();
-
-    }
-
-
-    // ------------------------------------------
+    // ==========================================
     // LOGO
-    // ------------------------------------------
+    // ==========================================
 
     const uploadLogoBtn =
         document.getElementById(
@@ -816,7 +808,10 @@ document.addEventListener("DOMContentLoaded", () => {
             const file =
                 logoInput.files[0];
 
-            if (!file) return;
+            if (!file) {
+                return;
+            }
+
 
             const reader =
                 new FileReader();
@@ -832,6 +827,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             logo.scaleToWidth(
                                 180
                             );
+
 
                             logo.set({
 
@@ -866,28 +862,9 @@ document.addEventListener("DOMContentLoaded", () => {
     );
 
 
-    // ------------------------------------------
-    // TEMPLATE BUTTON
-    // ------------------------------------------
-
-    document
-        .getElementById(
-            "templatesBtn"
-        )
-        ?.addEventListener(
-            "click",
-            () => {
-
-                window.location.href =
-                    "templates.html";
-
-            }
-        );
-
-
-    // ------------------------------------------
-    // ELEMENTS BUTTON
-    // ------------------------------------------
+    // ==========================================
+    // ELEMENTS
+    // ==========================================
 
     document
         .getElementById(
@@ -900,9 +877,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 const circle =
                     new fabric.Circle({
 
-                        left: 400,
+                        left: 430,
 
-                        top: 400,
+                        top: 420,
 
                         radius: 70,
 
@@ -925,9 +902,28 @@ document.addEventListener("DOMContentLoaded", () => {
         );
 
 
-    // ------------------------------------------
-    // MOBILE BUTTONS
-    // ------------------------------------------
+    // ==========================================
+    // TEMPLATES
+    // ==========================================
+
+    document
+        .getElementById(
+            "templatesBtn"
+        )
+        ?.addEventListener(
+            "click",
+            () => {
+
+                window.location.href =
+                    "templates.html";
+
+            }
+        );
+
+
+    // ==========================================
+    // MOBILE TOOLS
+    // ==========================================
 
     document
         .getElementById(
@@ -995,16 +991,16 @@ document.addEventListener("DOMContentLoaded", () => {
             () => {
 
                 showStatus(
-                    "More editing tools coming next."
+                    "More tools will be added here."
                 );
 
             }
         );
 
 
-    // ------------------------------------------
+    // ==========================================
     // DOWNLOAD
-    // ------------------------------------------
+    // ==========================================
 
     document
         .getElementById(
@@ -1019,17 +1015,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 canvas.renderAll();
 
 
-                const dataURL =
+                const image =
                     canvas.toDataURL({
 
-                        format:
-                            "png",
+                        format: "png",
 
-                        multiplier:
-                            1,
+                        quality: 1,
 
-                        quality:
-                            1
+                        multiplier: 1
 
                     });
 
@@ -1039,11 +1032,14 @@ document.addEventListener("DOMContentLoaded", () => {
                         "a"
                     );
 
+
                 link.download =
                     "ads-maker-free.png";
 
+
                 link.href =
-                    dataURL;
+                    image;
+
 
                 link.click();
 
@@ -1051,63 +1047,23 @@ document.addEventListener("DOMContentLoaded", () => {
         );
 
 
-    // ------------------------------------------
+    // ==========================================
     // CANVAS CHANGES
-    // ------------------------------------------
+    // ==========================================
 
     canvas.on(
         "object:modified",
-        saveState
-    );
-
-
-    canvas.on(
-        "object:added",
         () => {
 
-            if (!restoring) {
-                canvas.renderAll();
-            }
+            saveState();
 
         }
     );
 
 
-    // ------------------------------------------
-    // READ IMAGE
-    // ------------------------------------------
-
-    function readImage(
-        file,
-        addImmediately
-    ) {
-
-        const reader =
-            new FileReader();
-
-
-        reader.onload =
-            (event) => {
-
-                if (addImmediately) {
-
-                    addImageToCanvas(
-                        event.target.result
-                    );
-
-                }
-
-            };
-
-
-        reader.readAsDataURL(file);
-
-    }
-
-
-    // ------------------------------------------
-    // INITIAL STATE
-    // ------------------------------------------
+    // ==========================================
+    // START
+    // ==========================================
 
     canvas.renderAll();
 
