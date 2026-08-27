@@ -23,7 +23,6 @@
 
 <div id="editor-app">
 
-
     <!-- ======================================
          HEADER
          ====================================== -->
@@ -37,11 +36,11 @@
             Ads Maker <span>Free</span>
         </a>
 
-
         <div class="editor-actions">
 
             <button
                 id="undoBtn"
+                type="button"
                 title="Undo"
             >
                 ↶
@@ -49,6 +48,7 @@
 
             <button
                 id="redoBtn"
+                type="button"
                 title="Redo"
             >
                 ↷
@@ -56,6 +56,7 @@
 
             <button
                 id="downloadBtn"
+                type="button"
             >
                 ↓ Download
             </button>
@@ -63,7 +64,6 @@
         </div>
 
     </header>
-
 
 
     <!-- ======================================
@@ -79,65 +79,62 @@
 
         <aside class="editor-tools">
 
-
             <button
                 id="templatesBtn"
+                type="button"
             >
                 <b>▦</b>
                 <span>Templates</span>
             </button>
 
-
             <button
                 id="uploadBtn"
+                type="button"
             >
                 <b>↑</b>
                 <span>Upload</span>
             </button>
 
-
             <button
                 id="textBtn"
+                type="button"
             >
                 <b>T</b>
                 <span>Text</span>
             </button>
 
-
             <button
                 id="elementsBtn"
+                type="button"
             >
                 <b>◇</b>
                 <span>Elements</span>
             </button>
 
-
             <button
                 id="backgroundBtn"
+                type="button"
             >
                 <b>◈</b>
                 <span>Background</span>
             </button>
 
-
             <button
                 id="logoBtn"
+                type="button"
             >
                 <b>◎</b>
                 <span>Logo</span>
             </button>
 
-
         </aside>
 
 
-
         <!-- ==================================
-             CANVAS
+             CANVAS AREA
              ================================== -->
 
         <section class="editor-canvas-area">
-
 
             <div class="canvas-top-info">
 
@@ -162,9 +159,7 @@
 
             </div>
 
-
         </section>
-
 
 
         <!-- ==================================
@@ -172,7 +167,6 @@
              ================================== -->
 
         <aside class="editing-panel">
-
 
             <div class="panel-header">
 
@@ -187,8 +181,9 @@
             </div>
 
 
-
-            <!-- PRODUCT IMAGE -->
+            <!-- =================================
+                 PRODUCT IMAGE
+                 ================================= -->
 
             <section class="edit-section">
 
@@ -197,14 +192,15 @@
                 </h3>
 
                 <p class="section-description">
-                    Upload your product image
-                    and prepare it for your advert.
+                    Upload your product image and
+                    remove the background automatically.
                 </p>
 
 
                 <button
                     id="productUploadBtn"
                     class="primary-action"
+                    type="button"
                 >
                     🖼️ Upload Product Image
                 </button>
@@ -237,6 +233,7 @@
                 <button
                     id="removeBackgroundBtn"
                     class="secondary-action"
+                    type="button"
                     disabled
                 >
                     ✨ Remove Background
@@ -246,6 +243,7 @@
                 <button
                     id="addProductBtn"
                     class="secondary-action"
+                    type="button"
                     disabled
                 >
                     + Add To Design
@@ -254,8 +252,9 @@
             </section>
 
 
-
-            <!-- TEXT -->
+            <!-- =================================
+                 TEXT
+                 ================================= -->
 
             <section class="edit-section">
 
@@ -263,26 +262,26 @@
                     ✍️ Text
                 </h3>
 
-
                 <button
                     id="addHeadlineBtn"
                     class="secondary-action"
+                    type="button"
                 >
                     + Add Headline
                 </button>
 
-
                 <button
                     id="addPriceBtn"
                     class="secondary-action"
+                    type="button"
                 >
                     + Add Price
                 </button>
 
-
                 <button
                     id="addPhoneBtn"
                     class="secondary-action"
+                    type="button"
                 >
                     + Add WhatsApp
                 </button>
@@ -290,8 +289,9 @@
             </section>
 
 
-
-            <!-- BACKGROUND -->
+            <!-- =================================
+                 BACKGROUND
+                 ================================= -->
 
             <section class="edit-section">
 
@@ -299,11 +299,12 @@
                     🎨 Background
                 </h3>
 
-
-                <label class="input-label">
+                <label
+                    class="input-label"
+                    for="backgroundColor"
+                >
                     Background Color
                 </label>
-
 
                 <input
                     type="color"
@@ -312,10 +313,10 @@
                     class="color-input"
                 >
 
-
                 <button
                     id="resetBackgroundBtn"
                     class="secondary-action"
+                    type="button"
                 >
                     Reset Background
                 </button>
@@ -323,8 +324,9 @@
             </section>
 
 
-
-            <!-- LOGO -->
+            <!-- =================================
+                 LOGO
+                 ================================= -->
 
             <section class="edit-section">
 
@@ -332,14 +334,13 @@
                     🏷️ Logo
                 </h3>
 
-
                 <button
                     id="uploadLogoBtn"
                     class="secondary-action"
+                    type="button"
                 >
                     + Upload Logo
                 </button>
-
 
                 <input
                     type="file"
@@ -351,8 +352,9 @@
             </section>
 
 
-
-            <!-- OBJECT CONTROLS -->
+            <!-- =================================
+                 OBJECT CONTROLS
+                 ================================= -->
 
             <section class="edit-section">
 
@@ -360,16 +362,15 @@
                     ⚙️ Selected Object
                 </h3>
 
-
                 <button
                     id="deleteObjectBtn"
                     class="delete-action"
+                    type="button"
                 >
                     🗑️ Delete Selected
                 </button>
 
             </section>
-
 
         </aside>
 
@@ -377,69 +378,52 @@
 
 
     <!-- ======================================
-         MOBILE BOTTOM BAR
+         MOBILE TOOLBAR
          ====================================== -->
 
     <nav class="mobile-editor-tools">
 
-
-        <button id="mobileTemplatesBtn">
-
+        <button
+            id="mobileTemplatesBtn"
+            type="button"
+        >
             <b>▦</b>
-
-            <span>
-                Templates
-            </span>
-
+            <span>Templates</span>
         </button>
 
-
-        <button id="mobileUploadBtn">
-
+        <button
+            id="mobileUploadBtn"
+            type="button"
+        >
             <b>↑</b>
-
-            <span>
-                Upload
-            </span>
-
+            <span>Upload</span>
         </button>
 
-
-        <button id="mobileTextBtn">
-
+        <button
+            id="mobileTextBtn"
+            type="button"
+        >
             <b>T</b>
-
-            <span>
-                Text
-            </span>
-
+            <span>Text</span>
         </button>
 
-
-        <button id="mobileElementsBtn">
-
+        <button
+            id="mobileElementsBtn"
+            type="button"
+        >
             <b>◇</b>
-
-            <span>
-                Elements
-            </span>
-
+            <span>Elements</span>
         </button>
 
-
-        <button id="mobileMoreBtn">
-
+        <button
+            id="mobileMoreBtn"
+            type="button"
+        >
             <b>＋</b>
-
-            <span>
-                More
-            </span>
-
+            <span>More</span>
         </button>
-
 
     </nav>
-
 
 
     <!-- ======================================
@@ -452,13 +436,49 @@
 
 
     <!-- ======================================
+         TRANSFORMERS.JS
+         BROWSER AI
+         ====================================== -->
+
+    <script type="module">
+
+        import {
+            pipeline,
+            env
+        } from
+        "https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.8.1/+esm";
+
+
+        /*
+         * Allow the AI model to download from
+         * Hugging Face when needed.
+         */
+
+        env.allowLocalModels = false;
+
+        env.useBrowserCache = true;
+
+
+        /*
+         * Make Transformers available to
+         * editor.js
+         */
+
+        window.adsMakerAI = {
+            pipeline,
+            env
+        };
+
+    </script>
+
+
+    <!-- ======================================
          OUR EDITOR JAVASCRIPT
          ====================================== -->
 
     <script
         src="js/editor.js"
     ></script>
-
 
 </div>
 
