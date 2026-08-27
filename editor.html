@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Ads Maker Free - Editor</title>
+
+    <link rel="stylesheet" href="css/editor.css">
+</head>
+
+<body>
+
+    <div id="editor-app">
+
+        <!-- Editor Header -->
+        <header class="editor-header">
+
+            <a href="index.html" class="editor-logo">
+                Ads Maker <span>Free</span>
+            </a>
+
+            <div class="editor-actions">
+
+                <button id="undoBtn">
+                    ↶
+                </button>
+
+                <button id="redoBtn">
+                    ↷
+                </button>
+
+                <button id="downloadBtn">
+                    ↓ Download
+                </button>
+
+            </div>
+
+        </header>
+
+
+        <!-- Main Editor -->
+        <main class="editor-main">
+
+            <!-- Left Tools -->
+            <aside class="editor-tools">
+
+                <button id="templatesBtn">
+                    ▦
+                    <span>Templates</span>
+                </button>
+
+                <button id="uploadBtn">
+                    ↑
+                    <span>Upload</span>
+                </button>
+
+                <button id="textBtn">
+                    T
+                    <span>Text</span>
+                </button>
+
+                <button id="elementsBtn">
+                    ◇
+                    <span>Elements</span>
+                </button>
+
+                <button id="backgroundBtn">
+                    ◈
+                    <span>Background</span>
+                </button>
+
+                <button id="logoBtn">
+                    ◎
+                    <span>Logo</span>
+                </button>
+
+            </aside>
+
+
+            <!-- Center Canvas Area -->
+            <section class="editor-canvas-area">
+
+                <div class="canvas-container">
+
+                    <canvas
+                        id="designCanvas"
+                        width="1080"
+                        height="1080">
+                    </canvas>
+
+                </div>
+
+            </section>
+
+
+            <!-- Right Editing Panel -->
+            <aside class="editing-panel">
+
+                <h2>
+                    Edit Design
+                </h2>
+
+                <div id="editingContent">
+
+                    <p>
+                        Select an object to edit it.
+                    </p>
+
+                </div>
+
+            </aside>
+
+        </main>
+
+    </div>
+
+
+    <script src="js/editor.js"></script>
+
+</body>
+
+</html>
