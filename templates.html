@@ -2,210 +2,156 @@
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Ads Maker Free - Templates</title>
 
-    <link
-        rel="stylesheet"
-        href="css/templates.css"
-    >
-
+    <link rel="stylesheet" href="css/templates.css">
 </head>
 
 <body>
 
-<div class="templates-app">
+<!-- =========================
+     HEADER
+========================= -->
 
+<header class="top-header">
 
-    <!-- =========================
-         HEADER
-         ========================= -->
+    <a href="index.html" class="brand">
+        <span class="brand-icon">A</span>
+        <span>Ads Maker <strong>Free</strong></span>
+    </a>
 
-    <header class="templates-header">
+    <nav class="navigation">
+        <a href="index.html">Home</a>
+        <a href="templates.html" class="active">Templates</a>
+        <a href="#">Features</a>
+        <a href="#">How It Works</a>
+        <a href="#">Blog</a>
+    </nav>
 
-        <a
-            href="index.html"
-            class="brand"
-        >
+    <div class="header-actions">
 
-            <span class="brand-icon">A</span>
+        <button class="theme-btn" id="themeBtn">
+            ☼
+        </button>
 
-            <span class="brand-name">
-                Ads Maker
-                <strong>Free</strong>
-            </span>
-
+        <a href="editor.html" class="create-btn">
+            + Create Ad
         </a>
 
+    </div>
 
-        <div class="header-actions">
+</header>
 
-            <a
-                href="index.html"
-                class="back-button"
-            >
-                ← Home
-            </a>
 
-            <a
-                href="editor.html"
-                class="create-button"
-            >
-                + Create Ad
-            </a>
+<!-- =========================
+     HERO
+========================= -->
 
+<section class="template-hero">
+
+    <div class="hero-badge">
+        ✦ Professional Ad Templates
+    </div>
+
+    <h1>
+        Choose a template
+        <span>you love.</span>
+    </h1>
+
+    <p>
+        Pick a design for your product, upload your image,
+        and customize your advert in minutes.
+    </p>
+
+</section>
+
+
+<!-- =========================
+     TEMPLATE AREA
+========================= -->
+
+<main class="template-main">
+
+    <!-- CATEGORY HEADER -->
+
+    <div class="category-heading">
+
+        <div>
+            <small>BROWSE BY CATEGORY</small>
+
+            <h2>
+                What are you advertising?
+            </h2>
         </div>
 
-    </header>
-
-
-
-    <!-- =========================
-         HERO
-         ========================= -->
-
-    <section class="templates-hero">
-
-        <div class="hero-content">
-
-            <span class="hero-badge">
-                ✦ PROFESSIONAL AD TEMPLATES
-            </span>
-
-            <h1>
-                Create ads that
-                <span>stand out.</span>
-            </h1>
-
-            <p>
-                Choose a professional design,
-                upload your product and customize
-                everything in seconds.
-            </p>
-
+        <div class="template-count">
+            24 Templates
         </div>
 
-    </section>
+    </div>
 
 
+    <!-- CATEGORY BUTTONS -->
 
-    <!-- =========================
-         CATEGORY NAV
-         ========================= -->
+    <div class="categories">
 
-    <section class="category-section">
+        <button class="category active" data-category="all">
+            ▦ All
+        </button>
 
-        <div class="section-heading">
+        <button class="category" data-category="fashion">
+            👗 Fashion
+        </button>
 
-            <div>
+        <button class="category active-category" data-category="shoes">
+            👟 Shoes
+        </button>
 
-                <small>
-                    BROWSE BY CATEGORY
-                </small>
+        <button class="category" data-category="food">
+            🍔 Food
+        </button>
 
-                <h2>
-                    What are you advertising?
-                </h2>
+        <button class="category" data-category="phones">
+            📱 Phones
+        </button>
 
-            </div>
+        <button class="category" data-category="electronics">
+            🎧 Electronics
+        </button>
 
-            <span
-                id="templateCount"
-                class="template-count"
-            >
-                6 Templates
-            </span>
+        <button class="category" data-category="beauty">
+            💄 Beauty
+        </button>
 
-        </div>
+        <button class="category" data-category="cars">
+            🚘 Cars
+        </button>
 
+        <button class="category" data-category="realestate">
+            🏠 Real Estate
+        </button>
 
-        <div
-            id="categoryList"
-            class="category-list"
-        >
+        <button class="category" data-category="business">
+            💼 Business
+        </button>
 
-            <button
-                class="category-chip active"
-                data-category="shoes"
-            >
-                👟 Shoes
-            </button>
-
-            <button
-                class="category-chip"
-                data-category="fashion"
-            >
-                👗 Fashion
-            </button>
-
-            <button
-                class="category-chip"
-                data-category="phones"
-            >
-                📱 Phones
-            </button>
-
-            <button
-                class="category-chip"
-                data-category="food"
-            >
-                🍔 Food
-            </button>
-
-            <button
-                class="category-chip"
-                data-category="electronics"
-            >
-                🎧 Electronics
-            </button>
-
-            <button
-                class="category-chip"
-                data-category="beauty"
-            >
-                💄 Beauty
-            </button>
-
-            <button
-                class="category-chip"
-                data-category="cars"
-            >
-                🚗 Cars
-            </button>
-
-            <button
-                class="category-chip"
-                data-category="business"
-            >
-                💼 Business
-            </button>
-
-        </div>
-
-    </section>
+    </div>
 
 
+    <!-- SEARCH + SORT -->
 
-    <!-- =========================
-         SEARCH / SORT
-         ========================= -->
-
-    <section class="template-controls">
+    <div class="template-controls">
 
         <div class="search-box">
 
             <span>⌕</span>
 
             <input
-                type="search"
-                id="templateSearch"
+                type="text"
+                id="searchTemplates"
                 placeholder="Search templates..."
             >
 
@@ -214,11 +160,9 @@
 
         <div class="sort-box">
 
-            <label for="templateSort">
-                Sort
-            </label>
+            <span>Sort</span>
 
-            <select id="templateSort">
+            <select id="sortTemplates">
 
                 <option value="popular">
                     Most Popular
@@ -229,125 +173,98 @@
                 </option>
 
                 <option value="sale">
-                    Sale Designs
-                </option>
-
-                <option value="minimal">
-                    Minimal
+                    Best Sale
                 </option>
 
             </select>
 
         </div>
 
-    </section>
-
+    </div>
 
 
     <!-- =========================
-         SHOES TEMPLATES
-         ========================= -->
+         SHOES
+    ========================= -->
 
-    <main>
+    <section class="template-section">
 
-        <section
-            id="templateGrid"
-            class="template-grid"
-        >
+        <div class="section-title">
+
+            <h2>
+                👟 Shoes Templates
+            </h2>
+
+            <span>
+                6 Templates
+            </span>
+
+        </div>
 
 
-            <!-- =====================
-                 SHOE TEMPLATE 01
-                 ===================== -->
+        <div class="template-grid">
+
+
+            <!-- CARD 1 -->
 
             <article
                 class="template-card"
+                data-name="big sale shoes"
                 data-category="shoes"
-                data-name="black sneaker big sale"
-                data-type="sale"
             >
 
-                <div
-                    class="template-preview shoe-template shoe-one-template"
-                >
+                <div class="advert red-ad">
 
-                    <span class="sale-badge">
+                    <span class="ad-badge red">
                         BIG SALE
                     </span>
-
 
                     <div class="ad-copy">
 
                         <small>
-                            LIMITED OFFER
+                            UP TO
                         </small>
 
                         <h3>
-                            BIG
-                            <strong>SALE</strong>
+                            50%<br>
+                            OFF
                         </h3>
 
-                        <p>
-                            Premium Sneakers
-                        </p>
-
                     </div>
 
-
-                    <div class="product-stage">
-
-                        <div class="shoe-art black-shoe">
-                            👟
-                        </div>
-
+                    <div class="shoe-image shoe-one">
+                        👟
                     </div>
 
-
-                    <div class="ad-bottom">
-
-                        <div>
-
-                            <span class="price-label">
-                                ONLY
-                            </span>
-
-                            <strong class="price">
-                                ₦35,000
-                            </strong>
-
-                        </div>
-
-                        <span class="discount">
-                            30% OFF
-                        </span>
-
+                    <div class="price">
+                        ₦35,000
                     </div>
 
+                    <div class="old-price">
+                        ₦70,000
+                    </div>
 
-                    <span class="shop-button">
+                    <button class="shop red-button">
                         SHOP NOW →
-                    </span>
+                    </button>
 
                 </div>
 
-
-                <div class="template-info">
+                <div class="card-footer">
 
                     <div>
+                        <strong>
+                            Big Sale Shoes
+                        </strong>
 
-                        <h3>
-                            Big Sale Sneakers
-                        </h3>
-
-                        <p>
+                        <small>
                             Shoes • Sale
-                        </p>
-
+                        </small>
                     </div>
 
                     <button
                         class="use-template"
-                        data-template="shoe-sale-01"
+                        data-template="sale"
                     >
                         Use Template
                     </button>
@@ -357,104 +274,62 @@
             </article>
 
 
-
-            <!-- =====================
-                 SHOE TEMPLATE 02
-                 ===================== -->
+            <!-- CARD 2 -->
 
             <article
                 class="template-card"
+                data-name="new collection"
                 data-category="shoes"
-                data-name="new arrival sneaker"
-                data-type="new"
             >
 
-                <div
-                    class="template-preview shoe-template shoe-two-template"
-                >
+                <div class="advert blue-ad">
 
-                    <span class="new-badge">
+                    <span class="ad-badge blue">
                         NEW ARRIVAL
                     </span>
 
-
                     <div class="ad-copy">
+
+                        <h3>
+                            NEW<br>
+                            COLLECTION
+                        </h3>
 
                         <small>
                             STYLE MEETS COMFORT
                         </small>
 
-                        <h3>
-                            NEW
-                            <strong>SNEAKERS</strong>
-                        </h3>
-
-                        <p>
-                            Designed for everyday style.
-                        </p>
-
                     </div>
 
-
-                    <div class="product-stage">
-
-                        <div class="shoe-art white-shoe">
-                            👟
-                        </div>
-
+                    <div class="shoe-image shoe-two">
+                        👟
                     </div>
 
-
-                    <div class="round-offer">
-
-                        <strong>
-                            UP TO
-                        </strong>
-
-                        <b>
-                            30%
-                        </b>
-
-                        <small>
-                            OFF
-                        </small>
-
+                    <div class="price white-price">
+                        ₦42,000
                     </div>
 
-
-                    <div class="ad-bottom">
-
-                        <strong class="price white-price">
-                            ₦42,000
-                        </strong>
-
-                    </div>
-
-
-                    <span class="shop-button light-button">
+                    <button class="shop blue-button">
                         SHOP NOW →
-                    </span>
+                    </button>
 
                 </div>
 
-
-                <div class="template-info">
+                <div class="card-footer">
 
                     <div>
+                        <strong>
+                            New Collection
+                        </strong>
 
-                        <h3>
-                            New Arrival
-                        </h3>
-
-                        <p>
+                        <small>
                             Shoes • New
-                        </p>
-
+                        </small>
                     </div>
 
                     <button
                         class="use-template"
-                        data-template="shoe-new-02"
+                        data-template="new"
                     >
                         Use Template
                     </button>
@@ -464,87 +339,71 @@
             </article>
 
 
-
-            <!-- =====================
-                 SHOE TEMPLATE 03
-                 ===================== -->
+            <!-- CARD 3 -->
 
             <article
                 class="template-card"
+                data-name="premium sneakers"
                 data-category="shoes"
-                data-name="premium footwear discount"
-                data-type="popular"
             >
 
-                <div
-                    class="template-preview shoe-template shoe-three-template"
-                >
+                <div class="advert gold-ad">
 
-                    <span class="premium-badge">
-                        PREMIUM
+                    <span class="ad-badge gold">
+                        LIMITED OFFER
                     </span>
 
-
-                    <div class="ad-copy centered-copy">
-
-                        <small>
-                            PREMIUM FOOTWEAR
-                        </small>
+                    <div class="ad-copy">
 
                         <h3>
-                            WALK
-                            <strong>IN STYLE</strong>
+                            PREMIUM<br>
+                            SNEAKERS
                         </h3>
 
-                    </div>
-
-
-                    <div class="product-stage">
-
-                        <div class="shoe-art red-shoe">
-                            👟
-                        </div>
-
-                    </div>
-
-
-                    <div class="premium-price">
-
-                        <span>
-                            ₦55,000
-                        </span>
-
                         <small>
-                            FREE DELIVERY
+                            BEST QUALITY
                         </small>
 
                     </div>
 
+                    <div class="shoe-image shoe-three">
+                        👟
+                    </div>
 
-                    <span class="shop-button">
-                        BUY NOW →
-                    </span>
+                    <div class="discount-circle">
+                        30%<br>
+                        <small>OFF</small>
+                    </div>
+
+                    <div class="price gold-price">
+                        ₦38,000
+                    </div>
+
+                    <div class="old-price">
+                        ₦54,000
+                    </div>
+
+                    <button class="shop gold-button">
+                        SHOP NOW →
+                    </button>
 
                 </div>
 
-
-                <div class="template-info">
+                <div class="card-footer">
 
                     <div>
+                        <strong>
+                            Premium Sneakers
+                        </strong>
 
-                        <h3>
-                            Walk In Style
-                        </h3>
-
-                        <p>
-                            Shoes • Premium
-                        </p>
-
+                        <small>
+                            Shoes • Promo
+                        </small>
                     </div>
 
                     <button
                         class="use-template"
-                        data-template="shoe-premium-03"
+                        data-template="premium"
                     >
                         Use Template
                     </button>
@@ -554,339 +413,132 @@
             </article>
 
 
-
-            <!-- =====================
-                 SHOE TEMPLATE 04
-                 ===================== -->
+            <!-- CARD 4 -->
 
             <article
                 class="template-card"
+                data-name="casual shoes"
                 data-category="shoes"
-                data-name="flash sale sneakers"
-                data-type="sale"
             >
 
-                <div
-                    class="template-preview shoe-template shoe-four-template"
-                >
+                <div class="advert white-ad">
 
-                    <span class="flash-badge">
+                    <span class="ad-badge green">
+                        NEW
+                    </span>
+
+                    <div class="ad-copy dark-copy">
+
+                        <h3>
+                            CASUAL<br>
+                            SHOES
+                        </h3>
+
+                        <small>
+                            COMFORT EVERY STEP
+                        </small>
+
+                    </div>
+
+                    <div class="shoe-image shoe-four">
+                        👟
+                    </div>
+
+                    <div class="price green-price">
+                        ₦28,000
+                    </div>
+
+                    <button class="shop green-button">
+                        SHOP NOW →
+                    </button>
+
+                </div>
+
+                <div class="card-footer">
+
+                    <div>
+                        <strong>
+                            Casual Shoes
+                        </strong>
+
+                        <small>
+                            Shoes • Minimal
+                        </small>
+                    </div>
+
+                    <button
+                        class="use-template"
+                        data-template="casual"
+                    >
+                        Use Template
+                    </button>
+
+                </div>
+
+            </article>
+
+
+            <!-- CARD 5 -->
+
+            <article
+                class="template-card"
+                data-name="sneakers for you"
+                data-category="shoes"
+            >
+
+                <div class="advert purple-ad">
+
+                    <span class="ad-badge pink">
                         FLASH SALE
                     </span>
 
-
-                    <div class="ad-copy">
-
-                        <small>
-                            TODAY ONLY
-                        </small>
-
-                        <h3>
-                            50%
-                            <strong>OFF</strong>
-                        </h3>
-
-                        <p>
-                            Selected Sneakers
-                        </p>
-
-                    </div>
-
-
-                    <div class="product-stage">
-
-                        <div class="shoe-art blue-shoe">
-                            👟
-                        </div>
-
-                    </div>
-
-
-                    <div class="flash-price">
-
-                        <strong>
-                            ₦28,000
-                        </strong>
-
-                        <del>
-                            ₦56,000
-                        </del>
-
-                    </div>
-
-
-                    <span class="shop-button yellow-button">
-                        SHOP DEAL →
-                    </span>
-
-                </div>
-
-
-                <div class="template-info">
-
-                    <div>
-
-                        <h3>
-                            Flash Sale
-                        </h3>
-
-                        <p>
-                            Shoes • Discount
-                        </p>
-
-                    </div>
-
-                    <button
-                        class="use-template"
-                        data-template="shoe-flash-04"
-                    >
-                        Use Template
-                    </button>
-
-                </div>
-
-            </article>
-
-
-
-            <!-- =====================
-                 SHOE TEMPLATE 05
-                 ===================== -->
-
-            <article
-                class="template-card"
-                data-category="shoes"
-                data-name="luxury sneakers collection"
-                data-type="minimal"
-            >
-
-                <div
-                    class="template-preview shoe-template shoe-five-template"
-                >
-
-                    <span class="collection-badge">
-                        COLLECTION 2026
-                    </span>
-
-
-                    <div class="ad-copy center-large">
-
-                        <small>
-                            THE NEW
-                        </small>
-
-                        <h3>
-                            LUXURY
-                            <strong>STEP</strong>
-                        </h3>
-
-                    </div>
-
-
-                    <div class="product-stage">
-
-                        <div class="shoe-art luxury-shoe">
-                            👟
-                        </div>
-
-                    </div>
-
-
-                    <div class="minimal-price">
-
-                        <span>
-                            Starting from
-                        </span>
-
-                        <strong>
-                            ₦65,000
-                        </strong>
-
-                    </div>
-
-
-                    <span class="shop-button dark-button">
-                        EXPLORE →
-                    </span>
-
-                </div>
-
-
-                <div class="template-info">
-
-                    <div>
-
-                        <h3>
-                            Luxury Collection
-                        </h3>
-
-                        <p>
-                            Shoes • Minimal
-                        </p>
-
-                    </div>
-
-                    <button
-                        class="use-template"
-                        data-template="shoe-luxury-05"
-                    >
-                        Use Template
-                    </button>
-
-                </div>
-
-            </article>
-
-
-
-            <!-- =====================
-                 SHOE TEMPLATE 06
-                 ===================== -->
-
-            <article
-                class="template-card"
-                data-category="shoes"
-                data-name="sneaker weekend offer"
-                data-type="new"
-            >
-
-                <div
-                    class="template-preview shoe-template shoe-six-template"
-                >
-
-                    <span class="weekend-badge">
-                        WEEKEND OFFER
-                    </span>
-
-
-                    <div class="ad-copy">
-
-                        <small>
-                            FRESH LOOK
-                        </small>
-
-                        <h3>
-                            STEP
-                            <strong>UP</strong>
-                        </h3>
-
-                        <p>
-                            New season sneakers.
-                        </p>
-
-                    </div>
-
-
-                    <div class="product-stage">
-
-                        <div class="shoe-art green-shoe">
-                            👟
-                        </div>
-
-                    </div>
-
-
-                    <div class="weekend-offer">
-
-                        <strong>
-                            25% OFF
-                        </strong>
-
-                        <span>
-                            THIS WEEKEND
-                        </span>
-
-                    </div>
-
-
-                    <span class="shop-button">
-                        GET YOURS →
-                    </span>
-
-                </div>
-
-
-                <div class="template-info">
-
-                    <div>
-
-                        <h3>
-                            Weekend Offer
-                        </h3>
-
-                        <p>
-                            Shoes • New
-                        </p>
-
-                    </div>
-
-                    <button
-                        class="use-template"
-                        data-template="shoe-weekend-06"
-                    >
-                        Use Template
-                    </button>
-
-                </div>
-
-            </article>
-
-
-
-            <!-- =====================
-                 OTHER CATEGORY CARDS
-                 ===================== -->
-
-            <article
-                class="template-card hidden-category-card"
-                data-category="fashion"
-                data-name="fashion collection"
-                data-type="new"
-            >
-
-                <div class="template-preview category-placeholder fashion-placeholder">
-
-                    <span class="premium-badge">
-                        NEW COLLECTION
-                    </span>
-
-                    <div class="placeholder-icon">
-                        👗
-                    </div>
-
                     <div class="ad-copy">
 
                         <h3>
-                            FASHION
-                            <strong>COLLECTION</strong>
+                            SNEAKERS<br>
+                            FOR YOU
                         </h3>
 
                     </div>
 
-                    <span class="shop-button">
+                    <div class="shoe-image shoe-five">
+                        👟
+                    </div>
+
+                    <div class="discount-circle pink-circle">
+                        40%<br>
+                        <small>OFF</small>
+                    </div>
+
+                    <div class="price white-price">
+                        ₦33,000
+                    </div>
+
+                    <div class="old-price">
+                        ₦55,000
+                    </div>
+
+                    <button class="shop pink-button">
                         SHOP NOW →
-                    </span>
+                    </button>
 
                 </div>
 
-
-                <div class="template-info">
+                <div class="card-footer">
 
                     <div>
+                        <strong>
+                            Sneakers For You
+                        </strong>
 
-                        <h3>
-                            Fashion Collection
-                        </h3>
-
-                        <p>
-                            Fashion
-                        </p>
-
+                        <small>
+                            Shoes • Sale
+                        </small>
                     </div>
 
                     <button
                         class="use-template"
-                        data-template="fashion-01"
+                        data-template="sneakers"
                     >
                         Use Template
                     </button>
@@ -896,57 +548,62 @@
             </article>
 
 
+            <!-- CARD 6 -->
 
             <article
-                class="template-card hidden-category-card"
-                data-category="phones"
-                data-name="smartphone new arrival"
-                data-type="new"
+                class="template-card"
+                data-name="performance"
+                data-category="shoes"
             >
 
-                <div class="template-preview category-placeholder phone-placeholder">
+                <div class="advert green-ad">
 
-                    <span class="new-badge">
-                        NEW ARRIVAL
+                    <span class="ad-badge sport">
+                        SPORT
                     </span>
-
-                    <div class="placeholder-icon">
-                        📱
-                    </div>
 
                     <div class="ad-copy">
 
                         <h3>
-                            LATEST
-                            <strong>PHONE</strong>
+                            PERFORMANCE<br>
+                            UNLEASHED
                         </h3>
+
+                        <small>
+                            BUILT FOR SPEED
+                        </small>
 
                     </div>
 
-                    <span class="shop-button">
-                        BUY NOW →
-                    </span>
+                    <div class="shoe-image shoe-six">
+                        👟
+                    </div>
+
+                    <div class="price white-price">
+                        ₦45,000
+                    </div>
+
+                    <button class="shop green-button">
+                        SHOP NOW →
+                    </button>
 
                 </div>
 
-
-                <div class="template-info">
+                <div class="card-footer">
 
                     <div>
+                        <strong>
+                            Performance
+                        </strong>
 
-                        <h3>
-                            Latest Smartphone
-                        </h3>
-
-                        <p>
-                            Phones
-                        </p>
-
+                        <small>
+                            Shoes • Sport
+                        </small>
                     </div>
 
                     <button
                         class="use-template"
-                        data-template="phone-01"
+                        data-template="performance"
                     >
                         Use Template
                     </button>
@@ -956,129 +613,29 @@
             </article>
 
 
-
-            <article
-                class="template-card hidden-category-card"
-                data-category="food"
-                data-name="burger restaurant food"
-                data-type="sale"
-            >
-
-                <div class="template-preview category-placeholder food-placeholder">
-
-                    <span class="flash-badge">
-                        SPECIAL OFFER
-                    </span>
-
-                    <div class="placeholder-icon">
-                        🍔
-                    </div>
-
-                    <div class="ad-copy">
-
-                        <h3>
-                            DELICIOUS
-                            <strong>BURGER</strong>
-                        </h3>
-
-                    </div>
-
-                    <span class="shop-button yellow-button">
-                        ORDER NOW →
-                    </span>
-
-                </div>
-
-
-                <div class="template-info">
-
-                    <div>
-
-                        <h3>
-                            Burger Promo
-                        </h3>
-
-                        <p>
-                            Food
-                        </p>
-
-                    </div>
-
-                    <button
-                        class="use-template"
-                        data-template="food-01"
-                    >
-                        Use Template
-                    </button>
-
-                </div>
-
-            </article>
-
-
-
-        </section>
-
-
-
-        <!-- =========================
-             EMPTY STATE
-             ========================= -->
-
-        <div
-            id="emptyState"
-            class="empty-state"
-            hidden
-        >
-
-            <div class="empty-icon">
-                🔎
-            </div>
-
-            <h3>
-                No templates found
-            </h3>
-
-            <p>
-                Try another category or search term.
-            </p>
-
         </div>
 
-    </main>
+    </section>
 
 
+    <!-- LOAD MORE -->
 
-    <!-- =========================
-         FOOTER
-         ========================= -->
+    <button
+        class="load-more"
+        id="loadMore"
+    >
+        Load More Templates
+        <span>⌄</span>
+    </button>
 
-    <footer class="templates-footer">
-
-        <div class="footer-brand">
-
-            <span class="brand-icon">
-                A
-            </span>
-
-            <strong>
-                Ads Maker Free
-            </strong>
-
-        </div>
-
-        <p>
-            Create professional adverts in minutes.
-        </p>
-
-    </footer>
+</main>
 
 
-</div>
-
+<!-- =========================
+     JAVASCRIPT
+========================= -->
 
 <script src="js/templates.js"></script>
 
 </body>
-
 </html>
