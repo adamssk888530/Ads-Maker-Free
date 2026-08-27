@@ -1,640 +1,552 @@
 // ==========================================
 // ADS MAKER FREE
-// REAL EDITOR - STEP 1
+// EDITOR ENGINE
 // ==========================================
 
-const canvasElement = document.getElementById("designCanvas");
+document.addEventListener("DOMContentLoaded", () => {
 
-const canvas = new fabric.Canvas(canvasElement, {
-    width: 1080,
-    height: 1080,
-    backgroundColor: "#ffffff",
-    preserveObjectStacking: true
-});
+    // ------------------------------------------
+    // CANVAS
+    // ------------------------------------------
 
-
-// ==========================================
-// EDITOR STATE
-// ==========================================
-
-let history = [];
-
-let historyIndex = -1;
-
-let isRestoring = false;
+    const canvas = new fabric.Canvas("designCanvas", {
+        width: 1080,
+        height: 1080,
+        backgroundColor: "#ffffff",
+        preserveObjectStacking: true
+    });
 
 
-// ==========================================
-// SAVE CANVAS STATE
-// ==========================================
+    // ------------------------------------------
+    // VARIABLES
+    // ------------------------------------------
 
-function saveState() {
+    let uploadedProduct = null;
+    let productDataUrl = null;
 
-    if (isRestoring) {
-        return;
-    }
+    let history = [];
+    let historyIndex = -1;
+    let restoring = false;
 
-    const state = JSON.stringify(
-        canvas.toJSON()
-    );
 
-    history =
-        history.slice(
-            0,
-            historyIndex + 1
+    // ------------------------------------------
+    // HELPERS
+    // ------------------------------------------
+
+    function saveState() {
+
+        if (restoring) return;
+
+        const state = JSON.stringify(
+            canvas.toJSON()
         );
 
-    history.push(state);
-
-    historyIndex =
-        history.length - 1;
-
-    // Keep history small
-    if (history.length > 30) {
-
-        history.shift();
-
-        historyIndex--;
-
-    }
-
-}
-
-
-// ==========================================
-// RESTORE CANVAS
-// ==========================================
-
-function restoreState(state) {
-
-    isRestoring = true;
-
-    canvas.loadFromJSON(
-        JSON.parse(state),
-        () => {
-
-            canvas.renderAll();
-
-            isRestoring = false;
-
-        }
-    );
-// ==========================================
-// LOAD SELECTED TEMPLATE
-// ==========================================
-
-function loadSelectedTemplate() {
-
-    const savedTemplate =
-        localStorage.getItem(
-            "adsMakerTemplate"
-        );
-
-    if (!savedTemplate) {
-        return;
-    }
-
-    let template;
-
-    try {
-
-        template =
-            JSON.parse(savedTemplate);
-
-    } catch (error) {
-
-        console.error(
-            "Invalid template data",
-            error
-        );
-
-        return;
-
-    }
-
-
-    const category =
-        template.category || "General";
-
-
-    // Don't load twice
-    if (
-        canvas.getObjects().length > 0
-    ) {
-        return;
-    }
-
-
-    // ======================================
-    // TEMPLATE BACKGROUND
-    // ======================================
-
-    let background = "#ffffff";
-
-    if (category === "Shoes") {
-        background = "#071b38";
-    }
-
-    if (category === "Phones") {
-        background = "#0b4fa3";
-    }
-
-    if (category === "Food") {
-        background = "#8c2414";
-    }
-
-    if (category === "Fashion") {
-        background = "#5c153f";
-    }
-
-    if (category === "Beauty") {
-        background = "#181818";
-    }
-
-    if (category === "Cars") {
-        background = "#173d20";
-    }
-
-
-    canvas.backgroundColor =
-        background;
-
-
-    // ======================================
-    // HEADLINE
-    // ======================================
-
-    const headline =
-        new fabric.IText(
-            getHeadline(category),
-            {
-
-                left: 55,
-
-                top: 70,
-
-                fontSize: 58,
-
-                fontFamily:
-                    "Arial",
-
-                fontWeight:
-                    "bold",
-
-                fill: "#ffffff",
-
-                selectable: true,
-
-                cornerColor:
-                    "#7135f2",
-
-                cornerStrokeColor:
-                    "#7135f2",
-
-                borderColor:
-                    "#7135f2",
-
-                transparentCorners:
-                    false
-
-            }
-        );
-
-
-    canvas.add(headline);
-
-
-    // ======================================
-    // PRICE
-    // ======================================
-
-    const price =
-        new fabric.IText(
-            "₦35,000",
-            {
-
-                left: 55,
-
-                top: 760,
-
-                fontSize: 48,
-
-                fontFamily:
-                    "Arial",
-
-                fontWeight:
-                    "bold",
-
-                fill: "#ffffff",
-
-                cornerColor:
-                    "#7135f2",
-
-                cornerStrokeColor:
-                    "#7135f2",
-
-                borderColor:
-                    "#7135f2",
-
-                transparentCorners:
-                    false
-
-            }
-        );
-
-
-    canvas.add(price);
-
-
-    // ======================================
-    // DISCOUNT BADGE
-    // ======================================
-
-    const badge =
-        new fabric.Circle({
-
-            left: 780,
-
-            top: 90,
-
-            radius: 65,
-
-            fill: "#ffd51a",
-
-            originX: "center",
-
-            originY: "center"
-
-        });
-
-
-    canvas.add(badge);
-
-
-    const discount =
-        new fabric.IText(
-            "30% OFF",
-            {
-
-                left: 780,
-
-                top: 78,
-
-                originX: "center",
-
-                fontSize: 25,
-
-                fontWeight:
-                    "bold",
-
-                fill: "#111111"
-
-            }
-        );
-
-
-    canvas.add(discount);
-
-
-    // ======================================
-    // SHOP NOW BUTTON
-    // ======================================
-
-    const button =
-        new fabric.Rect({
-
-            left: 55,
-
-            top: 870,
-
-            width: 200,
-
-            height: 65,
-
-            rx: 15,
-
-            ry: 15,
-
-            fill: "#ffd51a"
-
-        });
-
-
-    canvas.add(button);
-
-
-    const buttonText =
-        new fabric.IText(
-            "SHOP NOW",
-            {
-
-                left: 88,
-
-                top: 888,
-
-                fontSize: 23,
-
-                fontWeight:
-                    "bold",
-
-                fill: "#111111"
-
-            }
-        );
-
-
-    canvas.add(buttonText);
-
-
-    canvas.renderAll();
-
-    saveState();
-
-
-    // Remove saved selection
-    localStorage.removeItem(
-        "adsMakerTemplate"
-    );
-
-}
-
-
-// ==========================================
-// CATEGORY HEADLINES
-// ==========================================
-
-function getHeadline(category) {
-
-    const headlines = {
-
-        Shoes:
-            "PREMIUM SNEAKERS",
-
-        Phones:
-            "NEW SMARTPHONE",
-
-        Food:
-            "DELICIOUS FOOD",
-
-        Fashion:
-            "NEW COLLECTION",
-
-        Beauty:
-            "LUXURY BEAUTY",
-
-        Cars:
-            "PREMIUM CAR",
-
-        "Real Estate":
-            "PROPERTY FOR SALE",
-
-        Sale:
-            "MEGA SALE"
-
-    };
-
-
-    return (
-        headlines[category] ||
-        "YOUR PRODUCT"
-    );
-
-}
-
-
-// ==========================================
-// RUN WHEN EDITOR OPENS
-// ==========================================
-
-loadSelectedTemplate();
-}
-
-
-// ==========================================
-// UNDO
-// ==========================================
-
-function undo() {
-
-    if (historyIndex <= 0) {
-
-        return;
-
-    }
-
-    historyIndex--;
-
-    restoreState(
-        history[historyIndex]
-    );
-
-}
-
-
-// ==========================================
-// REDO
-// ==========================================
-
-function redo() {
-
-    if (
-        historyIndex >=
-        history.length - 1
-    ) {
-
-        return;
-
-    }
-
-    historyIndex++;
-
-    restoreState(
-        history[historyIndex]
-    );
-
-}
-
-
-// ==========================================
-// UPLOAD IMAGE
-// ==========================================
-
-const uploadButton =
-    document.getElementById(
-        "uploadBtn"
-    );
-
-const imageInput =
-    document.createElement("input");
-
-imageInput.type = "file";
-
-imageInput.accept =
-    "image/png,image/jpeg,image/webp";
-
-imageInput.style.display =
-    "none";
-
-document.body.appendChild(
-    imageInput
-);
-
-
-uploadButton.addEventListener(
-    "click",
-    () => {
-
-        imageInput.click();
-
-    }
-);
-
-
-imageInput.addEventListener(
-    "change",
-    function () {
-
-        const file =
-            this.files[0];
-
-        if (!file) {
-            return;
-        }
-
-        if (
-            !file.type.startsWith(
-                "image/"
-            )
-        ) {
-
-            alert(
-                "Please select an image."
+        history =
+            history.slice(
+                0,
+                historyIndex + 1
             );
 
-            return;
+        history.push(state);
 
+        historyIndex =
+            history.length - 1;
+
+        if (history.length > 30) {
+            history.shift();
+            historyIndex--;
+        }
+    }
+
+
+    function restoreState(state) {
+
+        restoring = true;
+
+        canvas.loadFromJSON(
+            JSON.parse(state),
+            () => {
+
+                canvas.renderAll();
+
+                restoring = false;
+
+            }
+        );
+    }
+
+
+    function showStatus(message) {
+
+        let box =
+            document.querySelector(
+                ".editor-status"
+            );
+
+        if (!box) {
+
+            box =
+                document.createElement("div");
+
+            box.className =
+                "editor-status";
+
+            box.style.position = "fixed";
+            box.style.left = "50%";
+            box.style.bottom = "80px";
+            box.style.transform =
+                "translateX(-50%)";
+
+            box.style.background =
+                "#171827";
+
+            box.style.color =
+                "#ffffff";
+
+            box.style.padding =
+                "10px 16px";
+
+            box.style.borderRadius =
+                "9px";
+
+            box.style.fontSize =
+                "12px";
+
+            box.style.fontWeight =
+                "700";
+
+            box.style.zIndex =
+                "99999";
+
+            box.style.boxShadow =
+                "0 8px 25px rgba(0,0,0,.2)";
+
+            document.body.appendChild(box);
         }
 
+        box.textContent = message;
 
-        const reader =
-            new FileReader();
+        clearTimeout(box.timer);
 
+        box.timer =
+            setTimeout(() => {
 
-        reader.onload =
-            function (event) {
+                box.remove();
 
-                fabric.Image.fromURL(
-                    event.target.result,
-                    function (img) {
-
-                        // Maximum image size
-                        const maxWidth = 700;
-
-                        const maxHeight = 650;
+            }, 2500);
+    }
 
 
-                        let scale =
-                            Math.min(
-                                maxWidth /
-                                    img.width,
+    // ------------------------------------------
+    // UNDO
+    // ------------------------------------------
 
-                                maxHeight /
-                                    img.height
-                            );
+    document
+        .getElementById("undoBtn")
+        ?.addEventListener(
+            "click",
+            () => {
 
+                if (historyIndex <= 0) {
+                    return;
+                }
 
-                        if (scale > 1) {
-                            scale = 1;
-                        }
+                historyIndex--;
 
-
-                        img.set({
-
-                            left:
-                                (
-                                    canvas.width -
-                                    img.width *
-                                    scale
-                                ) / 2,
-
-                            top:
-                                210,
-
-                            scaleX:
-                                scale,
-
-                            scaleY:
-                                scale,
-
-                            cornerColor:
-                                "#7135f2",
-
-                            cornerStrokeColor:
-                                "#7135f2",
-
-                            borderColor:
-                                "#7135f2",
-
-                            transparentCorners:
-                                false
-                        });
-
-
-                        canvas.add(img);
-
-                        canvas.setActiveObject(
-                            img
-                        );
-
-                        canvas.renderAll();
-
-                        saveState();
-
-                    },
-
-                    {
-                        crossOrigin:
-                            "anonymous"
-                    }
+                restoreState(
+                    history[historyIndex]
                 );
 
-            };
+            }
+        );
 
 
-        reader.readAsDataURL(file);
+    // ------------------------------------------
+    // REDO
+    // ------------------------------------------
+
+    document
+        .getElementById("redoBtn")
+        ?.addEventListener(
+            "click",
+            () => {
+
+                if (
+                    historyIndex >=
+                    history.length - 1
+                ) {
+                    return;
+                }
+
+                historyIndex++;
+
+                restoreState(
+                    history[historyIndex]
+                );
+
+            }
+        );
 
 
-        // Allow same file to be uploaded again
-        this.value = "";
+    // ------------------------------------------
+    // OLD UPLOAD BUTTON
+    // ------------------------------------------
 
-    }
-);
+    const uploadBtn =
+        document.getElementById(
+            "uploadBtn"
+        );
 
 
-// ==========================================
-// ADD TEXT
-// ==========================================
+    const oldInput =
+        document.createElement("input");
 
-const textButton =
-    document.getElementById(
-        "textBtn"
+    oldInput.type = "file";
+
+    oldInput.accept =
+        "image/png,image/jpeg,image/webp";
+
+    oldInput.hidden = true;
+
+    document.body.appendChild(
+        oldInput
     );
 
 
-textButton.addEventListener(
-    "click",
-    () => {
+    uploadBtn?.addEventListener(
+        "click",
+        () => {
+
+            oldInput.click();
+
+        }
+    );
+
+
+    oldInput.addEventListener(
+        "change",
+        () => {
+
+            const file =
+                oldInput.files[0];
+
+            if (!file) return;
+
+            readImage(
+                file,
+                true
+            );
+
+            oldInput.value = "";
+
+        }
+    );
+
+
+    // ------------------------------------------
+    // PRODUCT UPLOAD
+    // ------------------------------------------
+
+    const productUploadBtn =
+        document.getElementById(
+            "productUploadBtn"
+        );
+
+    const productImageInput =
+        document.getElementById(
+            "productImageInput"
+        );
+
+    const productPreview =
+        document.getElementById(
+            "productPreview"
+        );
+
+    const removeBackgroundBtn =
+        document.getElementById(
+            "removeBackgroundBtn"
+        );
+
+    const addProductBtn =
+        document.getElementById(
+            "addProductBtn"
+        );
+
+
+    productUploadBtn?.addEventListener(
+        "click",
+        () => {
+
+            productImageInput.click();
+
+        }
+    );
+
+
+    productImageInput?.addEventListener(
+        "change",
+        () => {
+
+            const file =
+                productImageInput.files[0];
+
+            if (!file) return;
+
+            if (
+                !file.type.startsWith(
+                    "image/"
+                )
+            ) {
+
+                showStatus(
+                    "Please select an image."
+                );
+
+                return;
+            }
+
+
+            const reader =
+                new FileReader();
+
+
+            reader.onload =
+                (event) => {
+
+                    productDataUrl =
+                        event.target.result;
+
+
+                    uploadedProduct =
+                        file;
+
+
+                    // Preview
+                    productPreview.innerHTML = "";
+
+                    const img =
+                        document.createElement(
+                            "img"
+                        );
+
+                    img.src =
+                        productDataUrl;
+
+                    img.style.width =
+                        "100%";
+
+                    img.style.height =
+                        "130px";
+
+                    img.style.objectFit =
+                        "contain";
+
+                    productPreview.appendChild(
+                        img
+                    );
+
+
+                    removeBackgroundBtn.disabled =
+                        false;
+
+                    addProductBtn.disabled =
+                        false;
+
+
+                    showStatus(
+                        "Product image loaded."
+                    );
+
+                };
+
+
+            reader.readAsDataURL(file);
+
+            productImageInput.value = "";
+
+        }
+    );
+
+
+    // ------------------------------------------
+    // REMOVE BACKGROUND
+    // ------------------------------------------
+
+    removeBackgroundBtn?.addEventListener(
+        "click",
+        () => {
+
+            if (!productDataUrl) {
+
+                showStatus(
+                    "Upload a product image first."
+                );
+
+                return;
+            }
+
+
+            /*
+             * IMPORTANT:
+             *
+             * This is intentionally NOT
+             * pretending to remove the background.
+             *
+             * Real background removal will be
+             * connected to an image-processing API
+             * in the next stage.
+             */
+
+            showStatus(
+                "Real background removal will be connected next."
+            );
+
+        }
+    );
+
+
+    // ------------------------------------------
+    // ADD PRODUCT TO CANVAS
+    // ------------------------------------------
+
+    addProductBtn?.addEventListener(
+        "click",
+        () => {
+
+            if (!productDataUrl) {
+
+                showStatus(
+                    "Upload a product image first."
+                );
+
+                return;
+            }
+
+
+            addImageToCanvas(
+                productDataUrl
+            );
+
+        }
+    );
+
+
+    // ------------------------------------------
+    // ADD IMAGE
+    // ------------------------------------------
+
+    function addImageToCanvas(
+        dataUrl
+    ) {
+
+        fabric.Image.fromURL(
+            dataUrl,
+            (img) => {
+
+                const maxSize = 650;
+
+                let scale =
+                    Math.min(
+                        maxSize / img.width,
+                        maxSize / img.height
+                    );
+
+
+                if (scale > 1) {
+                    scale = 1;
+                }
+
+
+                img.set({
+
+                    left:
+                        (
+                            canvas.width -
+                            img.width * scale
+                        ) / 2,
+
+                    top:
+                        230,
+
+                    scaleX:
+                        scale,
+
+                    scaleY:
+                        scale,
+
+                    cornerColor:
+                        "#7135f2",
+
+                    cornerStrokeColor:
+                        "#7135f2",
+
+                    borderColor:
+                        "#7135f2",
+
+                    transparentCorners:
+                        false
+
+                });
+
+
+                canvas.add(img);
+
+                canvas.setActiveObject(
+                    img
+                );
+
+                canvas.renderAll();
+
+                saveState();
+
+
+                showStatus(
+                    "Product added to design."
+                );
+
+            },
+
+            {
+                crossOrigin:
+                    "anonymous"
+            }
+        );
+
+    }
+
+
+    // ------------------------------------------
+    // TEXT
+    // ------------------------------------------
+
+    document
+        .getElementById("textBtn")
+        ?.addEventListener(
+            "click",
+            addHeadline
+        );
+
+
+    document
+        .getElementById("addHeadlineBtn")
+        ?.addEventListener(
+            "click",
+            addHeadline
+        );
+
+
+    function addHeadline() {
 
         const text =
             new fabric.IText(
                 "YOUR PRODUCT",
                 {
 
-                    left: 100,
+                    left: 70,
 
-                    top: 80,
+                    top: 70,
 
-                    fontSize: 60,
+                    fontSize: 58,
 
                     fontFamily:
                         "Arial",
@@ -643,12 +555,9 @@ textButton.addEventListener(
                         "bold",
 
                     fill:
-                        "#171827",
+                        "#ffffff",
 
                     cornerColor:
-                        "#7135f2",
-
-                    cornerStrokeColor:
                         "#7135f2",
 
                     borderColor:
@@ -667,158 +576,541 @@ textButton.addEventListener(
             text
         );
 
-        text.enterEditing();
-
         canvas.renderAll();
 
         saveState();
 
-    }
-);
-
-
-// ==========================================
-// DELETE SELECTED OBJECT
-// ==========================================
-
-function deleteSelected() {
-
-    const selected =
-        canvas.getActiveObject();
-
-
-    if (!selected) {
-
-        return;
+        text.enterEditing();
 
     }
 
 
-    canvas.remove(
-        selected
-    );
+    // ------------------------------------------
+    // PRICE
+    // ------------------------------------------
 
-    canvas.discardActiveObject();
+    document
+        .getElementById("addPriceBtn")
+        ?.addEventListener(
+            "click",
+            () => {
 
-    canvas.renderAll();
+                const price =
+                    new fabric.IText(
+                        "₦35,000",
+                        {
 
-    saveState();
+                            left: 70,
 
-}
+                            top: 760,
+
+                            fontSize: 48,
+
+                            fontFamily:
+                                "Arial",
+
+                            fontWeight:
+                                "bold",
+
+                            fill:
+                                "#ffffff"
+
+                        }
+                    );
 
 
-// Keyboard Delete
-document.addEventListener(
-    "keydown",
-    function (event) {
+                canvas.add(price);
 
-        if (
-            event.key ===
-            "Delete"
-        ) {
+                canvas.setActiveObject(
+                    price
+                );
 
-            deleteSelected();
+                canvas.renderAll();
+
+                saveState();
+
+            }
+        );
+
+
+    // ------------------------------------------
+    // WHATSAPP
+    // ------------------------------------------
+
+    document
+        .getElementById("addPhoneBtn")
+        ?.addEventListener(
+            "click",
+            () => {
+
+                const phone =
+                    new fabric.IText(
+                        "WhatsApp: 0800 000 0000",
+                        {
+
+                            left: 70,
+
+                            top: 850,
+
+                            fontSize: 28,
+
+                            fontFamily:
+                                "Arial",
+
+                            fill:
+                                "#ffffff"
+
+                        }
+                    );
+
+
+                canvas.add(phone);
+
+                canvas.setActiveObject(
+                    phone
+                );
+
+                canvas.renderAll();
+
+                saveState();
+
+            }
+        );
+
+
+    // ------------------------------------------
+    // BACKGROUND COLOR
+    // ------------------------------------------
+
+    const backgroundColor =
+        document.getElementById(
+            "backgroundColor"
+        );
+
+
+    backgroundColor?.addEventListener(
+        "input",
+        () => {
+
+            canvas.backgroundColor =
+                backgroundColor.value;
+
+            canvas.renderAll();
+
+            saveState();
 
         }
-
-    }
-);
-
-
-// ==========================================
-// CANVAS CHANGES
-// ==========================================
-
-canvas.on(
-    "object:modified",
-    () => {
-
-        saveState();
-
-    }
-);
-
-
-// ==========================================
-// INITIAL STATE
-// ==========================================
-
-saveState();
-
-
-// ==========================================
-// DOWNLOAD PNG
-// ==========================================
-
-const downloadButton =
-    document.getElementById(
-        "downloadBtn"
     );
 
 
-downloadButton.addEventListener(
-    "click",
-    () => {
+    // ------------------------------------------
+    // RESET BACKGROUND
+    // ------------------------------------------
+
+    document
+        .getElementById(
+            "resetBackgroundBtn"
+        )
+        ?.addEventListener(
+            "click",
+            () => {
+
+                canvas.backgroundColor =
+                    "#ffffff";
+
+                backgroundColor.value =
+                    "#ffffff";
+
+                canvas.renderAll();
+
+                saveState();
+
+            }
+        );
+
+
+    // ------------------------------------------
+    // DELETE OBJECT
+    // ------------------------------------------
+
+    document
+        .getElementById(
+            "deleteObjectBtn"
+        )
+        ?.addEventListener(
+            "click",
+            deleteSelected
+        );
+
+
+    document.addEventListener(
+        "keydown",
+        (event) => {
+
+            const active =
+                canvas.getActiveObject();
+
+            if (!active) return;
+
+
+            if (
+                event.key ===
+                "Delete"
+            ) {
+
+                deleteSelected();
+
+            }
+
+        }
+    );
+
+
+    function deleteSelected() {
+
+        const active =
+            canvas.getActiveObject();
+
+        if (!active) return;
+
+        canvas.remove(active);
 
         canvas.discardActiveObject();
 
         canvas.renderAll();
 
-
-        const dataURL =
-            canvas.toDataURL({
-
-                format:
-                    "png",
-
-                quality:
-                    1,
-
-                multiplier:
-                    1
-
-            });
-
-
-        const link =
-            document.createElement(
-                "a"
-            );
-
-        link.download =
-            "ads-maker-free.png";
-
-        link.href =
-            dataURL;
-
-        link.click();
+        saveState();
 
     }
-);
 
 
-// ==========================================
-// UNDO / REDO BUTTONS
-// ==========================================
+    // ------------------------------------------
+    // LOGO
+    // ------------------------------------------
 
-const undoButton =
-    document.getElementById(
-        "undoBtn"
+    const uploadLogoBtn =
+        document.getElementById(
+            "uploadLogoBtn"
+        );
+
+    const logoInput =
+        document.getElementById(
+            "logoInput"
+        );
+
+
+    uploadLogoBtn?.addEventListener(
+        "click",
+        () => {
+
+            logoInput.click();
+
+        }
     );
 
-const redoButton =
-    document.getElementById(
-        "redoBtn"
+
+    logoInput?.addEventListener(
+        "change",
+        () => {
+
+            const file =
+                logoInput.files[0];
+
+            if (!file) return;
+
+            const reader =
+                new FileReader();
+
+
+            reader.onload =
+                (event) => {
+
+                    fabric.Image.fromURL(
+                        event.target.result,
+                        (logo) => {
+
+                            logo.scaleToWidth(
+                                180
+                            );
+
+                            logo.set({
+
+                                left: 70,
+
+                                top: 920
+
+                            });
+
+
+                            canvas.add(logo);
+
+                            canvas.setActiveObject(
+                                logo
+                            );
+
+                            canvas.renderAll();
+
+                            saveState();
+
+                        }
+                    );
+
+                };
+
+
+            reader.readAsDataURL(file);
+
+            logoInput.value = "";
+
+        }
     );
 
 
-undoButton.addEventListener(
-    "click",
-    undo
-);
+    // ------------------------------------------
+    // TEMPLATE BUTTON
+    // ------------------------------------------
+
+    document
+        .getElementById(
+            "templatesBtn"
+        )
+        ?.addEventListener(
+            "click",
+            () => {
+
+                window.location.href =
+                    "templates.html";
+
+            }
+        );
 
 
-redoButton.addEventListener(
-    "click",
-    redo
-);
+    // ------------------------------------------
+    // ELEMENTS BUTTON
+    // ------------------------------------------
+
+    document
+        .getElementById(
+            "elementsBtn"
+        )
+        ?.addEventListener(
+            "click",
+            () => {
+
+                const circle =
+                    new fabric.Circle({
+
+                        left: 400,
+
+                        top: 400,
+
+                        radius: 70,
+
+                        fill: "#7135f2"
+
+                    });
+
+
+                canvas.add(circle);
+
+                canvas.setActiveObject(
+                    circle
+                );
+
+                canvas.renderAll();
+
+                saveState();
+
+            }
+        );
+
+
+    // ------------------------------------------
+    // MOBILE BUTTONS
+    // ------------------------------------------
+
+    document
+        .getElementById(
+            "mobileTemplatesBtn"
+        )
+        ?.addEventListener(
+            "click",
+            () => {
+
+                window.location.href =
+                    "templates.html";
+
+            }
+        );
+
+
+    document
+        .getElementById(
+            "mobileUploadBtn"
+        )
+        ?.addEventListener(
+            "click",
+            () => {
+
+                productUploadBtn?.click();
+
+            }
+        );
+
+
+    document
+        .getElementById(
+            "mobileTextBtn"
+        )
+        ?.addEventListener(
+            "click",
+            addHeadline
+        );
+
+
+    document
+        .getElementById(
+            "mobileElementsBtn"
+        )
+        ?.addEventListener(
+            "click",
+            () => {
+
+                document
+                    .getElementById(
+                        "elementsBtn"
+                    )
+                    ?.click();
+
+            }
+        );
+
+
+    document
+        .getElementById(
+            "mobileMoreBtn"
+        )
+        ?.addEventListener(
+            "click",
+            () => {
+
+                showStatus(
+                    "More editing tools coming next."
+                );
+
+            }
+        );
+
+
+    // ------------------------------------------
+    // DOWNLOAD
+    // ------------------------------------------
+
+    document
+        .getElementById(
+            "downloadBtn"
+        )
+        ?.addEventListener(
+            "click",
+            () => {
+
+                canvas.discardActiveObject();
+
+                canvas.renderAll();
+
+
+                const dataURL =
+                    canvas.toDataURL({
+
+                        format:
+                            "png",
+
+                        multiplier:
+                            1,
+
+                        quality:
+                            1
+
+                    });
+
+
+                const link =
+                    document.createElement(
+                        "a"
+                    );
+
+                link.download =
+                    "ads-maker-free.png";
+
+                link.href =
+                    dataURL;
+
+                link.click();
+
+            }
+        );
+
+
+    // ------------------------------------------
+    // CANVAS CHANGES
+    // ------------------------------------------
+
+    canvas.on(
+        "object:modified",
+        saveState
+    );
+
+
+    canvas.on(
+        "object:added",
+        () => {
+
+            if (!restoring) {
+                canvas.renderAll();
+            }
+
+        }
+    );
+
+
+    // ------------------------------------------
+    // READ IMAGE
+    // ------------------------------------------
+
+    function readImage(
+        file,
+        addImmediately
+    ) {
+
+        const reader =
+            new FileReader();
+
+
+        reader.onload =
+            (event) => {
+
+                if (addImmediately) {
+
+                    addImageToCanvas(
+                        event.target.result
+                    );
+
+                }
+
+            };
+
+
+        reader.readAsDataURL(file);
+
+    }
+
+
+    // ------------------------------------------
+    // INITIAL STATE
+    // ------------------------------------------
+
+    canvas.renderAll();
+
+    saveState();
+
+});
