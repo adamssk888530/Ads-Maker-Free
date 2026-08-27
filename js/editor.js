@@ -79,7 +79,334 @@ function restoreState(state) {
 
         }
     );
+// ==========================================
+// LOAD SELECTED TEMPLATE
+// ==========================================
 
+function loadSelectedTemplate() {
+
+    const savedTemplate =
+        localStorage.getItem(
+            "adsMakerTemplate"
+        );
+
+    if (!savedTemplate) {
+        return;
+    }
+
+    let template;
+
+    try {
+
+        template =
+            JSON.parse(savedTemplate);
+
+    } catch (error) {
+
+        console.error(
+            "Invalid template data",
+            error
+        );
+
+        return;
+
+    }
+
+
+    const category =
+        template.category || "General";
+
+
+    // Don't load twice
+    if (
+        canvas.getObjects().length > 0
+    ) {
+        return;
+    }
+
+
+    // ======================================
+    // TEMPLATE BACKGROUND
+    // ======================================
+
+    let background = "#ffffff";
+
+    if (category === "Shoes") {
+        background = "#071b38";
+    }
+
+    if (category === "Phones") {
+        background = "#0b4fa3";
+    }
+
+    if (category === "Food") {
+        background = "#8c2414";
+    }
+
+    if (category === "Fashion") {
+        background = "#5c153f";
+    }
+
+    if (category === "Beauty") {
+        background = "#181818";
+    }
+
+    if (category === "Cars") {
+        background = "#173d20";
+    }
+
+
+    canvas.backgroundColor =
+        background;
+
+
+    // ======================================
+    // HEADLINE
+    // ======================================
+
+    const headline =
+        new fabric.IText(
+            getHeadline(category),
+            {
+
+                left: 55,
+
+                top: 70,
+
+                fontSize: 58,
+
+                fontFamily:
+                    "Arial",
+
+                fontWeight:
+                    "bold",
+
+                fill: "#ffffff",
+
+                selectable: true,
+
+                cornerColor:
+                    "#7135f2",
+
+                cornerStrokeColor:
+                    "#7135f2",
+
+                borderColor:
+                    "#7135f2",
+
+                transparentCorners:
+                    false
+
+            }
+        );
+
+
+    canvas.add(headline);
+
+
+    // ======================================
+    // PRICE
+    // ======================================
+
+    const price =
+        new fabric.IText(
+            "₦35,000",
+            {
+
+                left: 55,
+
+                top: 760,
+
+                fontSize: 48,
+
+                fontFamily:
+                    "Arial",
+
+                fontWeight:
+                    "bold",
+
+                fill: "#ffffff",
+
+                cornerColor:
+                    "#7135f2",
+
+                cornerStrokeColor:
+                    "#7135f2",
+
+                borderColor:
+                    "#7135f2",
+
+                transparentCorners:
+                    false
+
+            }
+        );
+
+
+    canvas.add(price);
+
+
+    // ======================================
+    // DISCOUNT BADGE
+    // ======================================
+
+    const badge =
+        new fabric.Circle({
+
+            left: 780,
+
+            top: 90,
+
+            radius: 65,
+
+            fill: "#ffd51a",
+
+            originX: "center",
+
+            originY: "center"
+
+        });
+
+
+    canvas.add(badge);
+
+
+    const discount =
+        new fabric.IText(
+            "30% OFF",
+            {
+
+                left: 780,
+
+                top: 78,
+
+                originX: "center",
+
+                fontSize: 25,
+
+                fontWeight:
+                    "bold",
+
+                fill: "#111111"
+
+            }
+        );
+
+
+    canvas.add(discount);
+
+
+    // ======================================
+    // SHOP NOW BUTTON
+    // ======================================
+
+    const button =
+        new fabric.Rect({
+
+            left: 55,
+
+            top: 870,
+
+            width: 200,
+
+            height: 65,
+
+            rx: 15,
+
+            ry: 15,
+
+            fill: "#ffd51a"
+
+        });
+
+
+    canvas.add(button);
+
+
+    const buttonText =
+        new fabric.IText(
+            "SHOP NOW",
+            {
+
+                left: 88,
+
+                top: 888,
+
+                fontSize: 23,
+
+                fontWeight:
+                    "bold",
+
+                fill: "#111111"
+
+            }
+        );
+
+
+    canvas.add(buttonText);
+
+
+    canvas.renderAll();
+
+    saveState();
+
+
+    // Remove saved selection
+    localStorage.removeItem(
+        "adsMakerTemplate"
+    );
+
+}
+
+
+// ==========================================
+// CATEGORY HEADLINES
+// ==========================================
+
+function getHeadline(category) {
+
+    const headlines = {
+
+        Shoes:
+            "PREMIUM SNEAKERS",
+
+        Phones:
+            "NEW SMARTPHONE",
+
+        Food:
+            "DELICIOUS FOOD",
+
+        Fashion:
+            "NEW COLLECTION",
+
+        Beauty:
+            "LUXURY BEAUTY",
+
+        Cars:
+            "PREMIUM CAR",
+
+        "Real Estate":
+            "PROPERTY FOR SALE",
+
+        Sale:
+            "MEGA SALE"
+
+    };
+
+
+    return (
+        headlines[category] ||
+        "YOUR PRODUCT"
+    );
+
+}
+
+
+// ==========================================
+// RUN WHEN EDITOR OPENS
+// ==========================================
+
+loadSelectedTemplate();
 }
 
 
