@@ -1,0 +1,893 @@
+/* =========================================
+   ADS MAKER FREE
+   Main Website Styles
+   ========================================= */
+
+:root {
+    --purple: #7135f2;
+    --purple-dark: #5420c9;
+    --purple-light: #eee7ff;
+
+    --dark: #09091c;
+    --dark-2: #111126;
+    --text: #17172a;
+    --muted: #6f7080;
+
+    --white: #ffffff;
+    --light: #f7f7fb;
+    --border: #e7e7ef;
+
+    --radius: 16px;
+    --shadow: 0 15px 40px rgba(20, 15, 60, 0.12);
+}
+
+/* RESET */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+    background: var(--light);
+    color: var(--text);
+    overflow-x: hidden;
+}
+
+button,
+input,
+select,
+textarea {
+    font: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+
+/* =========================================
+   NAVBAR
+   ========================================= */
+
+.navbar {
+    height: 72px;
+
+    display: flex;
+    align-items: center;
+
+    padding: 0 5%;
+
+    background: rgba(9, 9, 28, 0.96);
+    color: white;
+
+    position: sticky;
+    top: 0;
+
+    z-index: 1000;
+
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+
+    font-size: 21px;
+    font-weight: 900;
+
+    letter-spacing: -0.6px;
+}
+
+.logo span {
+    color: #9a6cff;
+}
+
+.logo-icon {
+    width: 34px;
+    height: 34px;
+
+    display: grid;
+    place-items: center;
+
+    background: linear-gradient(
+        135deg,
+        #8c52ff,
+        #5d24e8
+    );
+
+    color: white;
+
+    border-radius: 9px;
+
+    font-weight: 900;
+}
+
+.navbar nav {
+    display: flex;
+    align-items: center;
+
+    gap: 30px;
+
+    margin-left: auto;
+    margin-right: 30px;
+}
+
+.navbar nav a {
+    color: #d8d8e4;
+
+    font-size: 14px;
+    font-weight: 500;
+
+    transition: 0.2s;
+}
+
+.navbar nav a:hover {
+    color: white;
+}
+
+.get-started {
+    border: 0;
+
+    color: white;
+
+    background: linear-gradient(
+        135deg,
+        #793bff,
+        #5b27e4
+    );
+
+    padding: 12px 19px;
+
+    border-radius: 9px;
+
+    font-weight: 800;
+
+    box-shadow:
+        0 8px 25px rgba(113,53,242,0.35);
+
+    transition: 0.2s;
+}
+
+.get-started:hover {
+    transform: translateY(-2px);
+}
+
+
+/* =========================================
+   HERO
+   ========================================= */
+
+.hero {
+    min-height: 570px;
+
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1fr)
+        minmax(350px, 500px);
+
+    align-items: center;
+
+    gap: 60px;
+
+    padding: 75px 7%;
+
+    background:
+        radial-gradient(
+            circle at 75% 40%,
+            rgba(117, 54, 255, 0.28),
+            transparent 30%
+        ),
+        linear-gradient(
+            120deg,
+            #08081d,
+            #0e0b2c 55%,
+            #13082b
+        );
+
+    color: white;
+
+    overflow: hidden;
+}
+
+.hero-content {
+    max-width: 650px;
+}
+
+.free-badge {
+    display: inline-flex;
+
+    align-items: center;
+
+    padding: 8px 13px;
+
+    border-radius: 30px;
+
+    background: rgba(122, 65, 255, 0.18);
+
+    border: 1px solid rgba(150, 110, 255, 0.35);
+
+    color: #e7dcff;
+
+    font-size: 12px;
+    font-weight: 700;
+
+    margin-bottom: 20px;
+}
+
+.hero h1 {
+    font-size: clamp(45px, 6vw, 76px);
+
+    line-height: 0.98;
+
+    letter-spacing: -3px;
+
+    font-weight: 950;
+
+    margin-bottom: 25px;
+}
+
+.hero h1 span {
+    display: block;
+
+    background:
+        linear-gradient(
+            90deg,
+            #ffffff,
+            #9b68ff,
+            #6f35ef
+        );
+
+    -webkit-background-clip: text;
+    background-clip: text;
+
+    color: transparent;
+}
+
+.hero p {
+    max-width: 570px;
+
+    color: #c4c4d3;
+
+    font-size: 17px;
+
+    line-height: 1.7;
+
+    margin-bottom: 30px;
+}
+
+.hero-buttons {
+    display: flex;
+
+    gap: 12px;
+
+    margin-bottom: 30px;
+}
+
+.primary-btn,
+.secondary-btn {
+    min-height: 48px;
+
+    padding: 0 23px;
+
+    border-radius: 10px;
+
+    font-weight: 800;
+
+    transition: 0.2s;
+}
+
+.primary-btn {
+    border: 0;
+
+    background: linear-gradient(
+        135deg,
+        #7e43ff,
+        #5e27e4
+    );
+
+    color: white;
+
+    box-shadow:
+        0 10px 30px rgba(107, 49, 236, 0.35);
+}
+
+.secondary-btn {
+    background: transparent;
+
+    border: 1px solid rgba(255,255,255,0.4);
+
+    color: white;
+}
+
+.primary-btn:hover,
+.secondary-btn:hover {
+    transform: translateY(-2px);
+}
+
+.benefits {
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 12px 20px;
+
+    color: #d5d3e2;
+
+    font-size: 12px;
+}
+
+.benefits div::first-letter {
+    color: #9b68ff;
+}
+
+
+/* =========================================
+   AD PREVIEW
+   ========================================= */
+
+.ad-preview {
+    width: 100%;
+
+    aspect-ratio: 0.76;
+
+    max-width: 440px;
+
+    margin-left: auto;
+
+    padding: 28px;
+
+    position: relative;
+
+    overflow: hidden;
+
+    border-radius: 24px;
+
+    border: 2px solid #8d54ff;
+
+    background:
+        radial-gradient(
+            circle at 70% 65%,
+            #116df8 0,
+            transparent 30%
+        ),
+        linear-gradient(
+            145deg,
+            #050a13,
+            #071c3d 60%,
+            #020b1c
+        );
+
+    box-shadow:
+        0 0 45px rgba(112, 55, 245, 0.35);
+
+    transform: rotate(1deg);
+}
+
+.preview-badge {
+    display: inline-block;
+
+    padding: 6px 9px;
+
+    background: #ef2d2d;
+
+    color: white;
+
+    font-size: 10px;
+
+    font-weight: 900;
+
+    border-radius: 4px;
+}
+
+.ad-preview h2 {
+    font-size: 27px;
+    margin-top: 20px;
+}
+
+.ad-preview h3 {
+    font-size: 58px;
+
+    line-height: 0.9;
+
+    margin-top: 5px;
+
+    color: white;
+}
+
+.product-placeholder {
+    height: 43%;
+
+    display: grid;
+
+    place-items: center;
+
+    margin-top: 20px;
+
+    border-radius: 18px;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(30, 126, 255, 0.3),
+            transparent 65%
+        );
+}
+
+.shoe-icon {
+    font-size: 110px;
+
+    filter:
+        drop-shadow(
+            0 20px 20px rgba(0,0,0,0.5)
+        );
+}
+
+.discount {
+    position: absolute;
+
+    right: 24px;
+    top: 210px;
+
+    width: 100px;
+    height: 100px;
+
+    display: grid;
+    place-items: center;
+
+    text-align: center;
+
+    border-radius: 50%;
+
+    background: #ffd51a;
+
+    color: #111;
+
+    font-size: 11px;
+
+    font-weight: 900;
+}
+
+.discount strong {
+    font-size: 28px;
+}
+
+.price {
+    font-size: 30px;
+
+    font-weight: 950;
+
+    color: #ffd51a;
+
+    margin-top: 5px;
+}
+
+.ad-preview button {
+    position: absolute;
+
+    bottom: 25px;
+    left: 28px;
+
+    border: 0;
+
+    padding: 12px 23px;
+
+    border-radius: 30px;
+
+    background: #ffd51a;
+
+    color: #111;
+
+    font-weight: 900;
+}
+
+
+/* =========================================
+   CATEGORIES
+   ========================================= */
+
+.categories {
+    background: white;
+
+    padding: 55px 7%;
+}
+
+.section-heading {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 25px;
+}
+
+.section-heading h2 {
+    font-size: 27px;
+
+    letter-spacing: -1px;
+}
+
+.section-heading button {
+    border: 0;
+
+    background: none;
+
+    color: var(--purple);
+
+    font-weight: 800;
+}
+
+.category-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(8, 1fr);
+
+    gap: 13px;
+}
+
+.category {
+    min-height: 120px;
+
+    border: 1px solid var(--border);
+
+    background: white;
+
+    border-radius: 13px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 8px;
+
+    font-size: 12px;
+
+    color: var(--text);
+
+    transition: 0.2s;
+}
+
+.category:first-line {
+    font-size: 30px;
+}
+
+.category:hover {
+    border-color: var(--purple);
+
+    transform: translateY(-3px);
+
+    box-shadow: var(--shadow);
+}
+
+.category strong {
+    font-size: 12px;
+}
+
+
+/* =========================================
+   HOW IT WORKS
+   ========================================= */
+
+.how-it-works {
+    padding: 70px 7%;
+
+    background: #f6f6fb;
+
+    text-align: center;
+}
+
+.how-it-works > h2 {
+    font-size: 32px;
+
+    margin-bottom: 35px;
+}
+
+.steps {
+    display: grid;
+
+    grid-template-columns:
+        repeat(5, 1fr);
+
+    gap: 15px;
+}
+
+.step {
+    background: white;
+
+    border: 1px solid var(--border);
+
+    border-radius: 16px;
+
+    padding: 25px 18px;
+
+    position: relative;
+
+    min-height: 190px;
+}
+
+.step span {
+    width: 34px;
+    height: 34px;
+
+    display: grid;
+
+    place-items: center;
+
+    margin: 0 auto 15px;
+
+    border-radius: 50%;
+
+    background: var(--purple);
+
+    color: white;
+
+    font-weight: 900;
+}
+
+.step h3 {
+    font-size: 15px;
+
+    margin-bottom: 9px;
+}
+
+.step p {
+    color: var(--muted);
+
+    font-size: 12px;
+
+    line-height: 1.6;
+}
+
+
+/* =========================================
+   FOOTER
+   ========================================= */
+
+footer {
+    padding: 35px 7%;
+
+    background:
+        linear-gradient(
+            135deg,
+            #34128b,
+            #5d22d2
+        );
+
+    color: white;
+
+    text-align: center;
+}
+
+footer strong {
+    font-size: 22px;
+}
+
+footer p {
+    margin-top: 6px;
+
+    color: #ded4ff;
+
+    font-size: 13px;
+}
+
+
+/* =========================================
+   TABLET
+   ========================================= */
+
+@media (max-width: 1050px) {
+
+    .hero {
+        grid-template-columns:
+            1fr
+            400px;
+
+        gap: 30px;
+
+        padding-left: 5%;
+        padding-right: 5%;
+    }
+
+    .category-grid {
+        grid-template-columns:
+            repeat(4, 1fr);
+    }
+
+    .steps {
+        grid-template-columns:
+            repeat(3, 1fr);
+    }
+}
+
+
+/* =========================================
+   MOBILE
+   ========================================= */
+
+@media (max-width: 760px) {
+
+    body {
+        overflow-x: hidden;
+    }
+
+    .navbar {
+        height: 62px;
+
+        padding: 0 15px;
+    }
+
+    .logo {
+        font-size: 18px;
+    }
+
+    .logo-icon {
+        width: 31px;
+        height: 31px;
+    }
+
+    .navbar nav {
+        display: none;
+    }
+
+    .get-started {
+        margin-left: auto;
+
+        padding: 9px 12px;
+
+        font-size: 11px;
+    }
+
+
+    /* HERO */
+
+    .hero {
+        min-height: auto;
+
+        grid-template-columns: 1fr;
+
+        padding:
+            50px 18px
+            45px;
+
+        gap: 40px;
+
+        text-align: left;
+    }
+
+    .hero h1 {
+        font-size: 45px;
+
+        letter-spacing: -2px;
+    }
+
+    .hero p {
+        font-size: 14px;
+    }
+
+    .hero-buttons {
+        flex-direction: column;
+    }
+
+    .primary-btn,
+    .secondary-btn {
+        width: 100%;
+    }
+
+    .benefits {
+        flex-direction: column;
+
+        gap: 9px;
+    }
+
+    .ad-preview {
+        max-width: 350px;
+
+        margin: auto;
+
+        transform: none;
+    }
+
+
+    /* CATEGORIES */
+
+    .categories {
+        padding: 40px 15px;
+    }
+
+    .section-heading h2 {
+        font-size: 22px;
+    }
+
+    .category-grid {
+        grid-template-columns:
+            repeat(4, 1fr);
+
+        gap: 8px;
+    }
+
+    .category {
+        min-height: 95px;
+
+        padding: 8px;
+
+        font-size: 10px;
+    }
+
+    .category strong {
+        font-size: 10px;
+    }
+
+
+    /* STEPS */
+
+    .how-it-works {
+        padding: 45px 15px;
+    }
+
+    .how-it-works > h2 {
+        font-size: 25px;
+    }
+
+    .steps {
+        grid-template-columns: 1fr;
+
+        gap: 10px;
+    }
+
+    .step {
+        min-height: auto;
+
+        padding: 20px;
+    }
+}
+
+
+/* =========================================
+   VERY SMALL PHONES
+   ========================================= */
+
+@media (max-width: 390px) {
+
+    .hero h1 {
+        font-size: 38px;
+    }
+
+    .category-grid {
+        grid-template-columns:
+            repeat(2, 1fr);
+    }
+
+    .ad-preview h3 {
+        font-size: 45px;
+    }
+
+    .shoe-icon {
+        font-size: 85px;
+    }
+}
