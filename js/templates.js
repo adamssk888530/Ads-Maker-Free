@@ -1,374 +1,414 @@
-// ============================================
-// ADS MAKER FREE
-// Templates Engine
-// ============================================
+/* =====================================================
+   ADS MAKER FREE
+   PROFESSIONAL TEMPLATES JAVASCRIPT
+===================================================== */
 
 document.addEventListener("DOMContentLoaded", () => {
 
-    const cards = [
-        ...document.querySelectorAll(".template-card")
-    ];
+    const categories =
+        document.querySelectorAll(".category");
 
-    const chips = [
-        ...document.querySelectorAll(".category-chip")
-    ];
+    const cards =
+        document.querySelectorAll(".template-card");
 
     const searchInput =
-        document.getElementById("templateSearch");
+        document.querySelector("#searchTemplates");
 
     const sortSelect =
-        document.getElementById("templateSort");
+        document.querySelector("#sortTemplates");
 
-    const grid =
-        document.getElementById("templateGrid");
+    const useButtons =
+        document.querySelectorAll(".use-template");
 
-    const emptyState =
-        document.getElementById("emptyState");
+    const loadMoreButton =
+        document.querySelector("#loadMore");
 
-    const count =
-        document.getElementById("templateCount");
-
-
-    let selectedCategory = "all";
+    const themeButton =
+        document.querySelector("#themeBtn");
 
 
-    // ==========================================
-    // URL CATEGORY
-    // ==========================================
+    /* =================================================
+       CATEGORY FILTER
+    ================================================= */
 
-    const params =
-        new URLSearchParams(
-            window.location.search
-        );
+    categories.forEach((category) => {
 
-    const urlCategory =
-        params.get("category");
+        category.addEventListener("click", () => {
 
-
-    if (urlCategory) {
-
-        const normalized =
-            urlCategory
-                .toLowerCase()
-                .trim()
-                .replace(/\s+/g, "-");
-
-
-        const matchingChip =
-            chips.find(
-                chip =>
-                    chip.dataset.category ===
-                    normalized
-            );
-
-
-        if (matchingChip) {
-
-            selectedCategory =
-                normalized;
-
-
-            chips.forEach(chip => {
-
-                chip.classList.remove(
-                    "active"
-                );
-
+            categories.forEach((item) => {
+                item.classList.remove("active");
+                item.classList.remove("active-category");
             });
 
+            category.classList.add("active");
 
-            matchingChip.classList.add(
-                "active"
+            const selectedCategory =
+                category.dataset.category;
+
+            filterTemplates(
+                selectedCategory,
+                searchInput ? searchInput.value : ""
             );
 
-        }
-
-    }
-
-
-    // ==========================================
-    // CATEGORY FILTER
-    // ==========================================
-
-    chips.forEach(chip => {
-
-        chip.addEventListener(
-            "click",
-            () => {
-
-                selectedCategory =
-                    chip.dataset.category;
-
-
-                chips.forEach(item => {
-
-                    item.classList.remove(
-                        "active"
-                    );
-
-                });
-
-
-                chip.classList.add(
-                    "active"
-                );
-
-
-                filterTemplates();
-
-            }
-        );
+        });
 
     });
 
 
-    // ==========================================
-    // SEARCH
-    // ==========================================
+    /* =================================================
+       SEARCH
+    ================================================= */
 
-    searchInput?.addEventListener(
-        "input",
-        filterTemplates
-    );
+    if (searchInput) {
 
+        searchInput.addEventListener("input", () => {
 
-    // ==========================================
-    // SORT
-    // ==========================================
-
-    sortSelect?.addEventListener(
-        "change",
-        () => {
-
-            sortTemplates();
-
-            filterTemplates();
-
-        }
-    );
-
-
-    // ==========================================
-    // FILTER
-    // ==========================================
-
-    function filterTemplates() {
-
-        const search =
-            searchInput
-                ? searchInput.value
-                    .toLowerCase()
-                    .trim()
-                : "";
-
-
-        let visible = 0;
-
-
-        cards.forEach(card => {
+            const activeCategory =
+                document.querySelector(
+                    ".category.active"
+                );
 
             const category =
-                card.dataset.category ||
-                "";
+                activeCategory
+                    ? activeCategory.dataset.category
+                    : "all";
 
-            const name =
-                card.dataset.name ||
-                "";
-
-            const type =
-                card.dataset.type ||
-                "";
-
-
-            const categoryMatch =
-                selectedCategory === "all" ||
-                category === selectedCategory;
-
-
-            const searchMatch =
-                !search ||
-                name.includes(search) ||
-                category.includes(search) ||
-                type.includes(search);
-
-
-            const show =
-                categoryMatch &&
-                searchMatch;
-
-
-            card.style.display =
-                show
-                    ? ""
-                    : "none";
-
-
-            if (show) {
-                visible++;
-            }
+            filterTemplates(
+                category,
+                searchInput.value
+            );
 
         });
 
+    }
 
-        updateCount(
-            visible
+
+    /* =================================================
+       USE TEMPLATE
+    ================================================= */
+
+    useButtons.forEach((button) => {
+
+        button.addEventListener("click", () => {
+
+            const template =
+                button.dataset.template;
+
+            if (!template) {
+                return;
+            }
+
+            /*
+                Send selected template
+                to the editor.
+            */
+
+            const editorUrl =
+                "editor.html?template=" +
+                encodeURIComponent(template);
+
+            window.location.href =
+                editorUrl;
+
+        });
+
+    });
+
+
+    /* =================================================
+       SORT
+    ================================================= */
+
+    if (sortSelect) {
+
+        sortSelect.addEventListener("change", () => {
+
+            sortTemplates(
+                sortSelect.value
+            );
+
+        });
+
+    }
+
+
+    /* =================================================
+       LOAD MORE
+    ================================================= */
+
+    if (loadMoreButton) {
+
+        loadMoreButton.addEventListener(
+            "click",
+            () => {
+
+                showComingSoon();
+
+            }
+        );
+
+    }
+
+
+    /* =================================================
+       THEME BUTTON
+    ================================================= */
+
+    if (themeButton) {
+
+        themeButton.addEventListener(
+            "click",
+            () => {
+
+                document.body.classList.toggle(
+                    "dark-mode"
+                );
+
+            }
+        );
+
+    }
+
+
+    /* =================================================
+       INITIAL SORT
+    ================================================= */
+
+    sortTemplates("popular");
+
+});
+
+
+/* =====================================================
+   FILTER TEMPLATES
+===================================================== */
+
+function filterTemplates(
+    category,
+    searchText
+) {
+
+    const cards =
+        document.querySelectorAll(
+            ".template-card"
+        );
+
+    const search =
+        searchText
+            .toLowerCase()
+            .trim();
+
+
+    cards.forEach((card) => {
+
+        const cardCategory =
+            card.dataset.category || "";
+
+        const cardName =
+            card.dataset.name || "";
+
+
+        const categoryMatch =
+            category === "all" ||
+            cardCategory === category;
+
+
+        const searchMatch =
+            search === "" ||
+            cardName
+                .toLowerCase()
+                .includes(search);
+
+
+        if (
+            categoryMatch &&
+            searchMatch
+        ) {
+
+            card.style.display = "";
+
+        } else {
+
+            card.style.display = "none";
+
+        }
+
+    });
+
+
+    updateTemplateCount();
+
+}
+
+
+/* =====================================================
+   SORT TEMPLATES
+===================================================== */
+
+function sortTemplates(type) {
+
+    const grid =
+        document.querySelector(
+            ".template-grid"
+        );
+
+    if (!grid) {
+        return;
+    }
+
+
+    const cards =
+        Array.from(
+            grid.querySelectorAll(
+                ".template-card"
+            )
         );
 
 
-        if (emptyState) {
+    if (type === "new") {
 
-            emptyState.hidden =
-                visible !== 0;
-
-        }
+        cards.reverse();
 
     }
 
 
-    // ==========================================
-    // SORT
-    // ==========================================
+    if (type === "sale") {
 
-    function sortTemplates() {
+        cards.sort((a, b) => {
 
-        if (!grid) return;
+            const aText =
+                a.innerText
+                    .toLowerCase();
 
+            const bText =
+                b.innerText
+                    .toLowerCase();
 
-        const sort =
-            sortSelect
-                ? sortSelect.value
-                : "popular";
+            const aSale =
+                aText.includes("sale")
+                    ? 1
+                    : 0;
 
+            const bSale =
+                bText.includes("sale")
+                    ? 1
+                    : 0;
 
-        const sorted =
-            [...cards].sort(
-                (a, b) => {
-
-                    const aType =
-                        a.dataset.type ||
-                        "";
-
-                    const bType =
-                        b.dataset.type ||
-                        "";
-
-
-                    if (sort === "new") {
-
-                        return (
-                            aType === "new"
-                                ? -1
-                                : 1
-                        );
-
-                    }
-
-
-                    if (sort === "sale") {
-
-                        return (
-                            aType === "sale"
-                                ? -1
-                                : 1
-                        );
-
-                    }
-
-
-                    if (sort === "minimal") {
-
-                        return (
-                            aType === "minimal"
-                                ? -1
-                                : 1
-                        );
-
-                    }
-
-
-                    return 0;
-
-                }
-            );
-
-
-        sorted.forEach(card => {
-
-            grid.appendChild(card);
+            return bSale - aSale;
 
         });
 
     }
 
 
-    // ==========================================
-    // COUNT
-    // ==========================================
+    cards.forEach((card) => {
 
-    function updateCount(number) {
+        grid.appendChild(card);
 
-        if (!count) return;
+    });
 
+}
+
+
+/* =====================================================
+   UPDATE COUNT
+===================================================== */
+
+function updateTemplateCount() {
+
+    const visibleCards =
+        document.querySelectorAll(
+            ".template-card:not([style*='display: none'])"
+        );
+
+    const count =
+        document.querySelector(
+            ".section-title span"
+        );
+
+    if (count) {
 
         count.textContent =
-            `${number} Template${number === 1 ? "" : "s"}`;
+            visibleCards.length +
+            " Templates";
 
     }
 
-
-    // ==========================================
-    // USE TEMPLATE
-    // ==========================================
-
-    document
-        .querySelectorAll(".use-template")
-        .forEach(button => {
-
-            button.addEventListener(
-                "click",
-                () => {
-
-                    const template =
-                        button.dataset.template;
+}
 
 
-                    if (!template) {
+/* =====================================================
+   COMING SOON
+===================================================== */
 
-                        window.location.href =
-                            "editor.html";
+function showComingSoon() {
 
-                        return;
+    const oldMessage =
+        document.querySelector(
+            ".template-message"
+        );
 
-                    }
-
-
-                    /*
-                     * Send the selected template
-                     * to the editor.
-                     */
-
-                    const url =
-                        "editor.html?template=" +
-                        encodeURIComponent(
-                            template
-                        );
+    if (oldMessage) {
+        oldMessage.remove();
+    }
 
 
-                    window.location.href =
-                        url;
+    const message =
+        document.createElement("div");
 
-                }
-            );
+    message.className =
+        "template-message";
 
-        });
+    message.textContent =
+        "More professional templates are coming soon ✨";
 
 
-    // ==========================================
-    // INITIALIZE
-    // ==========================================
+    message.style.position =
+        "fixed";
 
-    sortTemplates();
+    message.style.left =
+        "50%";
 
-    filterTemplates();
+    message.style.bottom =
+        "25px";
 
-});
+    message.style.transform =
+        "translateX(-50%)";
+
+    message.style.zIndex =
+        "99999";
+
+    message.style.padding =
+        "13px 20px";
+
+    message.style.borderRadius =
+        "12px";
+
+    message.style.background =
+        "#171225";
+
+    message.style.color =
+        "#ffffff";
+
+    message.style.fontSize =
+        "13px";
+
+    message.style.fontWeight =
+        "700";
+
+    message.style.boxShadow =
+        "0 15px 40px rgba(0,0,0,.25)";
+
+
+    document.body.appendChild(
+        message
+    );
+
+
+    setTimeout(() => {
+
+        message.remove();
+
+    }, 2500);
+
+}
