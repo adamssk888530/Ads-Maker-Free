@@ -1,186 +1,374 @@
-// ==========================================
+// ============================================
 // ADS MAKER FREE
-// TEMPLATE PAGE
-// ==========================================
+// Templates Engine
+// ============================================
 
 document.addEventListener("DOMContentLoaded", () => {
 
-    const categories =
-        document.querySelectorAll(".category");
+    const cards = [
+        ...document.querySelectorAll(".template-card")
+    ];
 
-    const cards =
-        document.querySelectorAll(".template-card");
+    const chips = [
+        ...document.querySelectorAll(".category-chip")
+    ];
+
+    const searchInput =
+        document.getElementById("templateSearch");
+
+    const sortSelect =
+        document.getElementById("templateSort");
+
+    const grid =
+        document.getElementById("templateGrid");
+
+    const emptyState =
+        document.getElementById("emptyState");
 
     const count =
         document.getElementById("templateCount");
+
+
+    let selectedCategory = "all";
+
+
+    // ==========================================
+    // URL CATEGORY
+    // ==========================================
+
+    const params =
+        new URLSearchParams(
+            window.location.search
+        );
+
+    const urlCategory =
+        params.get("category");
+
+
+    if (urlCategory) {
+
+        const normalized =
+            urlCategory
+                .toLowerCase()
+                .trim()
+                .replace(/\s+/g, "-");
+
+
+        const matchingChip =
+            chips.find(
+                chip =>
+                    chip.dataset.category ===
+                    normalized
+            );
+
+
+        if (matchingChip) {
+
+            selectedCategory =
+                normalized;
+
+
+            chips.forEach(chip => {
+
+                chip.classList.remove(
+                    "active"
+                );
+
+            });
+
+
+            matchingChip.classList.add(
+                "active"
+            );
+
+        }
+
+    }
 
 
     // ==========================================
     // CATEGORY FILTER
     // ==========================================
 
-    categories.forEach((category) => {
+    chips.forEach(chip => {
 
-        category.addEventListener("click", () => {
+        chip.addEventListener(
+            "click",
+            () => {
 
-            // Remove active from all
-            categories.forEach((item) => {
-                item.classList.remove("active");
-            });
-
-            // Activate selected category
-            category.classList.add("active");
+                selectedCategory =
+                    chip.dataset.category;
 
 
-            const selected =
-                category.textContent
-                    .trim()
-                    .replace(
-                        /^[^\w]+/,
-                        ""
+                chips.forEach(item => {
+
+                    item.classList.remove(
+                        "active"
                     );
 
-
-            let visible = 0;
-
-
-            cards.forEach((card) => {
-
-                const cardCategory =
-                    card.dataset.category;
+                });
 
 
-                if (
-                    selected === "All" ||
-                    cardCategory === selected
-                ) {
-
-                    card.style.display =
-                        "block";
-
-                    visible++;
-
-                } else {
-
-                    card.style.display =
-                        "none";
-
-                }
-
-            });
+                chip.classList.add(
+                    "active"
+                );
 
 
-            if (count) {
+                filterTemplates();
 
-                count.textContent =
-                    visible +
-                    " Templates";
+            }
+        );
 
+    });
+
+
+    // ==========================================
+    // SEARCH
+    // ==========================================
+
+    searchInput?.addEventListener(
+        "input",
+        filterTemplates
+    );
+
+
+    // ==========================================
+    // SORT
+    // ==========================================
+
+    sortSelect?.addEventListener(
+        "change",
+        () => {
+
+            sortTemplates();
+
+            filterTemplates();
+
+        }
+    );
+
+
+    // ==========================================
+    // FILTER
+    // ==========================================
+
+    function filterTemplates() {
+
+        const search =
+            searchInput
+                ? searchInput.value
+                    .toLowerCase()
+                    .trim()
+                : "";
+
+
+        let visible = 0;
+
+
+        cards.forEach(card => {
+
+            const category =
+                card.dataset.category ||
+                "";
+
+            const name =
+                card.dataset.name ||
+                "";
+
+            const type =
+                card.dataset.type ||
+                "";
+
+
+            const categoryMatch =
+                selectedCategory === "all" ||
+                category === selectedCategory;
+
+
+            const searchMatch =
+                !search ||
+                name.includes(search) ||
+                category.includes(search) ||
+                type.includes(search);
+
+
+            const show =
+                categoryMatch &&
+                searchMatch;
+
+
+            card.style.display =
+                show
+                    ? ""
+                    : "none";
+
+
+            if (show) {
+                visible++;
             }
 
         });
 
-    });
+
+        updateCount(
+            visible
+        );
+
+
+        if (emptyState) {
+
+            emptyState.hidden =
+                visible !== 0;
+
+        }
+
+    }
+
+
+    // ==========================================
+    // SORT
+    // ==========================================
+
+    function sortTemplates() {
+
+        if (!grid) return;
+
+
+        const sort =
+            sortSelect
+                ? sortSelect.value
+                : "popular";
+
+
+        const sorted =
+            [...cards].sort(
+                (a, b) => {
+
+                    const aType =
+                        a.dataset.type ||
+                        "";
+
+                    const bType =
+                        b.dataset.type ||
+                        "";
+
+
+                    if (sort === "new") {
+
+                        return (
+                            aType === "new"
+                                ? -1
+                                : 1
+                        );
+
+                    }
+
+
+                    if (sort === "sale") {
+
+                        return (
+                            aType === "sale"
+                                ? -1
+                                : 1
+                        );
+
+                    }
+
+
+                    if (sort === "minimal") {
+
+                        return (
+                            aType === "minimal"
+                                ? -1
+                                : 1
+                        );
+
+                    }
+
+
+                    return 0;
+
+                }
+            );
+
+
+        sorted.forEach(card => {
+
+            grid.appendChild(card);
+
+        });
+
+    }
+
+
+    // ==========================================
+    // COUNT
+    // ==========================================
+
+    function updateCount(number) {
+
+        if (!count) return;
+
+
+        count.textContent =
+            `${number} Template${number === 1 ? "" : "s"}`;
+
+    }
 
 
     // ==========================================
     // USE TEMPLATE
     // ==========================================
 
-    const useButtons =
-        document.querySelectorAll(
-            ".use-template"
-        );
+    document
+        .querySelectorAll(".use-template")
+        .forEach(button => {
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    const template =
+                        button.dataset.template;
 
 
-    useButtons.forEach((button) => {
+                    if (!template) {
 
-        button.addEventListener(
-            "click",
-            (event) => {
+                        window.location.href =
+                            "editor.html";
 
-                event.preventDefault();
+                        return;
 
-                const card =
-                    button.closest(
-                        ".template-card"
-                    );
+                    }
 
 
-                if (!card) {
-                    return;
+                    /*
+                     * Send the selected template
+                     * to the editor.
+                     */
+
+                    const url =
+                        "editor.html?template=" +
+                        encodeURIComponent(
+                            template
+                        );
+
+
+                    window.location.href =
+                        url;
+
                 }
+            );
 
-
-                const category =
-                    card.dataset.category;
-
-
-                const name =
-                    card
-                        .querySelector(
-                            ".template-info strong"
-                        )
-                        ?.textContent
-                        .trim();
-
-
-                // Save selected template
-                localStorage.setItem(
-                    "adsMakerTemplate",
-                    JSON.stringify({
-                        name: name || "Template",
-                        category:
-                            category || "General"
-                    })
-                );
-
-
-                // Open real editor
-                window.location.href =
-                    "editor.html";
-
-            }
-        );
-
-    });
+        });
 
 
     // ==========================================
-    // PREVIEW CLICK
+    // INITIALIZE
     // ==========================================
 
-    cards.forEach((card) => {
+    sortTemplates();
 
-        card.addEventListener(
-            "dblclick",
-            () => {
-
-                const button =
-                    card.querySelector(
-                        ".use-template"
-                    );
-
-                if (button) {
-                    button.click();
-                }
-
-            }
-        );
-
-    });
-
-
-    // ==========================================
-    // INITIAL COUNT
-    // ==========================================
-
-    if (count) {
-
-        count.textContent =
-            cards.length +
-            " Templates";
-
-    }
+    filterTemplates();
 
 });
