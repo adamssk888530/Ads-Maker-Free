@@ -18,7 +18,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     createButtons.forEach((button) => {
 
-        button.addEventListener("click", () => {
+        button.addEventListener("click", (event) => {
+
+            event.preventDefault();
 
             openEditor();
 
@@ -31,28 +33,21 @@ document.addEventListener("DOMContentLoaded", () => {
     // BROWSE TEMPLATES
     // ============================================
 
-    const browseButton = document.querySelector(
+    const browseButtons = document.querySelectorAll(
         ".secondary-btn"
     );
 
-    if (browseButton) {
+    browseButtons.forEach((button) => {
 
-        browseButton.addEventListener("click", () => {
+        button.addEventListener("click", (event) => {
 
-            const templates =
-                document.querySelector("#templates");
+            event.preventDefault();
 
-            if (templates) {
-
-                templates.scrollIntoView({
-                    behavior: "smooth"
-                });
-
-            }
+            openTemplates();
 
         });
 
-    }
+    });
 
 
     // ============================================
@@ -92,11 +87,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (viewAll) {
 
-        viewAll.addEventListener("click", () => {
+        viewAll.addEventListener("click", (event) => {
 
-            showMessage(
-                "More categories will be available here."
-            );
+            event.preventDefault();
+
+            openTemplates();
 
         });
 
@@ -106,29 +101,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 // ============================================
-// OPEN EDITOR
+// OPEN REAL EDITOR
 // ============================================
 
 function openEditor() {
 
-    showMessage(
-        "Editor is ready. We will connect the real editor next."
-    );
+    window.location.href = "editor.html";
 
-    /*
-       Later this button will open:
+}
 
-       editor.html
 
-       where the user will:
+// ============================================
+// OPEN TEMPLATES
+// ============================================
 
-       1. Choose template
-       2. Upload product image
-       3. Remove background
-       4. Edit advert
-       5. Download
-       6. Share
-    */
+function openTemplates() {
+
+    window.location.href = "templates.html";
+
 }
 
 
@@ -143,83 +133,20 @@ function openCategory(category) {
         category
     );
 
-    showMessage(
-        category + " templates selected."
-    );
 
-}
+    /*
+     * Send the selected category to
+     * templates.html.
+     *
+     * Example:
+     * templates.html?category=Shoes
+     */
 
-
-// ============================================
-// MESSAGE
-// ============================================
-
-function showMessage(message) {
-
-    const oldMessage =
-        document.querySelector(".site-message");
-
-    if (oldMessage) {
-        oldMessage.remove();
-    }
+    const url =
+        "templates.html?category=" +
+        encodeURIComponent(category);
 
 
-    const messageBox =
-        document.createElement("div");
-
-    messageBox.className =
-        "site-message";
-
-    messageBox.textContent =
-        message;
-
-
-    messageBox.style.position =
-        "fixed";
-
-    messageBox.style.bottom =
-        "25px";
-
-    messageBox.style.left =
-        "50%";
-
-    messageBox.style.transform =
-        "translateX(-50%)";
-
-    messageBox.style.background =
-        "#17172a";
-
-    messageBox.style.color =
-        "#ffffff";
-
-    messageBox.style.padding =
-        "12px 18px";
-
-    messageBox.style.borderRadius =
-        "10px";
-
-    messageBox.style.fontSize =
-        "13px";
-
-    messageBox.style.fontWeight =
-        "600";
-
-    messageBox.style.zIndex =
-        "99999";
-
-    messageBox.style.boxShadow =
-        "0 10px 30px rgba(0,0,0,.2)";
-
-
-    document.body.appendChild(
-        messageBox
-    );
-
-
-    setTimeout(() => {
-
-        messageBox.remove();
-
-    }, 2500);
+    window.location.href = url;
 
 }
