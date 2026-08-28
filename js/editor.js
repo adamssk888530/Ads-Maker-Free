@@ -1,7 +1,7 @@
 /* =========================================================
    ADS MAKER FREE
    AI AD GENERATOR
-   Background Removal + Professional Design
+   REAL REMOVE.BG INTEGRATION
 ========================================================= */
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -14,13 +14,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const canvas = new fabric.Canvas("designCanvas", {
         width: 1080,
         height: 1080,
-        backgroundColor: "#061b4f",
+        backgroundColor: "#f1f3f7",
         preserveObjectStacking: true,
         selection: true
     });
 
     window.adsMakerCanvas = canvas;
-
 
     /* =====================================================
        ELEMENTS
@@ -80,9 +79,7 @@ document.addEventListener("DOMContentLoaded", () => {
     ===================================================== */
 
     let originalImage = null;
-
     let cleanImage = null;
-
     let selectedStyle = "premium";
 
 
@@ -90,90 +87,79 @@ document.addEventListener("DOMContentLoaded", () => {
        DEFAULT VALUES
     ===================================================== */
 
-    headline.value =
-        "NEW ARRIVAL";
+    if (headline)
+        headline.value = "NEW ARRIVAL";
 
-    subheadline.value =
-        "PREMIUM STYLE • EVERYDAY COMFORT";
+    if (subheadline)
+        subheadline.value =
+            "STYLE MEETS COMFORT";
 
-    price.value =
-        "₦35,000";
+    if (price)
+        price.value = "₦35,000";
 
-    oldPrice.value =
-        "₦50,000";
+    if (oldPrice)
+        oldPrice.value = "₦50,000";
 
-    discount.value =
-        "30% OFF";
+    if (discount)
+        discount.value = "30% OFF";
 
-    phone.value =
-        "080 1234 5678";
+    if (phone)
+        phone.value = "080 1234 5678";
 
-    buttonText.value =
-        "SHOP NOW";
+    if (buttonText)
+        buttonText.value = "SHOP NOW";
 
 
     /* =====================================================
        UPLOAD
     ===================================================== */
 
-    uploadBtn.addEventListener(
-        "click",
-        () => imageInput.click()
-    );
+    uploadBtn?.addEventListener("click", () => {
+        imageInput?.click();
+    });
 
 
-    imageInput.addEventListener(
-        "change",
-        (event) => {
+    imageInput?.addEventListener("change", (event) => {
 
-            const file =
-                event.target.files[0];
+        const file = event.target.files?.[0];
 
-            if (!file) return;
+        if (!file) return;
 
+        if (!file.type.startsWith("image/")) {
 
-            if (!file.type.startsWith("image/")) {
+            alert("Please select a valid image.");
 
-                alert(
-                    "Please select a valid image."
-                );
-
-                return;
-            }
-
-
-            const reader =
-                new FileReader();
-
-
-            reader.onload = () => {
-
-                originalImage =
-                    reader.result;
-
-                cleanImage = null;
-
-                showPreview(
-                    originalImage
-                );
-
-                uploadBtn.classList.add(
-                    "has-image"
-                );
-
-                uploadBtn.innerHTML = `
-                    <span class="upload-icon">✓</span>
-                    <strong>Product Image Added</strong>
-                    <small>Click to change image</small>
-                `;
-
-            };
-
-
-            reader.readAsDataURL(file);
-
+            return;
         }
-    );
+
+        const reader = new FileReader();
+
+        reader.onload = () => {
+
+            originalImage = reader.result;
+            cleanImage = null;
+
+            showPreview(originalImage);
+
+            uploadBtn.classList.add("has-image");
+
+            uploadBtn.innerHTML = `
+                <span class="upload-icon">✓</span>
+                <strong>Product Image Added</strong>
+                <small>Click to change image</small>
+            `;
+        };
+
+        reader.onerror = () => {
+
+            alert(
+                "An samu matsala wajen karanta hoton."
+            );
+
+        };
+
+        reader.readAsDataURL(file);
+    });
 
 
     /* =====================================================
@@ -182,30 +168,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function showPreview(src) {
 
+        if (!preview) return;
+
         preview.innerHTML = "";
 
         const img =
             document.createElement("img");
 
         img.src = src;
+        img.alt = "Product image";
 
-        img.alt =
-            "Product image";
-
-        img.style.width =
-            "100%";
-
-        img.style.height =
-            "180px";
-
-        img.style.objectFit =
-            "contain";
-
-        img.style.borderRadius =
-            "14px";
+        img.style.width = "100%";
+        img.style.height = "180px";
+        img.style.objectFit = "contain";
+        img.style.borderRadius = "14px";
 
         preview.appendChild(img);
-
     }
 
 
@@ -213,84 +191,92 @@ document.addEventListener("DOMContentLoaded", () => {
        STYLE
     ===================================================== */
 
-    styleButtons.forEach(
-        (button) => {
+    styleButtons.forEach((button) => {
 
-            button.addEventListener(
-                "click",
-                () => {
+        button.addEventListener("click", () => {
 
-                    styleButtons.forEach(
-                        (item) =>
-                            item.classList.remove(
-                                "active"
-                            )
-                    );
+            styleButtons.forEach((item) => {
+                item.classList.remove("active");
+            });
 
-                    button.classList.add(
-                        "active"
-                    );
+            button.classList.add("active");
 
-                    selectedStyle =
-                        button.dataset.style ||
-                        "premium";
+            selectedStyle =
+                button.dataset.style || "premium";
+        });
 
-                }
-            );
-
-        }
-    );
+    });
 
 
     /* =====================================================
-       REMOVE BACKGROUND API
+       REAL REMOVE.BG API
     ===================================================== */
 
-    async function removeBackground(
-        imageData
-    ) {
+    async function removeBackground(imageData) {
+
+        if (!imageData) {
+            throw new Error(
+                "Babu hoton da za a aika."
+            );
+        }
 
         setGenerateText(
             "✨ Removing background..."
         );
 
 
+        /*
+         * IMPORTANT:
+         *
+         * remove-background.js yana jiran:
+         *
+         * {
+         *    image: "data:image/...;base64,..."
+         * }
+         *
+         * Saboda haka muna aika JSON.
+         */
+
         const response =
-            await fetch(
-                imageData
-            );
-
-
-        const blob =
-            await response.blob();
-
-
-        const formData =
-            new FormData();
-
-
-        formData.append(
-            "image",
-            blob,
-            "product.png"
-        );
-
-
-        const apiResponse =
             await fetch(
                 "/api/remove-background",
                 {
                     method: "POST",
-                    body: formData
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body: JSON.stringify({
+                        image: imageData
+                    })
                 }
             );
 
 
-        const result =
-            await apiResponse.json();
+        let result;
+
+        try {
+
+            result =
+                await response.json();
+
+        } catch {
+
+            throw new Error(
+                "Server bai dawo da JSON ba."
+            );
+
+        }
 
 
-        if (!apiResponse.ok) {
+        if (!response.ok) {
+
+            console.error(
+                "Remove BG API error:",
+                result
+            );
 
             throw new Error(
                 result.error ||
@@ -300,30 +286,24 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
 
-        if (
-            !result.image
-        ) {
+        if (!result.image) {
 
             throw new Error(
-                "No transparent image returned."
+                "Ba a samu transparent image ba."
             );
 
         }
 
 
         return result.image;
-
     }
 
 
     /* =====================================================
-       CREATE TEXT
+       TEXT
     ===================================================== */
 
-    function addText(
-        text,
-        options = {}
-    ) {
+    function addText(text, options = {}) {
 
         const object =
             new fabric.Textbox(
@@ -346,35 +326,26 @@ document.addEventListener("DOMContentLoaded", () => {
                         "Arial",
 
                     fontWeight:
-                        options.fontWeight ||
-                        "700",
+                        options.fontWeight || "700",
 
                     fill:
-                        options.fill ||
-                        "#ffffff",
+                        options.fill || "#ffffff",
 
                     textAlign:
-                        options.textAlign ||
-                        "left",
+                        options.textAlign || "left",
 
                     lineHeight:
-                        options.lineHeight ||
-                        1.05,
+                        options.lineHeight || 1.05,
 
-                    selectable:
-                        false,
+                    selectable: false,
 
-                    evented:
-                        false
-
+                    evented: false
                 }
             );
-
 
         canvas.add(object);
 
         return object;
-
     }
 
 
@@ -382,9 +353,7 @@ document.addEventListener("DOMContentLoaded", () => {
        RECTANGLE
     ===================================================== */
 
-    function addRect(
-        options = {}
-    ) {
+    function addRect(options = {}) {
 
         const rect =
             new fabric.Rect({
@@ -402,30 +371,22 @@ document.addEventListener("DOMContentLoaded", () => {
                     options.height ?? 100,
 
                 fill:
-                    options.fill ||
-                    "#ffffff",
+                    options.fill || "#ffffff",
 
                 rx:
-                    options.rx ||
-                    0,
+                    options.rx || 0,
 
                 ry:
-                    options.ry ||
-                    0,
+                    options.ry || 0,
 
-                selectable:
-                    false,
+                selectable: false,
 
-                evented:
-                    false
-
+                evented: false
             });
-
 
         canvas.add(rect);
 
         return rect;
-
     }
 
 
@@ -433,9 +394,7 @@ document.addEventListener("DOMContentLoaded", () => {
        CIRCLE
     ===================================================== */
 
-    function addCircle(
-        options = {}
-    ) {
+    function addCircle(options = {}) {
 
         const circle =
             new fabric.Circle({
@@ -450,35 +409,26 @@ document.addEventListener("DOMContentLoaded", () => {
                     options.radius ?? 50,
 
                 fill:
-                    options.fill ||
-                    "#ffffff",
+                    options.fill || "#ffffff",
 
                 stroke:
                     options.stroke,
 
                 strokeWidth:
-                    options.strokeWidth ||
-                    0,
+                    options.strokeWidth || 0,
 
-                originX:
-                    "center",
+                originX: "center",
 
-                originY:
-                    "center",
+                originY: "center",
 
-                selectable:
-                    false,
+                selectable: false,
 
-                evented:
-                    false
-
+                evented: false
             });
-
 
         canvas.add(circle);
 
         return circle;
-
     }
 
 
@@ -489,38 +439,22 @@ document.addEventListener("DOMContentLoaded", () => {
     function createBackground() {
 
         let first =
-            bgColor.value ||
-            "#061b4f";
+            bgColor?.value || "#061b4f";
 
-        let second =
-            "#020617";
+        let second = "#020617";
 
 
-        if (
-            selectedStyle ===
-            "sale"
-        ) {
+        if (selectedStyle === "sale") {
 
-            first =
-                "#a90000";
-
-            second =
-                "#210000";
-
+            first = "#b40000";
+            second = "#210000";
         }
 
 
-        if (
-            selectedStyle ===
-            "minimal"
-        ) {
+        if (selectedStyle === "minimal") {
 
-            first =
-                "#eeeeee";
-
-            second =
-                "#ffffff";
-
+            first = "#eeeeee";
+            second = "#ffffff";
         }
 
 
@@ -541,15 +475,10 @@ document.addEventListener("DOMContentLoaded", () => {
                         type: "linear",
 
                         coords: {
-
                             x1: 0,
-
                             y1: 0,
-
                             x2: 1080,
-
                             y2: 1080
-
                         },
 
                         colorStops: [
@@ -560,7 +489,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             },
 
                             {
-                                offset: 0.5,
+                                offset: 0.55,
                                 color: first
                             },
 
@@ -570,22 +499,17 @@ document.addEventListener("DOMContentLoaded", () => {
                             }
 
                         ]
-
                     }),
 
                 selectable: false,
 
                 evented: false
-
             });
 
 
         canvas.add(background);
 
-        canvas.sendObjectToBack(
-            background
-        );
-
+        canvas.sendObjectToBack(background);
     }
 
 
@@ -595,10 +519,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function createGlow() {
 
-        if (
-            selectedStyle ===
-            "minimal"
-        ) {
+        if (selectedStyle === "minimal") {
             return;
         }
 
@@ -609,14 +530,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
             top: 350,
 
-            radius: 250,
+            radius: 260,
 
             fill:
-                selectedStyle ===
-                "sale"
+                selectedStyle === "sale"
                     ? "rgba(255,50,30,.15)"
-                    : "rgba(30,120,255,.15)"
-
+                    : "rgba(30,120,255,.16)"
         });
 
 
@@ -624,28 +543,23 @@ document.addEventListener("DOMContentLoaded", () => {
 
             left: 220,
 
-            top: 760,
+            top: 780,
 
-            radius: 220,
+            radius: 230,
 
             fill:
-                selectedStyle ===
-                "sale"
-                    ? "rgba(255,20,20,.12)"
-                    : "rgba(100,60,255,.12)"
-
+                selectedStyle === "sale"
+                    ? "rgba(255,20,20,.13)"
+                    : "rgba(100,60,255,.13)"
         });
-
     }
 
 
     /* =====================================================
-       PRODUCT
+       PRODUCT IMAGE
     ===================================================== */
 
-    async function addProduct(
-        imageURL
-    ) {
+    async function addProduct(imageURL) {
 
         const image =
             await fabric.Image.fromURL(
@@ -653,20 +567,22 @@ document.addEventListener("DOMContentLoaded", () => {
             );
 
 
-        const maxWidth =
-            760;
+        if (!image.width || !image.height) {
 
-        const maxHeight =
-            500;
+            throw new Error(
+                "Product image ba shi da dimensions."
+            );
+        }
+
+
+        const maxWidth = 820;
+        const maxHeight = 540;
 
 
         const scale =
             Math.min(
-                maxWidth /
-                    image.width,
-
-                maxHeight /
-                    image.height
+                maxWidth / image.width,
+                maxHeight / image.height
             );
 
 
@@ -674,37 +590,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
             left: 540,
 
-            top: 580,
+            top: 565,
 
-            originX:
-                "center",
+            originX: "center",
 
-            originY:
-                "center",
+            originY: "center",
 
-            scaleX:
-                scale,
+            scaleX: scale,
 
-            scaleY:
-                scale,
+            scaleY: scale,
 
-            selectable:
-                true,
+            selectable: true,
 
-            evented:
-                true,
+            evented: true,
 
-            cornerColor:
-                "#7437ff",
+            cornerColor: "#7437ff",
 
-            borderColor:
-                "#7437ff",
+            borderColor: "#7437ff",
 
-            transparentCorners:
-                false,
+            transparentCorners: false,
 
-            padding:
-                8,
+            padding: 8,
 
             shadow:
                 new fabric.Shadow({
@@ -712,26 +618,18 @@ document.addEventListener("DOMContentLoaded", () => {
                     color:
                         "rgba(0,0,0,.45)",
 
-                    blur:
-                        30,
+                    blur: 30,
 
-                    offsetX:
-                        0,
+                    offsetX: 0,
 
-                    offsetY:
-                        20
-
+                    offsetY: 20
                 })
-
         });
 
 
         canvas.add(image);
 
-        canvas.bringObjectToFront(
-            image
-        );
-
+        canvas.bringObjectToFront(image);
     }
 
 
@@ -742,7 +640,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function createDiscount() {
 
         const value =
-            discount.value.trim();
+            discount?.value.trim();
 
         if (!value) return;
 
@@ -760,7 +658,6 @@ document.addEventListener("DOMContentLoaded", () => {
             stroke: "#ffffff",
 
             strokeWidth: 4
-
         });
 
 
@@ -778,19 +675,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 fontSize: 27,
 
-                fontWeight:
-                    "900",
+                fontWeight: "900",
 
-                fill:
-                    "#111111",
+                fill: "#111111",
 
-                textAlign:
-                    "center"
-
+                textAlign: "center"
             }
-
         );
-
     }
 
 
@@ -801,10 +692,10 @@ document.addEventListener("DOMContentLoaded", () => {
     function createPrice() {
 
         const currentPrice =
-            price.value.trim();
+            price?.value.trim();
 
         const previousPrice =
-            oldPrice.value.trim();
+            oldPrice?.value.trim();
 
 
         if (!currentPrice) return;
@@ -821,15 +712,13 @@ document.addEventListener("DOMContentLoaded", () => {
             height: 105,
 
             fill:
-                selectedStyle ===
-                "minimal"
+                selectedStyle === "minimal"
                     ? "#111111"
                     : "#ffd21a",
 
             rx: 20,
 
             ry: 20
-
         });
 
 
@@ -847,17 +736,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 fontSize: 55,
 
-                fontWeight:
-                    "900",
+                fontWeight: "900",
 
                 fill:
-                    selectedStyle ===
-                    "minimal"
+                    selectedStyle === "minimal"
                         ? "#ffffff"
                         : "#111111"
-
             }
-
         );
 
 
@@ -877,18 +762,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     fontSize: 29,
 
-                    fontWeight:
-                        "700",
+                    fontWeight: "700",
 
-                    fill:
-                        "#ffffff"
-
+                    fill: "#ffffff"
                 }
-
             );
-
         }
-
     }
 
 
@@ -899,7 +778,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function createCTA() {
 
         const text =
-            buttonText.value.trim() ||
+            buttonText?.value.trim() ||
             "SHOP NOW";
 
 
@@ -918,7 +797,6 @@ document.addEventListener("DOMContentLoaded", () => {
             rx: 35,
 
             ry: 35
-
         });
 
 
@@ -936,30 +814,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 fontSize: 26,
 
-                fontWeight:
-                    "900",
+                fontWeight: "900",
 
-                fill:
-                    "#111111",
+                fill: "#111111",
 
-                textAlign:
-                    "center"
-
+                textAlign: "center"
             }
-
         );
-
     }
 
 
     /* =====================================================
-       PHONE
+       WHATSAPP
     ===================================================== */
 
     function createPhone() {
 
         const number =
-            phone.value.trim();
+            phone?.value.trim();
 
         if (!number) return;
 
@@ -973,7 +845,6 @@ document.addEventListener("DOMContentLoaded", () => {
             radius: 31,
 
             fill: "#20d366"
-
         });
 
 
@@ -991,17 +862,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 fontSize: 16,
 
-                fontWeight:
-                    "900",
+                fontWeight: "900",
 
-                fill:
-                    "#ffffff",
+                fill: "#ffffff",
 
-                textAlign:
-                    "center"
-
+                textAlign: "center"
             }
-
         );
 
 
@@ -1019,21 +885,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 fontSize: 27,
 
-                fontWeight:
-                    "700",
+                fontWeight: "700",
 
-                fill:
-                    "#ffffff"
-
+                fill: "#ffffff"
             }
-
         );
-
     }
 
 
     /* =====================================================
-       GENERATE
+       GENERATE AD
     ===================================================== */
 
     async function generateAd() {
@@ -1045,18 +906,27 @@ document.addEventListener("DOMContentLoaded", () => {
             );
 
             return;
-
         }
 
 
-        generateBtn.disabled =
-            true;
+        if (!generateBtn) {
+
+            alert(
+                "Generate button bai samu ba."
+            );
+
+            return;
+        }
+
+
+        generateBtn.disabled = true;
 
 
         try {
 
             /*
-             * REAL AI BACKGROUND REMOVAL
+             * STEP 1
+             * REMOVE BACKGROUND
              */
 
             cleanImage =
@@ -1071,6 +941,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
             /*
+             * STEP 2
              * CLEAR CANVAS
              */
 
@@ -1078,6 +949,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
             /*
+             * STEP 3
              * BACKGROUND
              */
 
@@ -1087,6 +959,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
             /*
+             * STEP 4
              * BADGE
              */
 
@@ -1101,22 +974,19 @@ document.addEventListener("DOMContentLoaded", () => {
                 height: 45,
 
                 fill:
-                    selectedStyle ===
-                    "minimal"
+                    selectedStyle === "minimal"
                         ? "#111111"
                         : "#ed3028",
 
                 rx: 8,
 
                 ry: 8
-
             });
 
 
             addText(
 
-                selectedStyle ===
-                "sale"
+                selectedStyle === "sale"
                     ? "BIG SALE"
                     : "NEW ARRIVAL",
 
@@ -1130,24 +1000,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     fontSize: 20,
 
-                    fontWeight:
-                        "900",
+                    fontWeight: "900",
 
-                    fill:
-                        "#ffffff"
-
+                    fill: "#ffffff"
                 }
-
             );
 
 
             /*
+             * STEP 5
              * HEADLINE
              */
 
             addText(
 
-                headline.value.trim() ||
+                headline?.value.trim() ||
                 "NEW ARRIVAL",
 
                 {
@@ -1160,29 +1027,25 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     fontSize: 67,
 
-                    fontWeight:
-                        "900",
+                    fontWeight: "900",
 
                     fill:
-                        selectedStyle ===
-                        "minimal"
+                        selectedStyle === "minimal"
                             ? "#111111"
                             : "#ffffff",
 
-                    lineHeight:
-                        .95
-
+                    lineHeight: .95
                 }
-
             );
 
 
             /*
-             * DESCRIPTION
+             * STEP 6
+             * SUBHEADLINE
              */
 
             if (
-                subheadline.value.trim()
+                subheadline?.value.trim()
             ) {
 
                 addText(
@@ -1199,23 +1062,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
                         fontSize: 25,
 
-                        fontWeight:
-                            "600",
+                        fontWeight: "600",
 
                         fill:
-                            selectedStyle ===
-                            "minimal"
+                            selectedStyle === "minimal"
                                 ? "#333333"
                                 : "#eeeeee"
-
                     }
-
                 );
-
             }
 
 
             /*
+             * STEP 7
              * DISCOUNT
              */
 
@@ -1223,15 +1082,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
             /*
-             * CLEAN PRODUCT
+             * STEP 8
+             * PRODUCT
              */
 
-            await addProduct(
-                cleanImage
-            );
+            await addProduct(cleanImage);
 
 
             /*
+             * STEP 9
              * PRICE
              */
 
@@ -1239,13 +1098,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
             /*
-             * CTA
+             * STEP 10
+             * BUTTON
              */
 
             createCTA();
 
 
             /*
+             * STEP 11
              * WHATSAPP
              */
 
@@ -1278,33 +1139,27 @@ document.addEventListener("DOMContentLoaded", () => {
                 "✨ Generate Professional Ad"
             );
 
+
         } finally {
 
-            generateBtn.disabled =
-                false;
-
+            generateBtn.disabled = false;
         }
-
     }
 
 
     /* =====================================================
-       GENERATE BUTTON TEXT
+       BUTTON TEXT
     ===================================================== */
 
-    function setGenerateText(
-        text
-    ) {
+    function setGenerateText(text) {
 
         if (generateBtn) {
-            generateBtn.innerHTML =
-                text;
+            generateBtn.innerHTML = text;
         }
-
     }
 
 
-    generateBtn.addEventListener(
+    generateBtn?.addEventListener(
         "click",
         generateAd
     );
@@ -1324,39 +1179,27 @@ document.addEventListener("DOMContentLoaded", () => {
         const data =
             canvas.toDataURL({
 
-                format:
-                    "png",
+                format: "png",
 
-                quality:
-                    1,
+                quality: 1,
 
-                multiplier:
-                    1
-
+                multiplier: 1
             });
 
 
         const link =
             document.createElement("a");
 
-
-        link.href =
-            data;
-
+        link.href = data;
 
         link.download =
             "ads-maker-free.png";
 
-
-        document.body.appendChild(
-            link
-        );
-
+        document.body.appendChild(link);
 
         link.click();
 
         link.remove();
-
     }
 
 
@@ -1381,37 +1224,37 @@ document.addEventListener("DOMContentLoaded", () => {
         () => {
 
             originalImage = null;
-
             cleanImage = null;
-
 
             canvas.clear();
 
             canvas.backgroundColor =
                 "#f1f3f7";
 
-
             canvas.renderAll();
 
+            if (imageInput) {
+                imageInput.value = "";
+            }
 
-            imageInput.value = "";
+            if (preview) {
 
+                preview.innerHTML =
+                    "<span>No image selected</span>";
+            }
 
-            preview.innerHTML =
-                "<span>No image selected</span>";
-
-
-            uploadBtn.classList.remove(
+            uploadBtn?.classList.remove(
                 "has-image"
             );
 
+            if (uploadBtn) {
 
-            uploadBtn.innerHTML = `
-                <span class="upload-icon">↑</span>
-                <strong>Upload Product Image</strong>
-                <small>PNG, JPG or WEBP</small>
-            `;
-
+                uploadBtn.innerHTML = `
+                    <span class="upload-icon">↑</span>
+                    <strong>Upload Product Image</strong>
+                    <small>PNG, JPG or WEBP</small>
+                `;
+            }
         }
     );
 
