@@ -21,7 +21,10 @@
 
 <div id="editor-app">
 
-    <!-- HEADER -->
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
+
     <header class="editor-header">
 
         <a
@@ -45,12 +48,21 @@
     </header>
 
 
-    <!-- MAIN -->
+    <!-- =====================================================
+         MAIN GENERATOR
+    ====================================================== -->
+
     <main class="generator-main">
 
 
-        <!-- LEFT: SETTINGS -->
+        <!-- =================================================
+             LEFT PANEL
+        ================================================== -->
+
         <section class="generator-panel">
+
+
+            <!-- TITLE -->
 
             <div class="panel-title">
 
@@ -63,19 +75,28 @@
                 </h1>
 
                 <p>
-                    Upload your product image, enter your details,
-                    and generate a professional advert in seconds.
+                    Upload your product, describe your advert,
+                    and let AI create a premium advertisement.
                 </p>
 
             </div>
 
 
-            <!-- PRODUCT IMAGE -->
+            <!-- =================================================
+                 STEP 1 — PRODUCT IMAGE
+            ================================================== -->
+
             <div class="form-section">
 
                 <h2>
-                    🖼️ Product Image
+                    ① 🖼️ Product Image
                 </h2>
+
+                <p class="section-description">
+                    Upload a clear photo of your product.
+                    AI will remove the background automatically.
+                </p>
+
 
                 <button
                     id="productUploadBtn"
@@ -96,6 +117,7 @@
                     </small>
 
                 </button>
+
 
                 <input
                     type="file"
@@ -119,11 +141,14 @@
             </div>
 
 
-            <!-- AD DETAILS -->
+            <!-- =================================================
+                 STEP 2 — AD DETAILS
+            ================================================== -->
+
             <div class="form-section">
 
                 <h2>
-                    ✍️ Ad Details
+                    ② ✍️ Ad Details
                 </h2>
 
 
@@ -146,7 +171,7 @@
                 <input
                     type="text"
                     id="subheadlineInput"
-                    placeholder="e.g. Style Meets Comfort"
+                    placeholder="e.g. STYLE MEETS COMFORT"
                     maxlength="80"
                 >
 
@@ -223,16 +248,104 @@
             </div>
 
 
-            <!-- DESIGN -->
+            <!-- =================================================
+                 STEP 3 — AI PREMIUM SCENE
+            ================================================== -->
+
+            <div class="form-section ai-scene-section">
+
+                <h2>
+                    ③ ✨ AI Premium Scene
+                </h2>
+
+                <p class="section-description">
+                    Tell AI what kind of professional background
+                    you want for your product.
+                </p>
+
+
+                <label for="scenePromptInput">
+                    Describe your scene
+                </label>
+
+                <textarea
+                    id="scenePromptInput"
+                    rows="4"
+                    maxlength="500"
+                    placeholder="Example: Luxury shoe advertisement, dark blue premium studio, dramatic lighting, elegant platform, realistic shadows..."
+                ></textarea>
+
+
+                <!-- AI PRESETS -->
+
+                <div class="scene-presets">
+
+                    <button
+                        type="button"
+                        class="scene-preset active"
+                        data-prompt="Luxury premium product studio, dark navy background, dramatic blue lighting, elegant platform, realistic soft shadows, high-end commercial photography"
+                    >
+                        💎 Premium
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="scene-preset"
+                        data-prompt="Professional sale advertisement, powerful red and black background, dramatic lighting, glowing effects, realistic commercial product photography"
+                    >
+                        🔥 Sale
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="scene-preset"
+                        data-prompt="Clean luxury product advertisement, bright minimal studio, soft shadows, elegant white background, premium commercial photography"
+                    >
+                        🤍 Minimal
+                    </button>
+
+                </div>
+
+
+                <!-- GENERATE SCENE -->
+
+                <button
+                    id="generateSceneBtn"
+                    type="button"
+                    class="scene-generate-btn"
+                >
+                    ✨ Generate AI Scene
+                </button>
+
+
+                <!-- STATUS -->
+
+                <div
+                    id="sceneStatus"
+                    class="scene-status"
+                    hidden
+                >
+                    ✨ AI is creating your premium scene...
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 STEP 4 — DESIGN
+            ================================================== -->
+
             <div class="form-section">
 
                 <h2>
-                    🎨 Design
+                    ④ 🎨 Design Style
                 </h2>
 
 
                 <label for="backgroundColor">
-                    Background
+                    Background Color
                 </label>
 
                 <input
@@ -249,23 +362,25 @@
                         class="style-option active"
                         data-style="premium"
                     >
-                        Premium
+                        💎 Premium
                     </button>
+
 
                     <button
                         type="button"
                         class="style-option"
                         data-style="sale"
                     >
-                        Sale
+                        🔥 Sale
                     </button>
+
 
                     <button
                         type="button"
                         class="style-option"
                         data-style="minimal"
                     >
-                        Minimal
+                        🤍 Minimal
                     </button>
 
                 </div>
@@ -273,15 +388,30 @@
             </div>
 
 
-            <!-- GENERATE -->
-            <button
-                id="generateAdBtn"
-                type="button"
-                class="generate-btn"
-            >
-                ✨ Generate Professional Ad
-            </button>
+            <!-- =================================================
+                 STEP 5 — GENERATE
+            ================================================== -->
 
+            <div class="generate-area">
+
+                <button
+                    id="generateAdBtn"
+                    type="button"
+                    class="generate-btn"
+                >
+                    ✨ Generate Professional Ad
+                </button>
+
+
+                <p class="generate-hint">
+                    AI will remove the background and create
+                    your professional 1080 × 1080 advert.
+                </p>
+
+            </div>
+
+
+            <!-- RESET -->
 
             <button
                 id="resetBtn"
@@ -291,11 +421,16 @@
                 Reset
             </button>
 
+
         </section>
 
 
-        <!-- RIGHT: PREVIEW -->
+        <!-- =================================================
+             RIGHT — LIVE PREVIEW
+        ================================================== -->
+
         <section class="preview-panel">
+
 
             <div class="preview-header">
 
@@ -309,7 +444,12 @@
                         Your Advertisement
                     </h2>
 
+                    <p>
+                        Your final professional ad will appear here.
+                    </p>
+
                 </div>
+
 
                 <span class="size-label">
                     1080 × 1080
@@ -317,6 +457,8 @@
 
             </div>
 
+
+            <!-- CANVAS -->
 
             <div class="canvas-wrapper">
 
@@ -329,6 +471,8 @@
             </div>
 
 
+            <!-- DOWNLOAD -->
+
             <div class="preview-actions">
 
                 <button
@@ -340,21 +484,29 @@
 
             </div>
 
+
         </section>
 
     </main>
 
 
-    <!-- FABRIC.JS -->
+    <!-- =====================================================
+         FABRIC.JS
+    ====================================================== -->
+
     <script
         src="https://cdn.jsdelivr.net/npm/fabric@6.7.1/dist/index.min.js"
     ></script>
 
 
-    <!-- EDITOR -->
+    <!-- =====================================================
+         EDITOR JAVASCRIPT
+    ====================================================== -->
+
     <script
         src="js/editor.js"
     ></script>
+
 
 </div>
 
