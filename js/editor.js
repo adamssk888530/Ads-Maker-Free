@@ -1,165 +1,474 @@
-/* =====================================================
+/* =========================================================
    ADS MAKER FREE
-   EDITOR ENGINE
-===================================================== */
+   REAL AD GENERATOR
+   Fabric.js 6
+========================================================= */
 
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", () => {
+
+    // -----------------------------------------------------
+    // CHECK FABRIC
+    // -----------------------------------------------------
 
     if (typeof fabric === "undefined") {
         console.error("Fabric.js bai load ba.");
         return;
     }
 
+
+    // -----------------------------------------------------
+    // CANVAS
+    // -----------------------------------------------------
+
     const canvas = new fabric.Canvas("designCanvas", {
         width: 1080,
         height: 1080,
-        backgroundColor: "#ffffff",
-        preserveObjectStacking: true,
-        selection: true
+        selection: true,
+        preserveObjectStacking: true
     });
 
     window.adsMakerCanvas = canvas;
 
 
-    /* =================================================
-       ELEMENTS
-    ================================================= */
-
-    const productInput =
-        document.getElementById("productImageInput");
+    // -----------------------------------------------------
+    // GET ELEMENTS
+    // -----------------------------------------------------
 
     const productUploadBtn =
         document.getElementById("productUploadBtn");
 
-    const uploadBtn =
-        document.getElementById("uploadBtn");
-
-    const removeBackgroundBtn =
-        document.getElementById("removeBackgroundBtn");
-
-    const addProductBtn =
-        document.getElementById("addProductBtn");
+    const productImageInput =
+        document.getElementById("productImageInput");
 
     const productPreview =
         document.getElementById("productPreview");
 
+    const headlineInput =
+        document.getElementById("headlineInput");
+
+    const subheadlineInput =
+        document.getElementById("subheadlineInput");
+
+    const priceInput =
+        document.getElementById("priceInput");
+
+    const oldPriceInput =
+        document.getElementById("oldPriceInput");
+
+    const discountInput =
+        document.getElementById("discountInput");
+
+    const phoneInput =
+        document.getElementById("phoneInput");
+
+    const buttonTextInput =
+        document.getElementById("buttonTextInput");
+
     const backgroundColor =
         document.getElementById("backgroundColor");
 
-    const resetBackgroundBtn =
-        document.getElementById("resetBackgroundBtn");
+    const generateAdBtn =
+        document.getElementById("generateAdBtn");
 
-    const addHeadlineBtn =
-        document.getElementById("addHeadlineBtn");
-
-    const addPriceBtn =
-        document.getElementById("addPriceBtn");
-
-    const addPhoneBtn =
-        document.getElementById("addPhoneBtn");
-
-    const deleteObjectBtn =
-        document.getElementById("deleteObjectBtn");
+    const resetBtn =
+        document.getElementById("resetBtn");
 
     const downloadBtn =
         document.getElementById("downloadBtn");
 
-    const undoBtn =
-        document.getElementById("undoBtn");
+    const downloadBtnBottom =
+        document.getElementById("downloadBtnBottom");
 
-    const redoBtn =
-        document.getElementById("redoBtn");
-
-    const uploadLogoBtn =
-        document.getElementById("uploadLogoBtn");
-
-    const logoInput =
-        document.getElementById("logoInput");
-
-    const templatesBtn =
-        document.getElementById("templatesBtn");
+    const styleButtons =
+        document.querySelectorAll(".style-option");
 
 
-    /* =================================================
-       STATE
-    ================================================= */
+    // -----------------------------------------------------
+    // STATE
+    // -----------------------------------------------------
 
-    let uploadedImage = null;
+    let uploadedImageURL = null;
 
-    let history = [];
-
-    let historyPosition = -1;
-
-    let changingHistory = false;
+    let selectedStyle = "premium";
 
 
-    /* =================================================
-       CREATE TEXT
-    ================================================= */
+    // -----------------------------------------------------
+    // DEFAULT VALUES
+    // -----------------------------------------------------
 
-    function createText(
-        text,
-        left,
-        top,
-        size,
-        color,
-        weight
-    ) {
+    if (headlineInput) {
+        headlineInput.value = "NEW ARRIVAL";
+    }
 
-        const object =
-            new fabric.IText(text, {
+    if (subheadlineInput) {
+        subheadlineInput.value = "STYLE MEETS COMFORT";
+    }
 
-                left: left,
+    if (priceInput) {
+        priceInput.value = "₦35,000";
+    }
 
-                top: top,
+    if (oldPriceInput) {
+        oldPriceInput.value = "₦50,000";
+    }
 
-                fill: color || "#111111",
+    if (discountInput) {
+        discountInput.value = "30% OFF";
+    }
 
-                fontSize: size || 60,
-
-                fontFamily: "Arial",
-
-                fontWeight:
-                    weight || "700",
-
-                padding: 8,
-
-                cornerColor: "#7437ff",
-
-                cornerStyle: "circle",
-
-                transparentCorners: false,
-
-                borderColor: "#7437ff",
-
-                editable: true
-
-            });
-
-        canvas.add(object);
-
-        canvas.setActiveObject(object);
-
-        canvas.renderAll();
-
-        saveHistory();
-
-        return object;
+    if (phoneInput) {
+        phoneInput.value = "080 1234 5678";
     }
 
 
-    /* =================================================
-       DEFAULT AD
-    ================================================= */
+    // -----------------------------------------------------
+    // UPLOAD BUTTON
+    // -----------------------------------------------------
 
-    function createDefaultAd() {
+    if (productUploadBtn && productImageInput) {
 
-        canvas.clear();
+        productUploadBtn.addEventListener("click", () => {
+            productImageInput.click();
+        });
 
-        canvas.backgroundColor = "#ffffff";
+    }
 
 
-        /* Background */
+    // -----------------------------------------------------
+    // IMAGE UPLOAD
+    // -----------------------------------------------------
+
+    if (productImageInput) {
+
+        productImageInput.addEventListener(
+            "change",
+            (event) => {
+
+                const file =
+                    event.target.files[0];
+
+                if (!file) {
+                    return;
+                }
+
+
+                if (!file.type.startsWith("image/")) {
+
+                    alert(
+                        "Da fatan zaɓi hoto PNG, JPG ko WEBP."
+                    );
+
+                    return;
+                }
+
+
+                const reader =
+                    new FileReader();
+
+
+                reader.onload = () => {
+
+                    uploadedImageURL =
+                        reader.result;
+
+
+                    showProductPreview(
+                        uploadedImageURL
+                    );
+
+
+                    productUploadBtn.classList.add(
+                        "has-image"
+                    );
+
+
+                    productUploadBtn.innerHTML = `
+                        <span class="upload-icon">✓</span>
+                        <strong>Product Image Added</strong>
+                        <small>Click to change image</small>
+                    `;
+
+                };
+
+
+                reader.readAsDataURL(file);
+
+            }
+        );
+
+    }
+
+
+    // -----------------------------------------------------
+    // PREVIEW IMAGE
+    // -----------------------------------------------------
+
+    function showProductPreview(imageURL) {
+
+        if (!productPreview) {
+            return;
+        }
+
+
+        productPreview.innerHTML = "";
+
+
+        const img =
+            document.createElement("img");
+
+
+        img.src = imageURL;
+
+        img.alt = "Product preview";
+
+
+        img.style.width = "100%";
+
+        img.style.height = "180px";
+
+        img.style.objectFit = "contain";
+
+        img.style.borderRadius = "14px";
+
+
+        productPreview.appendChild(img);
+
+    }
+
+
+    // -----------------------------------------------------
+    // STYLE BUTTONS
+    // -----------------------------------------------------
+
+    styleButtons.forEach((button) => {
+
+        button.addEventListener("click", () => {
+
+            styleButtons.forEach((item) => {
+                item.classList.remove("active");
+            });
+
+
+            button.classList.add("active");
+
+
+            selectedStyle =
+                button.dataset.style ||
+                "premium";
+
+        });
+
+    });
+
+
+    // -----------------------------------------------------
+    // HELPERS
+    // -----------------------------------------------------
+
+    function removeAllObjects() {
+
+        canvas.getObjects().forEach((object) => {
+            canvas.remove(object);
+        });
+
+        canvas.discardActiveObject();
+
+    }
+
+
+    function addText(
+        text,
+        options = {}
+    ) {
+
+        const textObject =
+            new fabric.Textbox(
+                text || "",
+                {
+
+                    left:
+                        options.left ?? 70,
+
+                    top:
+                        options.top ?? 70,
+
+                    width:
+                        options.width ?? 900,
+
+                    fontSize:
+                        options.fontSize ?? 50,
+
+                    fontFamily:
+                        options.fontFamily ||
+                        "Arial",
+
+                    fontWeight:
+                        options.fontWeight ||
+                        "700",
+
+                    fill:
+                        options.fill ||
+                        "#ffffff",
+
+                    textAlign:
+                        options.textAlign ||
+                        "left",
+
+                    lineHeight:
+                        options.lineHeight ||
+                        1.05,
+
+                    selectable:
+                        options.selectable ??
+                        false,
+
+                    evented:
+                        options.evented ??
+                        false,
+
+                    editable:
+                        false
+
+                }
+            );
+
+
+        canvas.add(textObject);
+
+        return textObject;
+
+    }
+
+
+    function addRect(options = {}) {
+
+        const rect =
+            new fabric.Rect({
+
+                left:
+                    options.left ?? 0,
+
+                top:
+                    options.top ?? 0,
+
+                width:
+                    options.width ?? 100,
+
+                height:
+                    options.height ?? 100,
+
+                fill:
+                    options.fill ?? "#ffffff",
+
+                rx:
+                    options.rx ?? 0,
+
+                ry:
+                    options.ry ?? 0,
+
+                selectable:
+                    options.selectable ??
+                    false,
+
+                evented:
+                    options.evented ??
+                    false
+
+            });
+
+
+        canvas.add(rect);
+
+        return rect;
+
+    }
+
+
+    function addCircle(options = {}) {
+
+        const circle =
+            new fabric.Circle({
+
+                left:
+                    options.left ?? 0,
+
+                top:
+                    options.top ?? 0,
+
+                radius:
+                    options.radius ?? 50,
+
+                fill:
+                    options.fill ?? "#ffffff",
+
+                stroke:
+                    options.stroke,
+
+                strokeWidth:
+                    options.strokeWidth ?? 0,
+
+                originX:
+                    options.originX ||
+                    "left",
+
+                originY:
+                    options.originY ||
+                    "top",
+
+                selectable:
+                    options.selectable ??
+                    false,
+
+                evented:
+                    options.evented ??
+                    false
+
+            });
+
+
+        canvas.add(circle);
+
+        return circle;
+
+    }
+
+
+    // -----------------------------------------------------
+    // GRADIENT BACKGROUND
+    // -----------------------------------------------------
+
+    function createBackground() {
+
+        let color =
+            backgroundColor?.value ||
+            "#061b4f";
+
+
+        let secondColor =
+            "#020617";
+
+
+        if (selectedStyle === "sale") {
+
+            color =
+                "#8b0000";
+
+            secondColor =
+                "#190000";
+
+        }
+
+
+        if (selectedStyle === "minimal") {
+
+            color =
+                "#f4f4f4";
+
+            secondColor =
+                "#ffffff";
+
+        }
+
 
         const background =
             new fabric.Rect({
@@ -185,105 +494,122 @@ document.addEventListener("DOMContentLoaded", function () {
                         },
 
                         colorStops: [
+
                             {
                                 offset: 0,
-                                color: "#250303"
+                                color: color
                             },
+
                             {
                                 offset: 0.55,
-                                color: "#9d0b06"
+                                color: color
                             },
+
                             {
                                 offset: 1,
-                                color: "#170101"
+                                color: secondColor
                             }
+
                         ]
+
                     }),
 
                 selectable: false,
 
-                evented: false,
-
-                excludeFromExport: false
+                evented: false
 
             });
 
 
         canvas.add(background);
 
+        canvas.sendObjectToBack(background);
 
-        /* Badge */
-
-        const badge =
-            new fabric.Rect({
-
-                left: 60,
-
-                top: 55,
-
-                width: 155,
-
-                height: 42,
-
-                rx: 8,
-
-                ry: 8,
-
-                fill: "#ff3028"
-
-            });
-
-        canvas.add(badge);
+    }
 
 
-        createText(
-            "BIG SALE",
-            80,
-            65,
-            20,
-            "#ffffff",
-            "900"
-        );
+    // -----------------------------------------------------
+    // DECORATIVE GLOW
+    // -----------------------------------------------------
+
+    function createGlow() {
+
+        if (selectedStyle === "minimal") {
+            return;
+        }
 
 
-        /* Headline */
+        addCircle({
 
-        createText(
-            "BIG",
-            60,
-            145,
-            105,
-            "#ffffff",
-            "900"
-        );
+            left: 800,
 
+            top: 340,
 
-        createText(
-            "SALE",
-            60,
-            250,
-            105,
-            "#ffffff",
-            "900"
-        );
+            radius: 260,
+
+            fill:
+                selectedStyle === "sale"
+                    ? "rgba(255,70,30,0.12)"
+                    : "rgba(0,130,255,0.15)",
+
+            originX: "center",
+
+            originY: "center"
+
+        });
 
 
-        /* Discount */
+        addCircle({
+
+            left: 260,
+
+            top: 700,
+
+            radius: 230,
+
+            fill:
+                selectedStyle === "sale"
+                    ? "rgba(255,20,20,0.12)"
+                    : "rgba(30,70,255,0.12)",
+
+            originX: "center",
+
+            originY: "center"
+
+        });
+
+    }
+
+
+    // -----------------------------------------------------
+    // DISCOUNT BADGE
+    // -----------------------------------------------------
+
+    function createDiscount() {
 
         const discount =
-            new fabric.Circle({
+            discountInput?.value.trim();
 
-                left: 250,
 
-                top: 450,
+        if (!discount) {
+            return;
+        }
 
-                radius: 92,
 
-                fill: "#ffd000",
+        const badge =
+            addCircle({
 
-                stroke: "#ff8c00",
+                left: 850,
 
-                strokeWidth: 5,
+                top: 230,
+
+                radius: 82,
+
+                fill: "#ffd21a",
+
+                stroke: "#ffffff",
+
+                strokeWidth: 4,
 
                 originX: "center",
 
@@ -291,1143 +617,735 @@ document.addEventListener("DOMContentLoaded", function () {
 
             });
 
-        canvas.add(discount);
 
+        addText(
 
-        createText(
-            "50%",
-            250,
-            420,
-            55,
-            "#111111",
-            "900"
-        ).set({
-            originX: "center"
-        });
+            discount,
 
+            {
 
-        createText(
-            "OFF",
-            250,
-            485,
-            28,
-            "#111111",
-            "900"
-        ).set({
-            originX: "center"
-        });
+                left: 775,
 
+                top: 198,
 
-        /* Product placeholder */
+                width: 150,
 
-        createProductPlaceholder();
+                fontSize: 29,
 
+                fontWeight: "900",
 
-        /* Price */
+                fill: "#111111",
 
-        createText(
-            "₦35,000",
-            60,
-            890,
-            65,
-            "#ffffff",
-            "900"
+                textAlign: "center"
+
+            }
+
         );
+
+    }
+
+
+    // -----------------------------------------------------
+    // PRODUCT IMAGE
+    // -----------------------------------------------------
+
+    function addProductImage(imageURL) {
+
+        return fabric.Image
+            .fromURL(imageURL)
+            .then((image) => {
+
+                if (!image.width || !image.height) {
+                    return;
+                }
+
+
+                const maxWidth = 780;
+
+                const maxHeight = 510;
+
+
+                const scaleX =
+                    maxWidth / image.width;
+
+
+                const scaleY =
+                    maxHeight / image.height;
+
+
+                const scale =
+                    Math.min(
+                        scaleX,
+                        scaleY
+                    );
+
+
+                image.set({
+
+                    left: 540,
+
+                    top: 570,
+
+                    originX: "center",
+
+                    originY: "center",
+
+                    scaleX: scale,
+
+                    scaleY: scale,
+
+                    angle: 0,
+
+                    selectable: true,
+
+                    evented: true,
+
+                    cornerColor: "#7437ff",
+
+                    borderColor: "#7437ff",
+
+                    transparentCorners: false,
+
+                    padding: 8
+
+                });
+
+
+                canvas.add(image);
+
+                canvas.bringObjectToFront(image);
+
+
+                // Soft shadow
+
+                image.set({
+
+                    shadow:
+                        new fabric.Shadow({
+
+                            color:
+                                "rgba(0,0,0,0.45)",
+
+                            blur: 28,
+
+                            offsetX: 0,
+
+                            offsetY: 18
+
+                        })
+
+                });
+
+
+                return image;
+
+            });
+
+    }
+
+
+    // -----------------------------------------------------
+    // PRICE AREA
+    // -----------------------------------------------------
+
+    function createPriceArea() {
+
+        const price =
+            priceInput?.value.trim();
 
 
         const oldPrice =
-            createText(
-                "₦70,000",
-                390,
-                910,
-                35,
-                "#d4aaaa",
-                "700"
-            );
-
-        oldPrice.set({
-            opacity: 0.8
-        });
+            oldPriceInput?.value.trim();
 
 
-        /* Button */
+        if (!price) {
+            return;
+        }
 
-        const button =
-            new fabric.Rect({
 
-                left: 60,
+        const priceBox =
+            addRect({
 
-                top: 975,
+                left: 55,
 
-                width: 235,
+                top: 820,
 
-                height: 70,
+                width: 390,
 
-                rx: 35,
+                height: 105,
 
-                ry: 35,
+                fill:
+                    selectedStyle === "minimal"
+                        ? "#111111"
+                        : "#ffd21a",
 
-                fill: "#ffd000"
+                rx: 22,
+
+                ry: 22
 
             });
 
-        canvas.add(button);
 
+        addText(
+
+            price,
+
+            {
+
+                left: 80,
+
+                top: 838,
+
+                width: 340,
+
+                fontSize: 56,
+
+                fontWeight: "900",
+
+                fill:
+                    selectedStyle === "minimal"
+                        ? "#ffffff"
+                        : "#111111"
+
+            }
+
+        );
+
+
+        if (oldPrice) {
+
+            addText(
+
+                oldPrice,
+
+                {
+
+                    left: 470,
+
+                    top: 850,
+
+                    width: 230,
+
+                    fontSize: 30,
+
+                    fontWeight: "700",
+
+                    fill: "#ffffff"
+
+                }
+
+            );
+
+        }
+
+    }
+
+
+    // -----------------------------------------------------
+    // SHOP BUTTON
+    // -----------------------------------------------------
+
+    function createShopButton() {
 
         const buttonText =
-            createText(
-                "SHOP NOW",
-                177,
-                992,
-                27,
-                "#171000",
-                "900"
-            );
+            buttonTextInput?.value.trim() ||
+            "SHOP NOW";
 
-        buttonText.set({
-            originX: "center"
+
+        addRect({
+
+            left: 55,
+
+            top: 955,
+
+            width: 275,
+
+            height: 72,
+
+            fill: "#ffd21a",
+
+            rx: 36,
+
+            ry: 36
+
         });
 
 
-        /* WhatsApp */
+        addText(
 
-        const whatsapp =
-            new fabric.Circle({
+            buttonText,
 
-                left: 370,
+            {
 
-                top: 1010,
+                left: 82,
 
-                radius: 30,
+                top: 976,
 
-                fill: "#20c866",
+                width: 220,
 
-                originX: "center",
+                fontSize: 27,
 
-                originY: "center"
+                fontWeight: "900",
+
+                fill: "#111111",
+
+                textAlign: "center"
+
+            }
+
+        );
+
+    }
+
+
+    // -----------------------------------------------------
+    // WHATSAPP
+    // -----------------------------------------------------
+
+    function createWhatsApp() {
+
+        const phone =
+            phoneInput?.value.trim();
+
+
+        if (!phone) {
+            return;
+        }
+
+
+        addCircle({
+
+            left: 390,
+
+            top: 991,
+
+            radius: 32,
+
+            fill: "#20d366",
+
+            originX: "center",
+
+            originY: "center"
+
+        });
+
+
+        addText(
+
+            "WA",
+
+            {
+
+                left: 366,
+
+                top: 1005,
+
+                width: 48,
+
+                fontSize: 17,
+
+                fontWeight: "900",
+
+                fill: "#ffffff",
+
+                textAlign: "center"
+
+            }
+
+        );
+
+
+        addText(
+
+            phone,
+
+            {
+
+                left: 440,
+
+                top: 995,
+
+                width: 470,
+
+                fontSize: 29,
+
+                fontWeight: "700",
+
+                fill: "#ffffff"
+
+            }
+
+        );
+
+    }
+
+
+    // -----------------------------------------------------
+    // GENERATE AD
+    // -----------------------------------------------------
+
+    async function generateAd() {
+
+        if (!uploadedImageURL) {
+
+            alert(
+                "Da farko ka upload product image."
+            );
+
+            return;
+
+        }
+
+
+        if (generateAdBtn) {
+
+            generateAdBtn.disabled = true;
+
+            generateAdBtn.innerHTML =
+                "✨ Generating Ad...";
+
+        }
+
+
+        try {
+
+            removeAllObjects();
+
+
+            createBackground();
+
+            createGlow();
+
+
+            // ---------------------------------------------
+            // TOP BADGE
+            // ---------------------------------------------
+
+            addRect({
+
+                left: 55,
+
+                top: 50,
+
+                width: 185,
+
+                height: 45,
+
+                fill:
+                    selectedStyle === "minimal"
+                        ? "#111111"
+                        : "#ef3028",
+
+                rx: 8,
+
+                ry: 8
 
             });
 
-        canvas.add(whatsapp);
 
+            addText(
 
-        const waText =
-            createText(
-                "WA",
-                370,
-                995,
-                19,
-                "#ffffff",
-                "900"
+                selectedStyle === "sale"
+                    ? "BIG SALE"
+                    : "NEW ARRIVAL",
+
+                {
+
+                    left: 72,
+
+                    top: 61,
+
+                    width: 150,
+
+                    fontSize: 21,
+
+                    fontWeight: "900",
+
+                    fill: "#ffffff"
+
+                }
+
             );
 
-        waText.set({
-            originX: "center"
-        });
+
+            // ---------------------------------------------
+            // HEADLINE
+            // ---------------------------------------------
+
+            const headline =
+                headlineInput?.value.trim() ||
+                "NEW ARRIVAL";
 
 
-        createText(
-            "080 1234 5678",
-            415,
-            993,
-            27,
-            "#ffffff",
-            "700"
+            addText(
+
+                headline,
+
+                {
+
+                    left: 55,
+
+                    top: 120,
+
+                    width: 720,
+
+                    fontSize: 72,
+
+                    fontWeight: "900",
+
+                    fill:
+                        selectedStyle === "minimal"
+                            ? "#111111"
+                            : "#ffffff",
+
+                    lineHeight: 0.95
+
+                }
+
+            );
+
+
+            // ---------------------------------------------
+            // SUBHEADLINE
+            // ---------------------------------------------
+
+            const subheadline =
+                subheadlineInput?.value.trim();
+
+
+            if (subheadline) {
+
+                addText(
+
+                    subheadline,
+
+                    {
+
+                        left: 60,
+
+                        top: 300,
+
+                        width: 650,
+
+                        fontSize: 27,
+
+                        fontWeight: "600",
+
+                        fill:
+                            selectedStyle === "minimal"
+                                ? "#333333"
+                                : "#eeeeee"
+
+                    }
+
+                );
+
+            }
+
+
+            // ---------------------------------------------
+            // DISCOUNT
+            // ---------------------------------------------
+
+            createDiscount();
+
+
+            // ---------------------------------------------
+            // PRODUCT
+            // ---------------------------------------------
+
+            await addProductImage(
+                uploadedImageURL
+            );
+
+
+            // ---------------------------------------------
+            // PRICE
+            // ---------------------------------------------
+
+            createPriceArea();
+
+
+            // ---------------------------------------------
+            // SHOP NOW
+            // ---------------------------------------------
+
+            createShopButton();
+
+
+            // ---------------------------------------------
+            // WHATSAPP
+            // ---------------------------------------------
+
+            createWhatsApp();
+
+
+            // ---------------------------------------------
+            // FINISH
+            // ---------------------------------------------
+
+            canvas.renderAll();
+
+
+        } catch (error) {
+
+            console.error(
+                "Generate error:",
+                error
+            );
+
+
+            alert(
+                "An samu matsala wajen ƙirƙirar advert."
+            );
+
+        } finally {
+
+            if (generateAdBtn) {
+
+                generateAdBtn.disabled = false;
+
+                generateAdBtn.innerHTML =
+                    "✨ Generate Professional Ad";
+
+            }
+
+        }
+
+    }
+
+
+    // -----------------------------------------------------
+    // GENERATE BUTTON
+    // -----------------------------------------------------
+
+    if (generateAdBtn) {
+
+        generateAdBtn.addEventListener(
+            "click",
+            generateAd
         );
+
+    }
+
+
+    // -----------------------------------------------------
+    // DOWNLOAD
+    // -----------------------------------------------------
+
+    function downloadAd() {
+
+        if (canvas.getObjects().length === 0) {
+
+            alert(
+                "Da farko ka danna Generate Professional Ad."
+            );
+
+            return;
+
+        }
 
 
         canvas.discardActiveObject();
 
         canvas.renderAll();
 
-        history = [];
 
-        historyPosition = -1;
+        const dataURL =
+            canvas.toDataURL({
 
-        saveHistory();
+                format: "png",
 
-    }
+                quality: 1,
 
-
-    /* =================================================
-       PRODUCT PLACEHOLDER
-    ================================================= */
-
-    function createProductPlaceholder() {
-
-        const shadow =
-            new fabric.Ellipse({
-
-                left: 535,
-
-                top: 700,
-
-                rx: 250,
-
-                ry: 55,
-
-                fill: "rgba(0,0,0,.35)",
-
-                originX: "center",
-
-                originY: "center",
-
-                selectable: false
-
-            });
-
-        canvas.add(shadow);
-
-
-        const shoe =
-            new fabric.Group([
-
-                new fabric.Rect({
-
-                    width: 420,
-
-                    height: 150,
-
-                    rx: 65,
-
-                    ry: 65,
-
-                    fill: "#f4f4f4",
-
-                    stroke: "#111111",
-
-                    strokeWidth: 7,
-
-                    originX: "center",
-
-                    originY: "center"
-
-                }),
-
-                new fabric.Rect({
-
-                    width: 280,
-
-                    height: 28,
-
-                    rx: 12,
-
-                    ry: 12,
-
-                    fill: "#222222",
-
-                    top: -15,
-
-                    originX: "center",
-
-                    originY: "center"
-
-                }),
-
-                new fabric.Line(
-                    [-130, -40, 40, -40],
-                    {
-                        stroke: "#222222",
-                        strokeWidth: 10
-                    }
-                ),
-
-                new fabric.Line(
-                    [-120, -10, 50, -10],
-                    {
-                        stroke: "#222222",
-                        strokeWidth: 10
-                    }
-                ),
-
-                new fabric.Line(
-                    [-105, 20, 60, 20],
-                    {
-                        stroke: "#222222",
-                        strokeWidth: 10
-                    }
-                )
-
-            ], {
-
-                left: 650,
-
-                top: 650,
-
-                originX: "center",
-
-                originY: "center",
-
-                angle: -12,
-
-                scaleX: 1.15,
-
-                scaleY: 1.15,
-
-                shadow:
-                    new fabric.Shadow({
-
-                        color: "rgba(0,0,0,.55)",
-
-                        blur: 25,
-
-                        offsetX: 0,
-
-                        offsetY: 20
-
-                    }),
-
-                name: "product-placeholder"
+                multiplier: 1
 
             });
 
 
-        canvas.add(shoe);
-
-        uploadedImage = shoe;
-
-    }
+        const link =
+            document.createElement("a");
 
 
-    /* =================================================
-       UPLOAD IMAGE
-    ================================================= */
+        link.href = dataURL;
 
-    function openProductPicker() {
-
-        if (productInput) {
-            productInput.click();
-        }
-
-    }
+        link.download =
+            "ads-maker-free-ad.png";
 
 
-    if (productUploadBtn) {
+        document.body.appendChild(link);
 
-        productUploadBtn.addEventListener(
-            "click",
-            openProductPicker
-        );
+        link.click();
+
+        link.remove();
 
     }
 
-
-    if (uploadBtn) {
-
-        uploadBtn.addEventListener(
-            "click",
-            openProductPicker
-        );
-
-    }
-
-
-    if (productInput) {
-
-        productInput.addEventListener(
-            "change",
-            function (event) {
-
-                const file =
-                    event.target.files[0];
-
-                if (!file) {
-                    return;
-                }
-
-
-                if (!file.type.startsWith("image/")) {
-
-                    alert(
-                        "Please select an image file."
-                    );
-
-                    return;
-
-                }
-
-
-                const reader =
-                    new FileReader();
-
-
-                reader.onload = function () {
-
-                    const imageUrl =
-                        reader.result;
-
-
-                    uploadedImage =
-                        imageUrl;
-
-
-                    showProductPreview(
-                        imageUrl
-                    );
-
-
-                    enableProductButtons();
-
-
-                    addUploadedImage(
-                        imageUrl
-                    );
-
-                };
-
-
-                reader.readAsDataURL(file);
-
-            }
-        );
-
-    }
-
-
-    /* =================================================
-       PRODUCT PREVIEW
-    ================================================= */
-
-    function showProductPreview(
-        imageUrl
-    ) {
-
-        if (!productPreview) {
-            return;
-        }
-
-
-        productPreview.innerHTML = "";
-
-
-        const image =
-            document.createElement("img");
-
-
-        image.src = imageUrl;
-
-
-        image.style.width =
-            "100%";
-
-
-        image.style.height =
-            "120px";
-
-
-        image.style.objectFit =
-            "contain";
-
-
-        image.style.borderRadius =
-            "10px";
-
-
-        productPreview.appendChild(
-            image
-        );
-
-    }
-
-
-    /* =================================================
-       ENABLE PRODUCT BUTTONS
-    ================================================= */
-
-    function enableProductButtons() {
-
-        if (removeBackgroundBtn) {
-
-            removeBackgroundBtn.disabled =
-                false;
-
-        }
-
-
-        if (addProductBtn) {
-
-            addProductBtn.disabled =
-                false;
-
-        }
-
-    }
-
-
-    /* =================================================
-       ADD UPLOADED IMAGE
-    ================================================= */
-
-    function addUploadedImage(
-        imageUrl
-    ) {
-
-        fabric.Image.fromURL(
-            imageUrl
-        ).then(function (image) {
-
-            const scale =
-                Math.min(
-                    500 / image.width,
-                    500 / image.height
-                );
-
-
-            image.set({
-
-                left: 650,
-
-                top: 650,
-
-                originX: "center",
-
-                originY: "center",
-
-                scaleX: scale,
-
-                scaleY: scale,
-
-                cornerColor: "#7437ff",
-
-                borderColor: "#7437ff",
-
-                transparentCorners: false,
-
-                name: "uploaded-product"
-
-            });
-
-
-            /* Remove old placeholder */
-
-            const objects =
-                canvas.getObjects();
-
-
-            objects.forEach(
-                function (object) {
-
-                    if (
-                        object.name ===
-                        "product-placeholder"
-                    ) {
-
-                        canvas.remove(
-                            object
-                        );
-
-                    }
-
-                }
-            );
-
-
-            canvas.add(image);
-
-            canvas.setActiveObject(image);
-
-            canvas.renderAll();
-
-            saveHistory();
-
-        });
-
-    }
-
-
-    /* =================================================
-       REMOVE BACKGROUND
-    ================================================= */
-
-    if (removeBackgroundBtn) {
-
-        removeBackgroundBtn.addEventListener(
-            "click",
-            function () {
-
-                if (!uploadedImage) {
-
-                    alert(
-                        "Please upload a product image first."
-                    );
-
-                    return;
-
-                }
-
-
-                alert(
-                    "AI Background Removal zai haɗu da Python API a mataki na gaba."
-                );
-
-            }
-        );
-
-    }
-
-
-    /* =================================================
-       ADD PRODUCT TO DESIGN
-    ================================================= */
-
-    if (addProductBtn) {
-
-        addProductBtn.addEventListener(
-            "click",
-            function () {
-
-                if (!uploadedImage) {
-
-                    alert(
-                        "Please upload a product image first."
-                    );
-
-                    return;
-
-                }
-
-
-                const active =
-                    canvas.getActiveObject();
-
-
-                if (active) {
-
-                    active.set({
-                        visible: true
-                    });
-
-                    canvas.renderAll();
-
-                }
-
-            }
-        );
-
-    }
-
-
-    /* =================================================
-       HEADLINE
-    ================================================= */
-
-    if (addHeadlineBtn) {
-
-        addHeadlineBtn.addEventListener(
-            "click",
-            function () {
-
-                createText(
-                    "YOUR HEADLINE",
-                    100,
-                    150,
-                    65,
-                    "#111111",
-                    "900"
-                );
-
-            }
-        );
-
-    }
-
-
-    /* =================================================
-       PRICE
-    ================================================= */
-
-    if (addPriceBtn) {
-
-        addPriceBtn.addEventListener(
-            "click",
-            function () {
-
-                createText(
-                    "₦35,000",
-                    100,
-                    800,
-                    60,
-                    "#111111",
-                    "900"
-                );
-
-            }
-        );
-
-    }
-
-
-    /* =================================================
-       WHATSAPP
-    ================================================= */
-
-    if (addPhoneBtn) {
-
-        addPhoneBtn.addEventListener(
-            "click",
-            function () {
-
-                createText(
-                    "080 1234 5678",
-                    100,
-                    900,
-                    35,
-                    "#111111",
-                    "700"
-                );
-
-            }
-        );
-
-    }
-
-
-    /* =================================================
-       BACKGROUND COLOR
-    ================================================= */
-
-    if (backgroundColor) {
-
-        backgroundColor.addEventListener(
-            "input",
-            function () {
-
-                canvas.backgroundColor =
-                    backgroundColor.value;
-
-                canvas.renderAll();
-
-            }
-        );
-
-
-        backgroundColor.addEventListener(
-            "change",
-            saveHistory
-        );
-
-    }
-
-
-    /* =================================================
-       RESET BACKGROUND
-    ================================================= */
-
-    if (resetBackgroundBtn) {
-
-        resetBackgroundBtn.addEventListener(
-            "click",
-            function () {
-
-                canvas.backgroundColor =
-                    "#ffffff";
-
-                canvas.renderAll();
-
-                saveHistory();
-
-            }
-        );
-
-    }
-
-
-    /* =================================================
-       DELETE OBJECT
-    ================================================= */
-
-    if (deleteObjectBtn) {
-
-        deleteObjectBtn.addEventListener(
-            "click",
-            function () {
-
-                const object =
-                    canvas.getActiveObject();
-
-
-                if (!object) {
-
-                    alert(
-                        "Select an object first."
-                    );
-
-                    return;
-
-                }
-
-
-                canvas.remove(object);
-
-                canvas.discardActiveObject();
-
-                canvas.renderAll();
-
-                saveHistory();
-
-            }
-        );
-
-    }
-
-
-    /* =================================================
-       KEYBOARD DELETE
-    ================================================= */
-
-    document.addEventListener(
-        "keydown",
-        function (event) {
-
-            const object =
-                canvas.getActiveObject();
-
-
-            if (!object) {
-                return;
-            }
-
-
-            if (
-                event.key === "Delete" ||
-                event.key === "Backspace"
-            ) {
-
-                if (object.isEditing) {
-                    return;
-                }
-
-
-                canvas.remove(object);
-
-                canvas.discardActiveObject();
-
-                canvas.renderAll();
-
-                saveHistory();
-
-            }
-
-        }
-    );
-
-
-    /* =================================================
-       UNDO
-    ================================================= */
-
-    if (undoBtn) {
-
-        undoBtn.addEventListener(
-            "click",
-            function () {
-
-                if (
-                    historyPosition <= 0
-                ) {
-                    return;
-                }
-
-
-                historyPosition--;
-
-
-                restoreHistory(
-                    history[
-                        historyPosition
-                    ]
-                );
-
-            }
-        );
-
-    }
-
-
-    /* =================================================
-       REDO
-    ================================================= */
-
-    if (redoBtn) {
-
-        redoBtn.addEventListener(
-            "click",
-            function () {
-
-                if (
-                    historyPosition >=
-                    history.length - 1
-                ) {
-                    return;
-                }
-
-
-                historyPosition++;
-
-
-                restoreHistory(
-                    history[
-                        historyPosition
-                    ]
-                );
-
-            }
-        );
-
-    }
-
-
-    /* =================================================
-       HISTORY
-    ================================================= */
-
-    function saveHistory() {
-
-        if (changingHistory) {
-            return;
-        }
-
-
-        const json =
-            JSON.stringify(
-                canvas.toJSON()
-            );
-
-
-        if (
-            history[
-                historyPosition
-            ] === json
-        ) {
-
-            return;
-
-        }
-
-
-        history =
-            history.slice(
-                0,
-                historyPosition + 1
-            );
-
-
-        history.push(json);
-
-
-        historyPosition =
-            history.length - 1;
-
-
-        if (history.length > 30) {
-
-            history.shift();
-
-            historyPosition--;
-
-        }
-
-    }
-
-
-    function restoreHistory(
-        json
-    ) {
-
-        changingHistory = true;
-
-
-        canvas.loadFromJSON(
-            JSON.parse(json)
-        ).then(function () {
-
-            canvas.renderAll();
-
-            changingHistory = false;
-
-        });
-
-    }
-
-
-    canvas.on(
-        "object:modified",
-        saveHistory
-    );
-
-
-    canvas.on(
-        "object:removed",
-        saveHistory
-    );
-
-
-    /* =================================================
-       LOGO
-    ================================================= */
-
-    if (uploadLogoBtn) {
-
-        uploadLogoBtn.addEventListener(
-            "click",
-            function () {
-
-                if (logoInput) {
-                    logoInput.click();
-                }
-
-            }
-        );
-
-    }
-
-
-    if (logoInput) {
-
-        logoInput.addEventListener(
-            "change",
-            function (event) {
-
-                const file =
-                    event.target.files[0];
-
-                if (!file) {
-                    return;
-                }
-
-
-                const reader =
-                    new FileReader();
-
-
-                reader.onload =
-                    function () {
-
-                        fabric.Image
-                            .fromURL(
-                                reader.result
-                            )
-                            .then(
-                                function (image) {
-
-                                    const scale =
-                                        Math.min(
-                                            160 / image.width,
-                                            160 / image.height
-                                        );
-
-
-                                    image.set({
-
-                                        left: 930,
-
-                                        top: 70,
-
-                                        scaleX:
-                                            scale,
-
-                                        scaleY:
-                                            scale,
-
-                                        originX:
-                                            "center",
-
-                                        originY:
-                                            "center",
-
-                                        name:
-                                            "logo"
-
-                                    });
-
-
-                                    canvas.add(
-                                        image
-                                    );
-
-                                    canvas.setActiveObject(
-                                        image
-                                    );
-
-                                    canvas.renderAll();
-
-                                    saveHistory();
-
-                                }
-                            );
-
-                    };
-
-
-                reader.readAsDataURL(file);
-
-            }
-        );
-
-    }
-
-
-    /* =================================================
-       TEMPLATES
-    ================================================= */
-
-    if (templatesBtn) {
-
-        templatesBtn.addEventListener(
-            "click",
-            function () {
-
-                window.location.href =
-                    "templates.html";
-
-            }
-        );
-
-    }
-
-
-    /* =================================================
-       DOWNLOAD
-    ================================================= */
 
     if (downloadBtn) {
 
         downloadBtn.addEventListener(
             "click",
-            function () {
+            downloadAd
+        );
 
-                canvas.discardActiveObject();
+    }
+
+
+    if (downloadBtnBottom) {
+
+        downloadBtnBottom.addEventListener(
+            "click",
+            downloadAd
+        );
+
+    }
+
+
+    // -----------------------------------------------------
+    // RESET
+    // -----------------------------------------------------
+
+    if (resetBtn) {
+
+        resetBtn.addEventListener(
+            "click",
+            () => {
+
+                removeAllObjects();
 
                 canvas.renderAll();
 
-
-                const image =
-                    canvas.toDataURL({
-                        format: "png",
-                        multiplier: 1
-                    });
+                uploadedImageURL = null;
 
 
-                const link =
-                    document.createElement("a");
+                if (productPreview) {
+
+                    productPreview.innerHTML = `
+                        <span>No image selected</span>
+                    `;
+
+                }
 
 
-                link.href =
-                    image;
+                if (productUploadBtn) {
+
+                    productUploadBtn.classList.remove(
+                        "has-image"
+                    );
+
+                    productUploadBtn.innerHTML = `
+                        <span class="upload-icon">↑</span>
+                        <strong>Upload Product Image</strong>
+                        <small>PNG, JPG or WEBP</small>
+                    `;
+
+                }
 
 
-                link.download =
-                    "ads-maker-free.png";
-
-
-                document.body.appendChild(
-                    link
-                );
-
-
-                link.click();
-
-                link.remove();
+                if (productImageInput) {
+                    productImageInput.value = "";
+                }
 
             }
         );
@@ -1435,63 +1353,77 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
-    /* =================================================
-       MOBILE BUTTONS
-    ================================================= */
+    // -----------------------------------------------------
+    // BACKGROUND COLOR
+    // -----------------------------------------------------
 
-    const mobileTemplatesBtn =
-        document.getElementById(
-            "mobileTemplatesBtn"
+    if (backgroundColor) {
+
+        backgroundColor.addEventListener(
+            "input",
+            () => {
+
+                // Idan an riga an generate,
+                // sake generate domin sabon color.
+
+                if (uploadedImageURL) {
+                    generateAd();
+                }
+
+            }
         );
-
-    const mobileUploadBtn =
-        document.getElementById(
-            "mobileUploadBtn"
-        );
-
-    const mobileTextBtn =
-        document.getElementById(
-            "mobileTextBtn"
-        );
-
-
-    if (mobileTemplatesBtn) {
-
-        mobileTemplatesBtn.onclick =
-            function () {
-
-                window.location.href =
-                    "templates.html";
-
-            };
 
     }
 
 
-    if (mobileUploadBtn) {
+    // -----------------------------------------------------
+    // INPUT LIVE GENERATION
+    // -----------------------------------------------------
 
-        mobileUploadBtn.onclick =
-            openProductPicker;
-
-    }
-
-
-    if (mobileTextBtn) {
-
-        mobileTextBtn.onclick =
-            function () {
-
-                addHeadlineBtn?.click();
-
-            };
-
-    }
+    const detailInputs = [
+        headlineInput,
+        subheadlineInput,
+        priceInput,
+        oldPriceInput,
+        discountInput,
+        phoneInput,
+        buttonTextInput
+    ];
 
 
-    /* =================================================
-       START
-    ================================================= */
+    detailInputs.forEach((input) => {
 
-    createDefaultAd();
+        if (!input) {
+            return;
+        }
+
+
+        input.addEventListener(
+            "change",
+            () => {
+
+                if (uploadedImageURL) {
+                    generateAd();
+                }
+
+            }
+        );
+
+    });
+
+
+    // -----------------------------------------------------
+    // INITIAL EMPTY CANVAS
+    // -----------------------------------------------------
+
+    canvas.backgroundColor =
+        "#f1f3f7";
+
+    canvas.renderAll();
+
+
+    console.log(
+        "Ads Maker Free Real Ad Generator ready."
+    );
 
 });
