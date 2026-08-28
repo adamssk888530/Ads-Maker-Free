@@ -1,7 +1,7 @@
 /* =========================================================
    ADS MAKER FREE
-   AI AD GENERATOR
-   REAL REMOVE.BG INTEGRATION
+   PROFESSIONAL AI AD GENERATOR
+   1080 x 1080
 ========================================================= */
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -14,12 +14,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const canvas = new fabric.Canvas("designCanvas", {
         width: 1080,
         height: 1080,
-        backgroundColor: "#f1f3f7",
         preserveObjectStacking: true,
-        selection: true
+        selection: false
     });
 
     window.adsMakerCanvas = canvas;
+
 
     /* =====================================================
        ELEMENTS
@@ -84,7 +84,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* =====================================================
-       DEFAULT VALUES
+       DEFAULT DATA
     ===================================================== */
 
     if (headline)
@@ -126,9 +126,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!file) return;
 
         if (!file.type.startsWith("image/")) {
-
-            alert("Please select a valid image.");
-
+            alert("Da fatan zaɓi hoto.");
             return;
         }
 
@@ -150,20 +148,12 @@ document.addEventListener("DOMContentLoaded", () => {
             `;
         };
 
-        reader.onerror = () => {
-
-            alert(
-                "An samu matsala wajen karanta hoton."
-            );
-
-        };
-
         reader.readAsDataURL(file);
     });
 
 
     /* =====================================================
-       PREVIEW
+       IMAGE PREVIEW
     ===================================================== */
 
     function showPreview(src) {
@@ -188,14 +178,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* =====================================================
-       STYLE
+       STYLE BUTTONS
     ===================================================== */
 
-    styleButtons.forEach((button) => {
+    styleButtons.forEach(button => {
 
         button.addEventListener("click", () => {
 
-            styleButtons.forEach((item) => {
+            styleButtons.forEach(item => {
                 item.classList.remove("active");
             });
 
@@ -209,143 +199,111 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* =====================================================
-       REAL REMOVE.BG API
+       REMOVE BACKGROUND
+       SEND JSON DATA URL TO VERCEL API
     ===================================================== */
 
     async function removeBackground(imageData) {
 
-        if (!imageData) {
-            throw new Error(
-                "Babu hoton da za a aika."
-            );
-        }
+        setGenerateText("✨ Removing background...");
 
-        setGenerateText(
-            "✨ Removing background..."
+        const response = await fetch(
+            "/api/remove-background",
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify({
+                    image: imageData
+                })
+            }
         );
-
-
-        /*
-         * IMPORTANT:
-         *
-         * remove-background.js yana jiran:
-         *
-         * {
-         *    image: "data:image/...;base64,..."
-         * }
-         *
-         * Saboda haka muna aika JSON.
-         */
-
-        const response =
-            await fetch(
-                "/api/remove-background",
-                {
-                    method: "POST",
-
-                    headers: {
-                        "Content-Type":
-                            "application/json"
-                    },
-
-                    body: JSON.stringify({
-                        image: imageData
-                    })
-                }
-            );
-
 
         let result;
 
         try {
-
-            result =
-                await response.json();
-
+            result = await response.json();
         } catch {
-
             throw new Error(
-                "Server bai dawo da JSON ba."
+                "Server bai dawo da sakamakon da ya dace ba."
             );
-
         }
 
-
         if (!response.ok) {
-
-            console.error(
-                "Remove BG API error:",
-                result
-            );
 
             throw new Error(
                 result.error ||
                 "Background removal failed."
             );
-
         }
-
 
         if (!result.image) {
 
             throw new Error(
-                "Ba a samu transparent image ba."
+                "Transparent image ba ta dawo ba."
             );
-
         }
-
 
         return result.image;
     }
 
 
     /* =====================================================
-       TEXT
+       TEXT HELPER
     ===================================================== */
 
-    function addText(text, options = {}) {
+    function text(
+        value,
+        options = {}
+    ) {
 
-        const object =
+        const obj =
             new fabric.Textbox(
-                text || "",
+                value || "",
                 {
-
-                    left:
-                        options.left ?? 60,
-
-                    top:
-                        options.top ?? 60,
-
-                    width:
-                        options.width ?? 800,
-
-                    fontSize:
-                        options.fontSize ?? 50,
+                    left: options.left ?? 60,
+                    top: options.top ?? 60,
+                    width: options.width ?? 900,
 
                     fontFamily:
+                        options.fontFamily ||
                         "Arial",
 
+                    fontSize:
+                        options.fontSize ||
+                        50,
+
                     fontWeight:
-                        options.fontWeight || "700",
+                        options.fontWeight ||
+                        "700",
 
                     fill:
-                        options.fill || "#ffffff",
+                        options.fill ||
+                        "#ffffff",
 
                     textAlign:
-                        options.textAlign || "left",
+                        options.textAlign ||
+                        "left",
 
                     lineHeight:
-                        options.lineHeight || 1.05,
+                        options.lineHeight ||
+                        1,
+
+                    charSpacing:
+                        options.charSpacing ||
+                        0,
 
                     selectable: false,
-
                     evented: false
                 }
             );
 
-        canvas.add(object);
+        canvas.add(obj);
 
-        return object;
+        return obj;
     }
 
 
@@ -353,16 +311,13 @@ document.addEventListener("DOMContentLoaded", () => {
        RECTANGLE
     ===================================================== */
 
-    function addRect(options = {}) {
+    function rect(options = {}) {
 
-        const rect =
+        const obj =
             new fabric.Rect({
 
-                left:
-                    options.left ?? 0,
-
-                top:
-                    options.top ?? 0,
+                left: options.left ?? 0,
+                top: options.top ?? 0,
 
                 width:
                     options.width ?? 100,
@@ -371,22 +326,27 @@ document.addEventListener("DOMContentLoaded", () => {
                     options.height ?? 100,
 
                 fill:
-                    options.fill || "#ffffff",
+                    options.fill ?? "#ffffff",
 
                 rx:
-                    options.rx || 0,
+                    options.rx ?? 0,
 
                 ry:
-                    options.ry || 0,
+                    options.ry ?? 0,
+
+                stroke:
+                    options.stroke || null,
+
+                strokeWidth:
+                    options.strokeWidth || 0,
 
                 selectable: false,
-
                 evented: false
             });
 
-        canvas.add(rect);
+        canvas.add(obj);
 
-        return rect;
+        return obj;
     }
 
 
@@ -394,9 +354,9 @@ document.addEventListener("DOMContentLoaded", () => {
        CIRCLE
     ===================================================== */
 
-    function addCircle(options = {}) {
+    function circle(options = {}) {
 
-        const circle =
+        const obj =
             new fabric.Circle({
 
                 left:
@@ -408,27 +368,26 @@ document.addEventListener("DOMContentLoaded", () => {
                 radius:
                     options.radius ?? 50,
 
+                originX: "center",
+                originY: "center",
+
                 fill:
-                    options.fill || "#ffffff",
+                    options.fill ||
+                    "#ffffff",
 
                 stroke:
-                    options.stroke,
+                    options.stroke || null,
 
                 strokeWidth:
                     options.strokeWidth || 0,
 
-                originX: "center",
-
-                originY: "center",
-
                 selectable: false,
-
                 evented: false
             });
 
-        canvas.add(circle);
+        canvas.add(obj);
 
-        return circle;
+        return obj;
     }
 
 
@@ -438,35 +397,26 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function createBackground() {
 
-        let first =
-            bgColor?.value || "#061b4f";
-
+        let first = "#071b52";
         let second = "#020617";
 
-
         if (selectedStyle === "sale") {
-
-            first = "#b40000";
-            second = "#210000";
+            first = "#c40000";
+            second = "#180000";
         }
-
 
         if (selectedStyle === "minimal") {
-
-            first = "#eeeeee";
+            first = "#f3f3f3";
             second = "#ffffff";
         }
-
 
         const background =
             new fabric.Rect({
 
                 left: 0,
-
                 top: 0,
 
                 width: 1080,
-
                 height: 1080,
 
                 fill:
@@ -482,30 +432,24 @@ document.addEventListener("DOMContentLoaded", () => {
                         },
 
                         colorStops: [
-
                             {
                                 offset: 0,
                                 color: first
                             },
-
                             {
                                 offset: 0.55,
                                 color: first
                             },
-
                             {
                                 offset: 1,
                                 color: second
                             }
-
                         ]
                     }),
 
                 selectable: false,
-
                 evented: false
             });
-
 
         canvas.add(background);
 
@@ -514,43 +458,192 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* =====================================================
-       GLOW
+       PROFESSIONAL GLOW
     ===================================================== */
 
     function createGlow() {
 
-        if (selectedStyle === "minimal") {
+        if (selectedStyle === "minimal")
             return;
-        }
 
-
-        addCircle({
-
+        circle({
             left: 850,
-
-            top: 350,
-
+            top: 360,
             radius: 260,
-
             fill:
                 selectedStyle === "sale"
-                    ? "rgba(255,50,30,.15)"
-                    : "rgba(30,120,255,.16)"
+                    ? "rgba(255,40,20,0.16)"
+                    : "rgba(0,100,255,0.18)"
         });
 
-
-        addCircle({
-
+        circle({
             left: 220,
-
-            top: 780,
-
+            top: 800,
             radius: 230,
-
             fill:
                 selectedStyle === "sale"
-                    ? "rgba(255,20,20,.13)"
-                    : "rgba(100,60,255,.13)"
+                    ? "rgba(255,0,0,0.13)"
+                    : "rgba(80,60,255,0.13)"
+        });
+
+        circle({
+            left: 600,
+            top: 650,
+            radius: 180,
+            fill:
+                selectedStyle === "sale"
+                    ? "rgba(255,90,20,0.08)"
+                    : "rgba(0,180,255,0.08)"
+        });
+    }
+
+
+    /* =====================================================
+       TOP BADGE
+    ===================================================== */
+
+    function createTopBadge() {
+
+        const label =
+            selectedStyle === "sale"
+                ? "BIG SALE"
+                : "NEW ARRIVAL";
+
+        rect({
+            left: 55,
+            top: 48,
+            width: 205,
+            height: 48,
+            fill:
+                selectedStyle === "minimal"
+                    ? "#111111"
+                    : "#ef3028",
+            rx: 9,
+            ry: 9
+        });
+
+        text(label, {
+
+            left: 70,
+            top: 59,
+
+            width: 175,
+
+            fontSize: 21,
+
+            fontWeight: "900",
+
+            fill: "#ffffff"
+        });
+    }
+
+
+    /* =====================================================
+       HEADLINE
+    ===================================================== */
+
+    function createHeadline() {
+
+        const value =
+            headline?.value?.trim() ||
+            "NEW ARRIVAL";
+
+        text(value, {
+
+            left: 55,
+            top: 120,
+
+            width: 720,
+
+            fontSize: 76,
+
+            fontWeight: "900",
+
+            fill:
+                selectedStyle === "minimal"
+                    ? "#111111"
+                    : "#ffffff",
+
+            lineHeight: 0.92,
+
+            charSpacing: -20
+        });
+    }
+
+
+    /* =====================================================
+       SUBHEADLINE
+    ===================================================== */
+
+    function createSubheadline() {
+
+        const value =
+            subheadline?.value?.trim();
+
+        if (!value) return;
+
+        text(value, {
+
+            left: 60,
+            top: 295,
+
+            width: 650,
+
+            fontSize: 26,
+
+            fontWeight: "600",
+
+            fill:
+                selectedStyle === "minimal"
+                    ? "#333333"
+                    : "#eeeeee",
+
+            charSpacing: 5
+        });
+    }
+
+
+    /* =====================================================
+       DISCOUNT BADGE
+    ===================================================== */
+
+    function createDiscount() {
+
+        const value =
+            discount?.value?.trim();
+
+        if (!value) return;
+
+        circle({
+
+            left: 875,
+            top: 185,
+
+            radius: 83,
+
+            fill: "#ffd21a",
+
+            stroke: "#ffffff",
+
+            strokeWidth: 5
+        });
+
+        text(value, {
+
+            left: 800,
+            top: 157,
+
+            width: 150,
+
+            fontSize: 28,
+
+            fontWeight: "900",
+
+            fill: "#111111",
+
+            textAlign: "center",
+
+            lineHeight: 0.95
         });
     }
 
@@ -566,18 +659,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 imageURL
             );
 
-
-        if (!image.width || !image.height) {
-
+        if (!image || !image.width)
             throw new Error(
-                "Product image ba shi da dimensions."
+                "Product image ba ta load ba."
             );
-        }
-
 
         const maxWidth = 820;
-        const maxHeight = 540;
-
+        const maxHeight = 500;
 
         const scale =
             Math.min(
@@ -585,103 +673,33 @@ document.addEventListener("DOMContentLoaded", () => {
                 maxHeight / image.height
             );
 
-
         image.set({
 
             left: 540,
-
-            top: 565,
+            top: 575,
 
             originX: "center",
-
             originY: "center",
 
             scaleX: scale,
-
             scaleY: scale,
 
             selectable: true,
-
             evented: true,
-
-            cornerColor: "#7437ff",
-
-            borderColor: "#7437ff",
-
-            transparentCorners: false,
-
-            padding: 8,
 
             shadow:
                 new fabric.Shadow({
-
                     color:
-                        "rgba(0,0,0,.45)",
-
-                    blur: 30,
-
+                        "rgba(0,0,0,0.45)",
+                    blur: 35,
                     offsetX: 0,
-
-                    offsetY: 20
+                    offsetY: 22
                 })
         });
-
 
         canvas.add(image);
 
         canvas.bringObjectToFront(image);
-    }
-
-
-    /* =====================================================
-       DISCOUNT
-    ===================================================== */
-
-    function createDiscount() {
-
-        const value =
-            discount?.value.trim();
-
-        if (!value) return;
-
-
-        addCircle({
-
-            left: 880,
-
-            top: 190,
-
-            radius: 78,
-
-            fill: "#ffd21a",
-
-            stroke: "#ffffff",
-
-            strokeWidth: 4
-        });
-
-
-        addText(
-
-            value,
-
-            {
-
-                left: 805,
-
-                top: 160,
-
-                width: 150,
-
-                fontSize: 27,
-
-                fontWeight: "900",
-
-                fill: "#111111",
-
-                textAlign: "center"
-            }
-        );
     }
 
 
@@ -691,24 +709,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function createPrice() {
 
-        const currentPrice =
-            price?.value.trim();
+        const current =
+            price?.value?.trim();
 
-        const previousPrice =
-            oldPrice?.value.trim();
+        const previous =
+            oldPrice?.value?.trim();
 
+        if (!current) return;
 
-        if (!currentPrice) return;
-
-
-        addRect({
+        rect({
 
             left: 55,
-
             top: 820,
 
             width: 390,
-
             height: 105,
 
             fill:
@@ -717,56 +731,41 @@ document.addEventListener("DOMContentLoaded", () => {
                     : "#ffd21a",
 
             rx: 20,
-
             ry: 20
         });
 
+        text(current, {
 
-        addText(
+            left: 80,
+            top: 838,
 
-            currentPrice,
+            width: 340,
 
-            {
+            fontSize: 56,
 
-                left: 78,
+            fontWeight: "900",
 
-                top: 838,
+            fill:
+                selectedStyle === "minimal"
+                    ? "#ffffff"
+                    : "#111111"
+        });
 
-                width: 345,
+        if (previous) {
 
-                fontSize: 55,
+            text(previous, {
 
-                fontWeight: "900",
+                left: 475,
+                top: 850,
 
-                fill:
-                    selectedStyle === "minimal"
-                        ? "#ffffff"
-                        : "#111111"
-            }
-        );
+                width: 250,
 
+                fontSize: 30,
 
-        if (previousPrice) {
+                fontWeight: "700",
 
-            addText(
-
-                previousPrice,
-
-                {
-
-                    left: 475,
-
-                    top: 850,
-
-                    width: 230,
-
-                    fontSize: 29,
-
-                    fontWeight: "700",
-
-                    fill: "#ffffff"
-                }
-            );
+                fill: "#ffffff"
+            });
         }
     }
 
@@ -777,50 +776,39 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function createCTA() {
 
-        const text =
-            buttonText?.value.trim() ||
+        const value =
+            buttonText?.value?.trim() ||
             "SHOP NOW";
 
-
-        addRect({
+        rect({
 
             left: 55,
-
             top: 950,
 
-            width: 260,
-
-            height: 70,
+            width: 280,
+            height: 72,
 
             fill: "#ffd21a",
 
-            rx: 35,
-
-            ry: 35
+            rx: 36,
+            ry: 36
         });
 
+        text(value, {
 
-        addText(
+            left: 75,
+            top: 970,
 
-            text,
+            width: 240,
 
-            {
+            fontSize: 27,
 
-                left: 75,
+            fontWeight: "900",
 
-                top: 970,
+            fill: "#111111",
 
-                width: 220,
-
-                fontSize: 26,
-
-                fontWeight: "900",
-
-                fill: "#111111",
-
-                textAlign: "center"
-            }
-        );
+            textAlign: "center"
+        });
     }
 
 
@@ -831,15 +819,13 @@ document.addEventListener("DOMContentLoaded", () => {
     function createPhone() {
 
         const number =
-            phone?.value.trim();
+            phone?.value?.trim();
 
         if (!number) return;
 
+        circle({
 
-        addCircle({
-
-            left: 390,
-
+            left: 405,
             top: 985,
 
             radius: 31,
@@ -847,49 +833,35 @@ document.addEventListener("DOMContentLoaded", () => {
             fill: "#20d366"
         });
 
+        text("WA", {
 
-        addText(
+            left: 380,
+            top: 998,
 
-            "WA",
+            width: 50,
 
-            {
+            fontSize: 16,
 
-                left: 365,
+            fontWeight: "900",
 
-                top: 999,
+            fill: "#ffffff",
 
-                width: 50,
+            textAlign: "center"
+        });
 
-                fontSize: 16,
+        text(number, {
 
-                fontWeight: "900",
+            left: 450,
+            top: 991,
 
-                fill: "#ffffff",
+            width: 450,
 
-                textAlign: "center"
-            }
-        );
+            fontSize: 28,
 
+            fontWeight: "800",
 
-        addText(
-
-            number,
-
-            {
-
-                left: 440,
-
-                top: 992,
-
-                width: 500,
-
-                fontSize: 27,
-
-                fontWeight: "700",
-
-                fill: "#ffffff"
-            }
-        );
+            fill: "#ffffff"
+        });
     }
 
 
@@ -908,26 +880,12 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-
-        if (!generateBtn) {
-
-            alert(
-                "Generate button bai samu ba."
-            );
-
-            return;
-        }
-
-
-        generateBtn.disabled = true;
-
+        if (generateBtn)
+            generateBtn.disabled = true;
 
         try {
 
-            /*
-             * STEP 1
-             * REMOVE BACKGROUND
-             */
+            /* REMOVE BACKGROUND */
 
             cleanImage =
                 await removeBackground(
@@ -936,179 +894,54 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
             setGenerateText(
-                "✨ Creating your ad..."
+                "✨ Creating professional ad..."
             );
 
 
-            /*
-             * STEP 2
-             * CLEAR CANVAS
-             */
+            /* CLEAR */
 
             canvas.clear();
 
 
-            /*
-             * STEP 3
-             * BACKGROUND
-             */
+            /* BACKGROUND */
 
             createBackground();
 
             createGlow();
 
 
-            /*
-             * STEP 4
-             * BADGE
-             */
+            /* TEXT */
 
-            addRect({
+            createTopBadge();
 
-                left: 55,
+            createHeadline();
 
-                top: 50,
-
-                width: 190,
-
-                height: 45,
-
-                fill:
-                    selectedStyle === "minimal"
-                        ? "#111111"
-                        : "#ed3028",
-
-                rx: 8,
-
-                ry: 8
-            });
+            createSubheadline();
 
 
-            addText(
-
-                selectedStyle === "sale"
-                    ? "BIG SALE"
-                    : "NEW ARRIVAL",
-
-                {
-
-                    left: 72,
-
-                    top: 61,
-
-                    width: 160,
-
-                    fontSize: 20,
-
-                    fontWeight: "900",
-
-                    fill: "#ffffff"
-                }
-            );
-
-
-            /*
-             * STEP 5
-             * HEADLINE
-             */
-
-            addText(
-
-                headline?.value.trim() ||
-                "NEW ARRIVAL",
-
-                {
-
-                    left: 55,
-
-                    top: 125,
-
-                    width: 720,
-
-                    fontSize: 67,
-
-                    fontWeight: "900",
-
-                    fill:
-                        selectedStyle === "minimal"
-                            ? "#111111"
-                            : "#ffffff",
-
-                    lineHeight: .95
-                }
-            );
-
-
-            /*
-             * STEP 6
-             * SUBHEADLINE
-             */
-
-            if (
-                subheadline?.value.trim()
-            ) {
-
-                addText(
-
-                    subheadline.value.trim(),
-
-                    {
-
-                        left: 60,
-
-                        top: 295,
-
-                        width: 650,
-
-                        fontSize: 25,
-
-                        fontWeight: "600",
-
-                        fill:
-                            selectedStyle === "minimal"
-                                ? "#333333"
-                                : "#eeeeee"
-                    }
-                );
-            }
-
-
-            /*
-             * STEP 7
-             * DISCOUNT
-             */
+            /* DISCOUNT */
 
             createDiscount();
 
 
-            /*
-             * STEP 8
-             * PRODUCT
-             */
+            /* PRODUCT */
 
-            await addProduct(cleanImage);
+            await addProduct(
+                cleanImage
+            );
 
 
-            /*
-             * STEP 9
-             * PRICE
-             */
+            /* PRICE */
 
             createPrice();
 
 
-            /*
-             * STEP 10
-             * BUTTON
-             */
+            /* CTA */
 
             createCTA();
 
 
-            /*
-             * STEP 11
-             * WHATSAPP
-             */
+            /* WHATSAPP */
 
             createPhone();
 
@@ -1120,29 +953,26 @@ document.addEventListener("DOMContentLoaded", () => {
                 "✨ Generate Professional Ad"
             );
 
-
         } catch (error) {
 
             console.error(
-                "Ad generation error:",
+                "Generation error:",
                 error
             );
-
 
             alert(
                 "An samu matsala: " +
                 error.message
             );
 
-
             setGenerateText(
                 "✨ Generate Professional Ad"
             );
 
-
         } finally {
 
-            generateBtn.disabled = false;
+            if (generateBtn)
+                generateBtn.disabled = false;
         }
     }
 
@@ -1151,11 +981,10 @@ document.addEventListener("DOMContentLoaded", () => {
        BUTTON TEXT
     ===================================================== */
 
-    function setGenerateText(text) {
+    function setGenerateText(value) {
 
-        if (generateBtn) {
-            generateBtn.innerHTML = text;
-        }
+        if (generateBtn)
+            generateBtn.innerHTML = value;
     }
 
 
@@ -1175,17 +1004,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
         canvas.renderAll();
 
-
         const data =
             canvas.toDataURL({
-
                 format: "png",
-
                 quality: 1,
-
                 multiplier: 1
             });
-
 
         const link =
             document.createElement("a");
@@ -1207,7 +1031,6 @@ document.addEventListener("DOMContentLoaded", () => {
         "click",
         downloadAd
     );
-
 
     downloadBottom?.addEventListener(
         "click",
@@ -1233,9 +1056,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
             canvas.renderAll();
 
-            if (imageInput) {
+            if (imageInput)
                 imageInput.value = "";
-            }
 
             if (preview) {
 
@@ -1270,7 +1092,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     console.log(
-        "Ads Maker Free AI Generator ready."
+        "Ads Maker Free Professional Generator ready."
     );
 
 });
