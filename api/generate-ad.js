@@ -1,6 +1,6 @@
 // ==========================================
 // ADS MAKER FREE
-// PREMIUM AI AD GENERATOR
+// PREMIUM AI BACKGROUND GENERATOR
 // CLOUDFLARE WORKERS AI
 // FLUX.2 KLEIN 9B
 // ==========================================
@@ -29,55 +29,9 @@ export default async function handler(req, res) {
         }
 
         const {
-            image,
-            headline,
-            description,
-            price,
-            oldPrice,
-            discount,
-            phone,
-            buttonText,
-            style
+            style,
+            scene
         } = req.body || {};
-
-        if (!image) {
-            return res.status(400).json({
-                error:
-                    "No product image was provided."
-            });
-        }
-
-        // ======================================
-        // IMAGE
-        // ======================================
-
-        const match = image.match(
-            /^data:(image\/[a-zA-Z0-9.+-]+);base64,(.+)$/
-        );
-
-        if (!match) {
-            return res.status(400).json({
-                error:
-                    "Invalid product image."
-            });
-        }
-
-        const mimeType = match[1];
-        const base64Data = match[2];
-
-        const imageBuffer =
-            Buffer.from(
-                base64Data,
-                "base64"
-            );
-
-        const imageBlob =
-            new Blob(
-                [imageBuffer],
-                {
-                    type: mimeType
-                }
-            );
 
         // ======================================
         // STYLE
@@ -88,157 +42,110 @@ export default async function handler(req, res) {
         if (style === "sale") {
 
             stylePrompt = `
-Create an energetic SALE campaign.
-Strong commercial lighting.
-Bold red and warm tones.
-Premium retail campaign feeling.
-Urgent but elegant.
+Use a powerful premium retail campaign style.
+Elegant red and dark tones.
+Strong studio lighting.
+Energetic but sophisticated.
 `;
 
         } else if (style === "minimal") {
 
             stylePrompt = `
-Create an elegant minimalist advertisement.
-Clean white or soft neutral background.
-Very subtle shadows.
-Luxury editorial photography.
-Lots of clean negative space.
+Use a clean luxury minimalist style.
+Soft white and neutral tones.
+Elegant shadows.
+Bright premium studio.
+Lots of clean space.
 `;
 
         } else {
 
             stylePrompt = `
-Create a luxury premium advertisement.
-Dark sophisticated background.
-Beautiful studio lighting.
-Soft cinematic highlights.
-Realistic reflections.
-Elegant premium e-commerce atmosphere.
+Use a luxury premium commercial style.
+Dark sophisticated environment.
+Cinematic studio lighting.
+Beautiful soft highlights.
+Deep shadows.
+Premium e-commerce atmosphere.
 `;
 
         }
 
         // ======================================
-        // PROFESSIONAL AI PROMPT
+        // SCENE PROMPT
         // ======================================
 
+        const customScene =
+            typeof scene === "string" &&
+            scene.trim()
+                ? scene.trim()
+                : `
+luxury modern product photography studio,
+dark elegant background,
+soft cinematic lighting,
+subtle blue and purple ambient glow,
+premium floor reflection,
+realistic soft shadows,
+high-end Nigerian e-commerce advertising environment
+`;
+
         const prompt = `
-You are a world-class commercial advertising art director.
+Create a premium commercial advertising BACKGROUND.
 
-Create a premium 1:1 square product advertisement
-using INPUT IMAGE 0 as the exact product reference.
+IMPORTANT:
+This image is ONLY the background environment.
 
-PRODUCT PRESERVATION IS EXTREMELY IMPORTANT.
+Do NOT create a product.
 
-The product shown in INPUT IMAGE 0 must remain
-the same product.
+Do NOT create a chair.
 
-Do NOT replace the product.
+Do NOT create shoes.
 
-Do NOT invent another product.
+Do NOT create a phone.
 
-Do NOT change the product category.
+Do NOT create furniture.
 
-Do NOT change its important physical features.
+Do NOT create people.
 
-Do NOT add extra products.
+Do NOT create logos.
 
-Keep the original product recognizable.
+Do NOT create watermarks.
 
-Make the product the hero of the advertisement.
+Do NOT create advertising text.
 
-Place it naturally inside a beautiful professional
-commercial environment.
+Do NOT create prices.
 
-Use realistic studio photography.
+Do NOT create buttons.
 
-Use premium cinematic lighting.
+Do NOT create fake words.
 
-Use realistic contact shadows.
+Leave a large clean central area where a real
+product will be placed later.
 
-Use subtle reflections where appropriate.
-
-Use professional depth of field.
-
-Use realistic materials.
-
-Use sophisticated color grading.
-
-Create strong visual hierarchy.
-
-Leave clean space for advertisement information.
+The background must look like a professional
+high-end commercial product photography scene.
 
 ${stylePrompt}
 
-PRODUCT:
+CUSTOM SCENE:
+${customScene}
 
-Headline:
-${headline || "NEW ARRIVAL"}
+Composition:
+- Square 1:1
+- Premium commercial photography
+- Realistic lighting
+- Realistic floor and shadows
+- Beautiful depth
+- Clean composition
+- Product-ready environment
+- No text anywhere
+- No objects that compete with the future product
 
-Description:
-${description || "PREMIUM STYLE • EVERYDAY COMFORT"}
-
-Current Price:
-${price || ""}
-
-Old Price:
-${oldPrice || ""}
-
-Discount:
-${discount || ""}
-
-WhatsApp / Phone:
-${phone || ""}
-
-CTA:
-${buttonText || "SHOP NOW"}
-
-IMPORTANT:
-
-The uploaded product is the most important object.
-
-Preserve its identity.
-
-Do not turn a chair into a sofa.
-
-Do not turn shoes into another type of shoes.
-
-Do not turn a phone into another phone.
-
-Do not turn furniture into another furniture.
-
-Do not add people unless absolutely necessary.
-
-Do not add random objects.
-
-Do not create fake brand logos.
-
-Do not create watermarks.
-
-Do not create unrelated text.
-
-Make it look like a professional advertisement
-from a major Nigerian e-commerce brand.
-
-Final composition:
-
-1080 x 1080 square advertisement.
-
-Product large and visually dominant.
-
-Premium background.
-
-Professional lighting.
-
-Commercial photography.
-
-Clean composition.
-
-High-end advertising quality.
+Create a beautiful 1024 x 1024 background.
 `;
 
         // ======================================
-        // CLOUDFLARE FORM DATA
+        // CLOUDFLARE REQUEST
         // ======================================
 
         const formData =
@@ -263,16 +170,6 @@ High-end advertising quality.
             "guidance",
             "4"
         );
-
-        formData.append(
-            "input_image_0",
-            imageBlob,
-            "product.png"
-        );
-
-        // ======================================
-        // CLOUDFLARE AI
-        // ======================================
 
         const response =
             await fetch(
@@ -312,7 +209,6 @@ High-end advertising quality.
                 details:
                     errorText
             });
-
         }
 
         // ======================================
@@ -336,12 +232,7 @@ High-end advertising quality.
                 error:
                     "Cloudflare did not return an image."
             });
-
         }
-
-        // ======================================
-        // RETURN IMAGE
-        // ======================================
 
         return res.status(200).json({
 
@@ -355,20 +246,18 @@ High-end advertising quality.
     } catch (error) {
 
         console.error(
-            "Generate ad error:",
+            "Generate background error:",
             error
         );
 
         return res.status(500).json({
 
             error:
-                "Something went wrong while generating the advertisement.",
+                "Something went wrong while creating the AI background.",
 
             details:
                 error.message
 
         });
-
     }
-
 }
