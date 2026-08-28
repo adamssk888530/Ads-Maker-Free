@@ -1,76 +1,1284 @@
+/* =========================================================
+   ADS MAKER FREE
+   PROFESSIONAL EDITOR
+   Fabric.js
+========================================================= */
+
 document.addEventListener("DOMContentLoaded", () => {
 
-    const canvas = new fabric.Canvas("designCanvas", {
-        width: 1080,
-        height: 1080,
-        backgroundColor: "#ffffff",
-        preserveObjectStacking: true
-    });
+    /* =====================================================
+       CHECK FABRIC
+    ===================================================== */
 
-    let productDataUrl = null;
-    let processedProductDataUrl = null;
-
-    let backgroundRemover = null;
-    let aiLoading = false;
-
-    let history = [];
-    let historyIndex = -1;
-    let restoring = false;
-
-
-    // ==========================================
-    // STATUS
-    // ==========================================
-
-    function showStatus(message) {
-
-        let box =
-            document.querySelector(".editor-status");
-
-        if (!box) {
-
-            box = document.createElement("div");
-
-            box.className = "editor-status";
-
-            Object.assign(box.style, {
-                position: "fixed",
-                left: "50%",
-                bottom: "80px",
-                transform: "translateX(-50%)",
-                background: "#171827",
-                color: "#ffffff",
-                padding: "11px 17px",
-                borderRadius: "9px",
-                fontSize: "12px",
-                fontWeight: "700",
-                zIndex: "99999",
-                boxShadow: "0 8px 25px rgba(0,0,0,.2)"
-            });
-
-            document.body.appendChild(box);
-        }
-
-        box.textContent = message;
-
-        clearTimeout(box.timer);
-
-        box.timer = setTimeout(() => {
-            box.remove();
-        }, 3500);
+    if (typeof fabric === "undefined") {
+        console.error("Fabric.js was not loaded.");
+        alert("Editor failed to load. Please refresh the page.");
+        return;
     }
 
 
-    // ==========================================
-    // HISTORY
-    // ==========================================
+    /* =====================================================
+       CANVAS
+    ===================================================== */
 
-    function saveState() {
+    const canvasElement =
+        document.getElementById("designCanvas");
 
-        if (restoring) return;
+    if (!canvasElement) {
+        console.error("designCanvas not found.");
+        return;
+    }
+
+
+    const canvas = new fabric.Canvas(
+        "designCanvas",
+        {
+            width: 1080,
+            height: 1350,
+
+            backgroundColor: "#ffffff",
+
+            preserveObjectStacking: true,
+
+            selection: true
+        }
+    );
+
+
+    window.adsMakerCanvas = canvas;
+
+
+    /* =====================================================
+       VARIABLES
+    ===================================================== */
+
+    let history = [];
+
+    let historyIndex = -1;
+
+    let isRestoring = false;
+
+    let selectedProduct = null;
+
+    let selectedTemplate =
+        new URLSearchParams(
+            window.location.search
+        ).get("template") || "sale";
+
+
+    /* =====================================================
+       HELPERS
+    ===================================================== */
+
+    function addObject(object) {
+
+        canvas.add(object);
+
+        canvas.setActiveObject(object);
+
+        canvas.renderAll();
+
+        saveHistory();
+
+    }
+
+
+    function makeText(
+        text,
+        options = {}
+    ) {
+
+        return new fabric.IText(
+            text,
+            {
+                left: options.left || 100,
+
+                top: options.top || 100,
+
+                fill:
+                    options.fill ||
+                    "#ffffff",
+
+                fontSize:
+                    options.fontSize ||
+                    60,
+
+                fontFamily:
+                    options.fontFamily ||
+                    "Arial",
+
+                fontWeight:
+                    options.fontWeight ||
+                    "700",
+
+                originX:
+                    options.originX ||
+                    "left",
+
+                originY:
+                    options.originY ||
+                    "top",
+
+                selectable: true,
+
+                editable: true,
+
+                shadow:
+                    options.shadow ||
+                    null
+            }
+        );
+
+    }
+
+
+    function makeRect(
+        options = {}
+    ) {
+
+        return new fabric.Rect({
+
+            left:
+                options.left || 0,
+
+            top:
+                options.top || 0,
+
+            width:
+                options.width || 100,
+
+            height:
+                options.height || 100,
+
+            fill:
+                options.fill ||
+                "#ffffff",
+
+            rx:
+                options.rx || 0,
+
+            ry:
+                options.ry || 0,
+
+            selectable:
+                options.selectable !== false
+        });
+
+    }
+
+
+    function addGlowCircle(
+        left,
+        top,
+        radius,
+        color
+    ) {
+
+        const circle =
+            new fabric.Circle({
+
+                left,
+
+                top,
+
+                radius,
+
+                originX: "center",
+
+                originY: "center",
+
+                fill: color,
+
+                opacity: 0.75,
+
+                shadow:
+                    new fabric.Shadow({
+                        color: color,
+                        blur: 80,
+                        offsetX: 0,
+                        offsetY: 0
+                    }),
+
+                selectable: false,
+
+                evented: false
+            });
+
+        canvas.add(circle);
+
+    }
+
+
+    /* =====================================================
+       GRADIENT BACKGROUND
+    ===================================================== */
+
+    function setBackground(
+        color1,
+        color2,
+        color3
+    ) {
+
+        const gradient =
+            new fabric.Gradient({
+
+                type: "linear",
+
+                coords: {
+                    x1: 0,
+                    y1: 0,
+                    x2: 1080,
+                    y2: 1350
+                },
+
+                colorStops: [
+
+                    {
+                        offset: 0,
+                        color: color1
+                    },
+
+                    {
+                        offset: 0.52,
+                        color: color2
+                    },
+
+                    {
+                        offset: 1,
+                        color: color3
+                    }
+
+                ]
+
+            });
+
+        canvas.backgroundColor =
+            gradient;
+
+        canvas.renderAll();
+
+    }
+
+
+    /* =====================================================
+       DECORATIVE LIGHT
+    ===================================================== */
+
+    function addBackgroundLights(
+        color
+    ) {
+
+        addGlowCircle(
+            760,
+            610,
+            190,
+            color
+        );
+
+        addGlowCircle(
+            250,
+            1040,
+            150,
+            color
+        );
+
+    }
+
+
+    /* =====================================================
+       SALE TEMPLATE
+    ===================================================== */
+
+    function loadSaleTemplate() {
+
+        canvas.clear();
+
+        canvas.setWidth(1080);
+
+        canvas.setHeight(1350);
+
+
+        setBackground(
+            "#210202",
+            "#8d0805",
+            "#100101"
+        );
+
+
+        addBackgroundLights(
+            "#ff2518"
+        );
+
+
+        /* ---------------------------------------------
+           TOP BADGE
+        --------------------------------------------- */
+
+        const badge =
+            makeRect({
+
+                left: 70,
+                top: 65,
+
+                width: 150,
+                height: 42,
+
+                fill: "#f52a24",
+
+                rx: 8,
+                ry: 8
+
+            });
+
+        badge.set({
+            selectable: false,
+            evented: false
+        });
+
+        canvas.add(badge);
+
+
+        const badgeText =
+            makeText(
+                "BIG SALE",
+                {
+                    left: 88,
+                    top: 73,
+
+                    fontSize: 19,
+
+                    fontWeight: "900"
+                }
+            );
+
+        badgeText.set({
+            selectable: false,
+            evented: false
+        });
+
+        canvas.add(badgeText);
+
+
+        /* ---------------------------------------------
+           MAIN HEADLINE
+        --------------------------------------------- */
+
+        canvas.add(
+            makeText(
+                "BIG",
+                {
+                    left: 70,
+                    top: 145,
+
+                    fontSize: 112,
+
+                    fontWeight: "900"
+                }
+            )
+        );
+
+
+        canvas.add(
+            makeText(
+                "SALE",
+                {
+                    left: 70,
+                    top: 255,
+
+                    fontSize: 112,
+
+                    fontWeight: "900"
+                }
+            )
+        );
+
+
+        /* ---------------------------------------------
+           DISCOUNT CIRCLE
+        --------------------------------------------- */
+
+        const discount =
+            new fabric.Circle({
+
+                left: 260,
+                top: 475,
+
+                radius: 95,
+
+                originX: "center",
+                originY: "center",
+
+                fill: "#ffd000",
+
+                stroke: "#ff8a00",
+
+                strokeWidth: 6,
+
+                shadow:
+                    new fabric.Shadow({
+                        color: "#ff9d00",
+                        blur: 30,
+                        offsetX: 0,
+                        offsetY: 0
+                    })
+            });
+
+        canvas.add(discount);
+
+
+        canvas.add(
+            makeText(
+                "UP TO",
+                {
+                    left: 260,
+                    top: 420,
+
+                    originX: "center",
+
+                    fontSize: 28,
+
+                    fill: "#111111",
+
+                    fontWeight: "900"
+                }
+            )
+        );
+
+
+        canvas.add(
+            makeText(
+                "50%",
+                {
+                    left: 260,
+                    top: 452,
+
+                    originX: "center",
+
+                    fontSize: 62,
+
+                    fill: "#111111",
+
+                    fontWeight: "950"
+                }
+            )
+        );
+
+
+        canvas.add(
+            makeText(
+                "OFF",
+                {
+                    left: 260,
+                    top: 515,
+
+                    originX: "center",
+
+                    fontSize: 30,
+
+                    fill: "#111111",
+
+                    fontWeight: "900"
+                }
+            )
+        );
+
+
+        /* ---------------------------------------------
+           PRODUCT PLACEHOLDER
+        --------------------------------------------- */
+
+        createShoeGraphic();
+
+
+        /* ---------------------------------------------
+           PRICE
+        --------------------------------------------- */
+
+        canvas.add(
+            makeText(
+                "₦35,000",
+                {
+                    left: 70,
+                    top: 1070,
+
+                    fontSize: 68,
+
+                    fontWeight: "900"
+                }
+            )
+        );
+
+
+        canvas.add(
+            makeText(
+                "₦70,000",
+                {
+                    left: 420,
+                    top: 1090,
+
+                    fontSize: 38,
+
+                    fontWeight: "700",
+
+                    fill: "#bdb7b7",
+
+                    shadow: null
+                }
+            )
+        );
+
+
+        /* ---------------------------------------------
+           SHOP BUTTON
+        --------------------------------------------- */
+
+        const shopButton =
+            makeRect({
+
+                left: 70,
+                top: 1190,
+
+                width: 245,
+                height: 78,
+
+                fill: "#ffd000",
+
+                rx: 38,
+                ry: 38
+            });
+
+        canvas.add(shopButton);
+
+
+        canvas.add(
+            makeText(
+                "SHOP NOW",
+                {
+                    left: 193,
+                    top: 1210,
+
+                    originX: "center",
+
+                    fontSize: 31,
+
+                    fill: "#151000",
+
+                    fontWeight: "900"
+                }
+            )
+        );
+
+
+        /* ---------------------------------------------
+           WHATSAPP
+        --------------------------------------------- */
+
+        const whatsapp =
+            new fabric.Circle({
+
+                left: 385,
+                top: 1228,
+
+                radius: 29,
+
+                fill: "#18c65a",
+
+                originX: "center",
+                originY: "center"
+            });
+
+        canvas.add(whatsapp);
+
+
+        canvas.add(
+            makeText(
+                "WA",
+                {
+                    left: 385,
+                    top: 1213,
+
+                    originX: "center",
+
+                    fontSize: 20,
+
+                    fontWeight: "900"
+                }
+            )
+        );
+
+
+        canvas.add(
+            makeText(
+                "080 1234 5678",
+                {
+                    left: 430,
+                    top: 1208,
+
+                    fontSize: 31,
+
+                    fontWeight: "700"
+                }
+            )
+        );
+
+
+        canvas.renderAll();
+
+        saveHistory();
+
+    }
+
+
+    /* =====================================================
+       OTHER TEMPLATES
+    ===================================================== */
+
+    function loadNewTemplate() {
+
+        canvas.clear();
+
+        setBackground(
+            "#020a1c",
+            "#0b3e8a",
+            "#02050d"
+        );
+
+        addBackgroundLights("#2181ff");
+
+
+        canvas.add(
+            makeText(
+                "NEW",
+                {
+                    left: 70,
+                    top: 80,
+
+                    fontSize: 90,
+
+                    fontWeight: "900"
+                }
+            )
+        );
+
+
+        canvas.add(
+            makeText(
+                "COLLECTION",
+                {
+                    left: 70,
+                    top: 175,
+
+                    fontSize: 72,
+
+                    fontWeight: "900"
+                }
+            )
+        );
+
+
+        createShoeGraphic();
+
+
+        canvas.add(
+            makeText(
+                "₦42,000",
+                {
+                    left: 70,
+                    top: 1090,
+
+                    fontSize: 70,
+
+                    fontWeight: "900"
+                }
+            )
+        );
+
+
+        addShopButton(
+            "#147cff"
+        );
+
+
+        canvas.renderAll();
+
+        saveHistory();
+
+    }
+
+
+    function loadPremiumTemplate() {
+
+        canvas.clear();
+
+        setBackground(
+            "#070707",
+            "#33270a",
+            "#050505"
+        );
+
+        addBackgroundLights(
+            "#d5a719"
+        );
+
+
+        canvas.add(
+            makeText(
+                "PREMIUM",
+                {
+                    left: 70,
+                    top: 85,
+
+                    fontSize: 40,
+
+                    fill: "#ffd21a",
+
+                    fontWeight: "900"
+                }
+            )
+        );
+
+
+        canvas.add(
+            makeText(
+                "SNEAKERS",
+                {
+                    left: 70,
+                    top: 140,
+
+                    fontSize: 83,
+
+                    fontWeight: "900"
+                }
+            )
+        );
+
+
+        createShoeGraphic();
+
+
+        canvas.add(
+            makeText(
+                "₦38,000",
+                {
+                    left: 70,
+                    top: 1080,
+
+                    fontSize: 70,
+
+                    fill: "#ffd21a",
+
+                    fontWeight: "900"
+                }
+            )
+        );
+
+
+        addShopButton(
+            "#ffd21a",
+            "#151000"
+        );
+
+
+        canvas.renderAll();
+
+        saveHistory();
+
+    }
+
+
+    function loadCasualTemplate() {
+
+        canvas.clear();
+
+        setBackground(
+            "#f3f1ea",
+            "#ddd8cd",
+            "#c8c4bb"
+        );
+
+
+        canvas.add(
+            makeText(
+                "CASUAL",
+                {
+                    left: 70,
+                    top: 100,
+
+                    fontSize: 90,
+
+                    fill: "#161616",
+
+                    fontWeight: "900"
+                }
+            )
+        );
+
+
+        canvas.add(
+            makeText(
+                "SHOES",
+                {
+                    left: 70,
+                    top: 195,
+
+                    fontSize: 90,
+
+                    fill: "#161616",
+
+                    fontWeight: "900"
+                }
+            )
+        );
+
+
+        createShoeGraphic(
+            "#d5c7b4"
+        );
+
+
+        canvas.add(
+            makeText(
+                "₦28,000",
+                {
+                    left: 70,
+                    top: 1080,
+
+                    fontSize: 70,
+
+                    fill: "#198d42",
+
+                    fontWeight: "900"
+                }
+            )
+        );
+
+
+        addShopButton(
+            "#25a84b"
+        );
+
+
+        canvas.renderAll();
+
+        saveHistory();
+
+    }
+
+
+    function loadSneakersTemplate() {
+
+        canvas.clear();
+
+        setBackground(
+            "#090018",
+            "#4c147d",
+            "#08000f"
+        );
+
+        addBackgroundLights(
+            "#b928ff"
+        );
+
+
+        canvas.add(
+            makeText(
+                "SNEAKERS",
+                {
+                    left: 70,
+                    top: 100,
+
+                    fontSize: 82,
+
+                    fontWeight: "900"
+                }
+            )
+        );
+
+
+        canvas.add(
+            makeText(
+                "FOR YOU",
+                {
+                    left: 70,
+                    top: 190,
+
+                    fontSize: 70,
+
+                    fontWeight: "900"
+                }
+            )
+        );
+
+
+        createShoeGraphic(
+            "#7040d9"
+        );
+
+
+        canvas.add(
+            makeText(
+                "₦33,000",
+                {
+                    left: 70,
+                    top: 1080,
+
+                    fontSize: 70,
+
+                    fontWeight: "900"
+                }
+            )
+        );
+
+
+        addShopButton(
+            "#ed2994"
+        );
+
+
+        canvas.renderAll();
+
+        saveHistory();
+
+    }
+
+
+    function loadPerformanceTemplate() {
+
+        canvas.clear();
+
+        setBackground(
+            "#020b01",
+            "#174c0b",
+            "#010501"
+        );
+
+        addBackgroundLights(
+            "#25a928"
+        );
+
+
+        canvas.add(
+            makeText(
+                "PERFORMANCE",
+                {
+                    left: 70,
+                    top: 100,
+
+                    fontSize: 65,
+
+                    fontWeight: "900"
+                }
+            )
+        );
+
+
+        canvas.add(
+            makeText(
+                "UNLEASHED",
+                {
+                    left: 70,
+                    top: 175,
+
+                    fontSize: 72,
+
+                    fontWeight: "900"
+                }
+            )
+        );
+
+
+        createShoeGraphic(
+            "#25a928"
+        );
+
+
+        canvas.add(
+            makeText(
+                "₦45,000",
+                {
+                    left: 70,
+                    top: 1080,
+
+                    fontSize: 70,
+
+                    fontWeight: "900"
+                }
+            )
+        );
+
+
+        addShopButton(
+            "#2cae45"
+        );
+
+
+        canvas.renderAll();
+
+        saveHistory();
+
+    }
+
+
+    /* =====================================================
+       SHOE GRAPHIC
+    ===================================================== */
+
+    function createShoeGraphic(
+        accent = "#ffffff"
+    ) {
+
+        const group =
+            new fabric.Group(
+                [
+
+                    new fabric.Ellipse({
+
+                        rx: 250,
+                        ry: 80,
+
+                        fill: "rgba(0,0,0,.35)",
+
+                        originX: "center",
+                        originY: "center"
+                    }),
+
+                    new fabric.Rect({
+
+                        width: 430,
+                        height: 170,
+
+                        rx: 75,
+                        ry: 75,
+
+                        fill: accent,
+
+                        stroke: "#111111",
+
+                        strokeWidth: 9,
+
+                        originX: "center",
+                        originY: "center"
+                    }),
+
+                    new fabric.Rect({
+
+                        width: 360,
+                        height: 35,
+
+                        rx: 15,
+                        ry: 15,
+
+                        fill: "#111111",
+
+                        top: 45,
+
+                        originX: "center",
+                        originY: "center"
+                    }),
+
+                    new fabric.Triangle({
+
+                        width: 140,
+                        height: 150,
+
+                        fill: accent,
+
+                        angle: 90,
+
+                        left: 195,
+
+                        originX: "center",
+                        originY: "center"
+                    }),
+
+                    new fabric.Line(
+                        [-130, -40, 40, -40],
+                        {
+                            stroke: "#111111",
+                            strokeWidth: 12
+                        }
+                    ),
+
+                    new fabric.Line(
+                        [-115, -10, 55, -10],
+                        {
+                            stroke: "#111111",
+                            strokeWidth: 12
+                        }
+                    ),
+
+                    new fabric.Line(
+                        [-95, 20, 75, 20],
+                        {
+                            stroke: "#111111",
+                            strokeWidth: 12
+                        }
+                    )
+
+                ],
+                {
+                    left: 575,
+                    top: 700,
+
+                    originX: "center",
+                    originY: "center",
+
+                    angle: -12,
+
+                    scaleX: 1.25,
+                    scaleY: 1.25,
+
+                    shadow:
+                        new fabric.Shadow({
+                            color: "rgba(0,0,0,.65)",
+                            blur: 25,
+                            offsetX: 0,
+                            offsetY: 20
+                        })
+                }
+            );
+
+
+        group.set({
+            name: "product"
+        });
+
+
+        canvas.add(group);
+
+        canvas.setActiveObject(group);
+
+        selectedProduct = group;
+
+    }
+
+
+    /* =====================================================
+       SHOP BUTTON
+    ===================================================== */
+
+    function addShopButton(
+        background = "#ffd000",
+        textColor = "#111111"
+    ) {
+
+        const button =
+            makeRect({
+
+                left: 70,
+                top: 1190,
+
+                width: 245,
+                height: 78,
+
+                fill: background,
+
+                rx: 38,
+                ry: 38
+            });
+
+        canvas.add(button);
+
+
+        canvas.add(
+            makeText(
+                "SHOP NOW",
+                {
+                    left: 193,
+                    top: 1210,
+
+                    originX: "center",
+
+                    fontSize: 30,
+
+                    fill: textColor,
+
+                    fontWeight: "900"
+                }
+            )
+        );
+
+    }
+
+
+    /* =====================================================
+       LOAD SELECTED TEMPLATE
+    ===================================================== */
+
+    function loadTemplate(
+        template
+    ) {
+
+        selectedTemplate =
+            template || "sale";
+
+
+        switch (selectedTemplate) {
+
+            case "new":
+                loadNewTemplate();
+                break;
+
+            case "premium":
+                loadPremiumTemplate();
+                break;
+
+            case "casual":
+                loadCasualTemplate();
+                break;
+
+            case "sneakers":
+                loadSneakersTemplate();
+                break;
+
+            case "performance":
+                loadPerformanceTemplate();
+                break;
+
+            case "sale":
+
+            default:
+                loadSaleTemplate();
+                break;
+
+        }
+
+    }
+
+
+    /* =====================================================
+       HISTORY
+    ===================================================== */
+
+    function getCanvasState() {
+
+        return JSON.stringify(
+            canvas.toJSON([
+                "name"
+            ])
+        );
+
+    }
+
+
+    function saveHistory() {
+
+        if (isRestoring) {
+            return;
+        }
+
 
         const state =
-            JSON.stringify(canvas.toJSON());
+            getCanvasState();
+
+
+        if (
+            historyIndex >= 0 &&
+            history[historyIndex] === state
+        ) {
+            return;
+        }
+
 
         history =
             history.slice(
@@ -78,724 +1286,477 @@ document.addEventListener("DOMContentLoaded", () => {
                 historyIndex + 1
             );
 
+
         history.push(state);
 
         historyIndex =
             history.length - 1;
 
+
         if (history.length > 30) {
+
             history.shift();
+
             historyIndex--;
+
         }
+
     }
 
 
-    function restoreState(state) {
+    function restoreState(
+        state
+    ) {
 
-        restoring = true;
+        isRestoring = true;
+
 
         canvas.loadFromJSON(
-            JSON.parse(state),
-            () => {
+            JSON.parse(state)
+        ).then(() => {
 
-                canvas.renderAll();
+            canvas.renderAll();
 
-                restoring = false;
-            }
-        );
+            isRestoring = false;
+
+        });
+
     }
 
 
-    // ==========================================
-    // UNDO
-    // ==========================================
+    function undo() {
 
-    document
-        .getElementById("undoBtn")
-        ?.addEventListener("click", () => {
-
-            if (historyIndex <= 0) return;
-
-            historyIndex--;
-
-            restoreState(
-                history[historyIndex]
-            );
-        });
+        if (historyIndex <= 0) {
+            return;
+        }
 
 
-    // ==========================================
-    // REDO
-    // ==========================================
+        historyIndex--;
 
-    document
-        .getElementById("redoBtn")
-        ?.addEventListener("click", () => {
+        restoreState(
+            history[historyIndex]
+        );
 
-            if (
-                historyIndex >=
-                history.length - 1
-            ) return;
-
-            historyIndex++;
-
-            restoreState(
-                history[historyIndex]
-            );
-        });
+    }
 
 
-    // ==========================================
-    // PRODUCT ELEMENTS
-    // ==========================================
+    function redo() {
 
-    const uploadButton =
+        if (
+            historyIndex >=
+            history.length - 1
+        ) {
+            return;
+        }
+
+
+        historyIndex++;
+
+        restoreState(
+            history[historyIndex]
+        );
+
+    }
+
+
+    /* =====================================================
+       CANVAS CHANGE EVENTS
+    ===================================================== */
+
+    canvas.on(
+        "object:modified",
+        saveHistory
+    );
+
+    canvas.on(
+        "object:added",
+        () => {
+
+            if (!isRestoring) {
+                saveHistory();
+            }
+
+        }
+    );
+
+    canvas.on(
+        "object:removed",
+        saveHistory
+    );
+
+
+    /* =====================================================
+       UPLOAD PRODUCT
+    ===================================================== */
+
+    const productUploadButton =
         document.getElementById(
             "productUploadBtn"
         );
 
-    const imageInput =
+    const productInput =
         document.getElementById(
             "productImageInput"
         );
 
-    const preview =
-        document.getElementById(
-            "productPreview"
+
+    if (productUploadButton) {
+
+        productUploadButton.addEventListener(
+            "click",
+            () => {
+
+                productInput?.click();
+
+            }
         );
 
-    const removeButton =
+    }
+
+
+    if (productInput) {
+
+        productInput.addEventListener(
+            "change",
+            (event) => {
+
+                const file =
+                    event.target.files?.[0];
+
+                if (!file) {
+                    return;
+                }
+
+
+                const reader =
+                    new FileReader();
+
+
+                reader.onload = () => {
+
+                    fabric.FabricImage
+                        .fromURL(
+                            reader.result
+                        )
+                        .then((image) => {
+
+                            image.set({
+
+                                left: 540,
+
+                                top: 680,
+
+                                originX:
+                                    "center",
+
+                                originY:
+                                    "center",
+
+                                scaleX:
+                                    0.5,
+
+                                scaleY:
+                                    0.5,
+
+                                name:
+                                    "uploaded-product"
+
+                            });
+
+
+                            if (
+                                selectedProduct
+                            ) {
+
+                                canvas.remove(
+                                    selectedProduct
+                                );
+
+                            }
+
+
+                            canvas.add(image);
+
+                            canvas.setActiveObject(
+                                image
+                            );
+
+
+                            selectedProduct =
+                                image;
+
+
+                            canvas.renderAll();
+
+                            saveHistory();
+
+                            updateProductPreview(
+                                reader.result
+                            );
+
+                        });
+
+                };
+
+
+                reader.readAsDataURL(file);
+
+            }
+        );
+
+    }
+
+
+    /* =====================================================
+       PRODUCT PREVIEW
+    ===================================================== */
+
+    function updateProductPreview(
+        src
+    ) {
+
+        const preview =
+            document.getElementById(
+                "productPreview"
+            );
+
+        if (!preview) {
+            return;
+        }
+
+
+        preview.innerHTML = "";
+
+
+        const image =
+            document.createElement("img");
+
+        image.src = src;
+
+        image.style.width = "100%";
+
+        image.style.height = "120px";
+
+        image.style.objectFit = "contain";
+
+        image.style.borderRadius = "10px";
+
+
+        preview.appendChild(image);
+
+    }
+
+
+    /* =====================================================
+       REMOVE BACKGROUND
+    ===================================================== */
+
+    const removeBackgroundButton =
         document.getElementById(
             "removeBackgroundBtn"
         );
 
-    const addButton =
+
+    if (removeBackgroundButton) {
+
+        removeBackgroundButton.addEventListener(
+            "click",
+            () => {
+
+                if (!selectedProduct) {
+
+                    alert(
+                        "Please upload a product image first."
+                    );
+
+                    return;
+
+                }
+
+
+                /*
+                 * Real AI background removal
+                 * will be connected here.
+                 *
+                 * We intentionally do NOT put
+                 * an API key inside this browser
+                 * code.
+                 */
+
+
+                alert(
+                    "Product selected. AI background removal will be connected through the secure server API."
+                );
+
+            }
+        );
+
+    }
+
+
+    /* =====================================================
+       ADD PRODUCT
+    ===================================================== */
+
+    const addProductButton =
         document.getElementById(
             "addProductBtn"
         );
 
 
-    // ==========================================
-    // UPLOAD PRODUCT
-    // ==========================================
+    if (addProductButton) {
 
-    uploadButton?.addEventListener(
-        "click",
-        () => {
-
-            imageInput?.click();
-
-        }
-    );
-
-
-    imageInput?.addEventListener(
-        "change",
-        () => {
-
-            const file =
-                imageInput.files[0];
-
-            if (!file) return;
-
-
-            if (
-                !file.type.startsWith("image/")
-            ) {
-
-                showStatus(
-                    "Please select an image."
-                );
-
-                return;
-            }
-
-
-            const reader =
-                new FileReader();
-
-
-            reader.onload =
-                (event) => {
-
-                    productDataUrl =
-                        event.target.result;
-
-                    processedProductDataUrl =
-                        null;
-
-
-                    showPreview(
-                        productDataUrl
-                    );
-
-
-                    if (removeButton) {
-                        removeButton.disabled =
-                            false;
-                    }
-
-                    if (addButton) {
-                        addButton.disabled =
-                            false;
-                    }
-
-
-                    showStatus(
-                        "Product image uploaded."
-                    );
-                };
-
-
-            reader.readAsDataURL(file);
-
-            imageInput.value = "";
-
-        }
-    );
-
-
-    // ==========================================
-    // PREVIEW
-    // ==========================================
-
-    function showPreview(
-        imageUrl
-    ) {
-
-        if (!preview) return;
-
-        preview.innerHTML = "";
-
-        const image =
-            document.createElement("img");
-
-        image.src = imageUrl;
-
-        image.alt =
-            "Product preview";
-
-        Object.assign(
-            image.style,
-            {
-                width: "100%",
-                height: "130px",
-                objectFit: "contain"
-            }
-        );
-
-        preview.appendChild(image);
-    }
-
-
-    // ==========================================
-    // REAL BROWSER AI
-    // ==========================================
-
-    async function removeBackground() {
-
-        if (!productDataUrl) {
-
-            showStatus(
-                "Upload a product image first."
-            );
-
-            return;
-        }
-
-
-        if (!window.adsMakerAI) {
-
-            showStatus(
-                "AI is still loading. Please try again."
-            );
-
-            return;
-        }
-
-
-        if (aiLoading) return;
-
-
-        aiLoading = true;
-
-        removeButton.disabled = true;
-        addButton.disabled = true;
-
-        removeButton.textContent =
-            "✨ Loading AI...";
-
-
-        try {
-
-            /*
-             * Load MODNet background remover.
-             *
-             * The model runs in the browser.
-             */
-
-            if (!backgroundRemover) {
-
-                backgroundRemover =
-                    await window.adsMakerAI.pipeline(
-                        "background-removal",
-                        "Xenova/modnet"
-                    );
-
-            }
-
-
-            removeButton.textContent =
-                "✨ Removing...";
-
-
-            const result =
-                await backgroundRemover(
-                    productDataUrl
-                );
-
-
-            if (!result) {
-                throw new Error(
-                    "No image returned by AI."
-                );
-            }
-
-
-            /*
-             * Transformers.js may return a Blob
-             * for image output.
-             */
-
-            let outputBlob = null;
-
-
-            if (
-                result instanceof Blob
-            ) {
-
-                outputBlob = result;
-
-            } else if (
-                result?.blob
-            ) {
-
-                outputBlob =
-                    await result.blob();
-
-            } else if (
-                result?.data
-            ) {
-
-                const data =
-                    result.data;
-
-                const canvasElement =
-                    document.createElement(
-                        "canvas"
-                    );
-
-                canvasElement.width =
-                    data.width;
-
-                canvasElement.height =
-                    data.height;
-
-                const context =
-                    canvasElement.getContext(
-                        "2d"
-                    );
-
-                const imageData =
-                    new ImageData(
-                        data.data,
-                        data.width,
-                        data.height
-                    );
-
-                context.putImageData(
-                    imageData,
-                    0,
-                    0
-                );
-
-
-                outputBlob =
-                    await new Promise(
-                        resolve => {
-
-                            canvasElement.toBlob(
-                                resolve,
-                                "image/png"
-                            );
-
-                        }
-                    );
-
-            }
-
-
-            if (!outputBlob) {
-
-                throw new Error(
-                    "The AI returned an unsupported image format."
-                );
-
-            }
-
-
-            processedProductDataUrl =
-                await blobToDataURL(
-                    outputBlob
-                );
-
-
-            productDataUrl =
-                processedProductDataUrl;
-
-
-            showPreview(
-                processedProductDataUrl
-            );
-
-
-            addButton.disabled =
-                false;
-
-
-            showStatus(
-                "Background removed successfully."
-            );
-
-
-        } catch (error) {
-
-            console.error(
-                "Background removal failed:",
-                error
-            );
-
-
-            showStatus(
-                "Background removal failed. Please try another image."
-            );
-
-        } finally {
-
-            aiLoading = false;
-
-            removeButton.disabled =
-                false;
-
-            removeButton.textContent =
-                "✨ Remove Background";
-
-            addButton.disabled =
-                !productDataUrl;
-
-        }
-    }
-
-
-    // ==========================================
-    // BLOB → DATA URL
-    // ==========================================
-
-    function blobToDataURL(blob) {
-
-        return new Promise(
-            (resolve, reject) => {
-
-                const reader =
-                    new FileReader();
-
-                reader.onload =
-                    () => resolve(
-                        reader.result
-                    );
-
-                reader.onerror =
-                    reject;
-
-                reader.readAsDataURL(
-                    blob
-                );
-            }
-        );
-    }
-
-
-    // ==========================================
-    // REMOVE BACKGROUND BUTTON
-    // ==========================================
-
-    removeButton?.addEventListener(
-        "click",
-        removeBackground
-    );
-
-
-    // ==========================================
-    // ADD PRODUCT TO DESIGN
-    // ==========================================
-
-    addButton?.addEventListener(
-        "click",
-        () => {
-
-            if (!productDataUrl) {
-
-                showStatus(
-                    "Upload a product image first."
-                );
-
-                return;
-            }
-
-
-            fabric.Image.fromURL(
-                productDataUrl,
-                (image) => {
-
-                    if (!image.width ||
-                        !image.height) {
-
-                        showStatus(
-                            "Unable to load product image."
-                        );
-
-                        return;
-                    }
-
-
-                    const maxWidth = 650;
-                    const maxHeight = 600;
-
-
-                    const scale =
-                        Math.min(
-                            maxWidth /
-                                image.width,
-
-                            maxHeight /
-                                image.height
-                        );
-
-
-                    image.set({
-
-                        left:
-                            (
-                                canvas.width -
-                                image.width *
-                                scale
-                            ) / 2,
-
-                        top: 250,
-
-                        scaleX: scale,
-
-                        scaleY: scale,
-
-                        cornerColor:
-                            "#7135f2",
-
-                        cornerStrokeColor:
-                            "#7135f2",
-
-                        borderColor:
-                            "#7135f2",
-
-                        transparentCorners:
-                            false
-
-                    });
-
-
-                    canvas.add(image);
-
-                    canvas.setActiveObject(
-                        image
-                    );
-
-                    canvas.renderAll();
-
-                    saveState();
-
-
-                    showStatus(
-                        "Product added to design."
-                    );
-
-                },
-
-                {
-                    crossOrigin:
-                        "anonymous"
-                }
-            );
-
-        }
-    );
-
-
-    // ==========================================
-    // HEADLINE
-    // ==========================================
-
-    function addHeadline() {
-
-        const text =
-            new fabric.IText(
-                "YOUR PRODUCT",
-                {
-
-                    left: 70,
-                    top: 70,
-
-                    fontSize: 58,
-
-                    fontFamily:
-                        "Arial",
-
-                    fontWeight:
-                        "bold",
-
-                    fill:
-                        "#ffffff",
-
-                    cornerColor:
-                        "#7135f2",
-
-                    borderColor:
-                        "#7135f2",
-
-                    transparentCorners:
-                        false
-
-                }
-            );
-
-
-        canvas.add(text);
-
-        canvas.setActiveObject(text);
-
-        canvas.renderAll();
-
-        saveState();
-
-        text.enterEditing();
-
-    }
-
-
-    document
-        .getElementById("textBtn")
-        ?.addEventListener(
-            "click",
-            addHeadline
-        );
-
-
-    document
-        .getElementById("addHeadlineBtn")
-        ?.addEventListener(
-            "click",
-            addHeadline
-        );
-
-
-    // ==========================================
-    // PRICE
-    // ==========================================
-
-    document
-        .getElementById("addPriceBtn")
-        ?.addEventListener(
+        addProductButton.addEventListener(
             "click",
             () => {
 
-                const price =
-                    new fabric.IText(
+                if (!selectedProduct) {
+
+                    alert(
+                        "Upload a product image first."
+                    );
+
+                    return;
+
+                }
+
+
+                selectedProduct.set({
+                    visible: true
+                });
+
+
+                canvas.setActiveObject(
+                    selectedProduct
+                );
+
+                canvas.renderAll();
+
+                saveHistory();
+
+            }
+        );
+
+    }
+
+
+    /* =====================================================
+       ADD HEADLINE
+    ===================================================== */
+
+    const headlineButton =
+        document.getElementById(
+            "addHeadlineBtn"
+        );
+
+
+    if (headlineButton) {
+
+        headlineButton.addEventListener(
+            "click",
+            () => {
+
+                const text =
+                    makeText(
+                        "NEW HEADLINE",
+                        {
+                            left: 100,
+                            top: 100,
+
+                            fontSize: 65,
+
+                            fontWeight: "900"
+                        }
+                    );
+
+
+                addObject(text);
+
+            }
+        );
+
+    }
+
+
+    /* =====================================================
+       ADD PRICE
+    ===================================================== */
+
+    const priceButton =
+        document.getElementById(
+            "addPriceBtn"
+        );
+
+
+    if (priceButton) {
+
+        priceButton.addEventListener(
+            "click",
+            () => {
+
+                const text =
+                    makeText(
                         "₦35,000",
                         {
+                            left: 100,
+                            top: 900,
 
-                            left: 70,
-                            top: 760,
+                            fontSize: 65,
 
-                            fontSize: 48,
-
-                            fontFamily:
-                                "Arial",
-
-                            fontWeight:
-                                "bold",
-
-                            fill:
-                                "#ffffff"
-
+                            fontWeight: "900"
                         }
                     );
 
 
-                canvas.add(price);
-
-                canvas.setActiveObject(price);
-
-                canvas.renderAll();
-
-                saveState();
+                addObject(text);
 
             }
         );
 
+    }
 
-    // ==========================================
-    // WHATSAPP
-    // ==========================================
 
-    document
-        .getElementById("addPhoneBtn")
-        ?.addEventListener(
+    /* =====================================================
+       ADD WHATSAPP
+    ===================================================== */
+
+    const phoneButton =
+        document.getElementById(
+            "addPhoneBtn"
+        );
+
+
+    if (phoneButton) {
+
+        phoneButton.addEventListener(
             "click",
             () => {
 
-                const phone =
-                    new fabric.IText(
-                        "WhatsApp: 0800 000 0000",
+                const text =
+                    makeText(
+                        "080 1234 5678",
                         {
+                            left: 400,
+                            top: 1200,
 
-                            left: 70,
-                            top: 850,
+                            fontSize: 30,
 
-                            fontSize: 28,
-
-                            fontFamily:
-                                "Arial",
-
-                            fill:
-                                "#ffffff"
-
+                            fontWeight: "700"
                         }
                     );
 
 
-                canvas.add(phone);
-
-                canvas.setActiveObject(phone);
-
-                canvas.renderAll();
-
-                saveState();
+                addObject(text);
 
             }
         );
 
+    }
 
-    // ==========================================
-    // BACKGROUND
-    // ==========================================
+
+    /* =====================================================
+       BACKGROUND COLOR
+    ===================================================== */
 
     const backgroundColor =
         document.getElementById(
@@ -803,321 +1764,154 @@ document.addEventListener("DOMContentLoaded", () => {
         );
 
 
-    backgroundColor?.addEventListener(
-        "input",
-        () => {
+    if (backgroundColor) {
 
-            canvas.backgroundColor =
-                backgroundColor.value;
+        backgroundColor.addEventListener(
+            "input",
+            () => {
 
-            canvas.renderAll();
+                canvas.backgroundColor =
+                    backgroundColor.value;
 
-            saveState();
+                canvas.renderAll();
 
-        }
-    );
+            }
+        );
 
 
-    document
-        .getElementById(
+        backgroundColor.addEventListener(
+            "change",
+            saveHistory
+        );
+
+    }
+
+
+    /* =====================================================
+       RESET BACKGROUND
+    ===================================================== */
+
+    const resetBackgroundButton =
+        document.getElementById(
             "resetBackgroundBtn"
-        )
-        ?.addEventListener(
+        );
+
+
+    if (resetBackgroundButton) {
+
+        resetBackgroundButton.addEventListener(
             "click",
             () => {
 
                 canvas.backgroundColor =
                     "#ffffff";
 
-                if (backgroundColor) {
-                    backgroundColor.value =
-                        "#ffffff";
-                }
-
                 canvas.renderAll();
 
-                saveState();
+                saveHistory();
 
             }
         );
-
-
-    // ==========================================
-    // DELETE
-    // ==========================================
-
-    function deleteSelected() {
-
-        const active =
-            canvas.getActiveObject();
-
-        if (!active) return;
-
-        canvas.remove(active);
-
-        canvas.discardActiveObject();
-
-        canvas.renderAll();
-
-        saveState();
 
     }
 
 
-    document
-        .getElementById(
+    /* =====================================================
+       DELETE OBJECT
+    ===================================================== */
+
+    const deleteButton =
+        document.getElementById(
             "deleteObjectBtn"
-        )
-        ?.addEventListener(
-            "click",
-            deleteSelected
         );
 
 
-    document.addEventListener(
-        "keydown",
-        (event) => {
+    if (deleteButton) {
 
-            if (
-                event.key === "Delete" &&
-                !event.target.matches(
-                    "input, textarea"
-                )
-            ) {
-
-                deleteSelected();
-
-            }
-
-        }
-    );
-
-
-    // ==========================================
-    // LOGO
-    // ==========================================
-
-    const uploadLogoBtn =
-        document.getElementById(
-            "uploadLogoBtn"
-        );
-
-    const logoInput =
-        document.getElementById(
-            "logoInput"
-        );
-
-
-    uploadLogoBtn?.addEventListener(
-        "click",
-        () => {
-
-            logoInput?.click();
-
-        }
-    );
-
-
-    logoInput?.addEventListener(
-        "change",
-        () => {
-
-            const file =
-                logoInput.files[0];
-
-            if (!file) return;
-
-
-            const reader =
-                new FileReader();
-
-
-            reader.onload =
-                (event) => {
-
-                    fabric.Image.fromURL(
-                        event.target.result,
-                        (logo) => {
-
-                            logo.scaleToWidth(
-                                180
-                            );
-
-                            logo.set({
-                                left: 70,
-                                top: 920
-                            });
-
-
-                            canvas.add(logo);
-
-                            canvas.setActiveObject(
-                                logo
-                            );
-
-                            canvas.renderAll();
-
-                            saveState();
-
-                        }
-                    );
-
-                };
-
-
-            reader.readAsDataURL(file);
-
-            logoInput.value = "";
-
-        }
-    );
-
-
-    // ==========================================
-    // ELEMENTS
-    // ==========================================
-
-    document
-        .getElementById(
-            "elementsBtn"
-        )
-        ?.addEventListener(
+        deleteButton.addEventListener(
             "click",
             () => {
 
-                const circle =
-                    new fabric.Circle({
-
-                        left: 430,
-                        top: 420,
-
-                        radius: 70,
-
-                        fill:
-                            "#7135f2"
-
-                    });
+                const activeObject =
+                    canvas.getActiveObject();
 
 
-                canvas.add(circle);
+                if (!activeObject) {
 
-                canvas.setActiveObject(
-                    circle
+                    alert(
+                        "Select an object first."
+                    );
+
+                    return;
+
+                }
+
+
+                canvas.remove(
+                    activeObject
                 );
+
+                canvas.discardActiveObject();
 
                 canvas.renderAll();
 
-                saveState();
+                saveHistory();
 
             }
         );
 
+    }
 
-    // ==========================================
-    // TEMPLATES
-    // ==========================================
 
-    document
-        .getElementById(
-            "templatesBtn"
-        )
-        ?.addEventListener(
-            "click",
-            () => {
+    /* =====================================================
+       UNDO / REDO
+    ===================================================== */
 
-                window.location.href =
-                    "templates.html";
-
-            }
+    const undoButton =
+        document.getElementById(
+            "undoBtn"
         );
 
 
-    // ==========================================
-    // MOBILE
-    // ==========================================
-
-    document
-        .getElementById(
-            "mobileTemplatesBtn"
-        )
-        ?.addEventListener(
-            "click",
-            () => {
-
-                window.location.href =
-                    "templates.html";
-
-            }
+    const redoButton =
+        document.getElementById(
+            "redoBtn"
         );
 
 
-    document
-        .getElementById(
-            "mobileUploadBtn"
-        )
-        ?.addEventListener(
+    if (undoButton) {
+
+        undoButton.addEventListener(
             "click",
-            () => {
-
-                uploadButton?.click();
-
-            }
+            undo
         );
 
+    }
 
-    document
-        .getElementById(
-            "mobileTextBtn"
-        )
-        ?.addEventListener(
+
+    if (redoButton) {
+
+        redoButton.addEventListener(
             "click",
-            addHeadline
+            redo
         );
 
-
-    document
-        .getElementById(
-            "mobileElementsBtn"
-        )
-        ?.addEventListener(
-            "click",
-            () => {
-
-                document
-                    .getElementById(
-                        "elementsBtn"
-                    )
-                    ?.click();
-
-            }
-        );
+    }
 
 
-    document
-        .getElementById(
-            "mobileMoreBtn"
-        )
-        ?.addEventListener(
-            "click",
-            () => {
+    /* =====================================================
+       DOWNLOAD
+    ===================================================== */
 
-                showStatus(
-                    "More editing tools coming soon."
-                );
-
-            }
-        );
-
-
-    // ==========================================
-    // DOWNLOAD
-    // ==========================================
-
-    document
-        .getElementById(
+    const downloadButton =
+        document.getElementById(
             "downloadBtn"
-        )
-        ?.addEventListener(
+        );
+
+
+    if (downloadButton) {
+
+        downloadButton.addEventListener(
             "click",
             () => {
 
@@ -1126,50 +1920,224 @@ document.addEventListener("DOMContentLoaded", () => {
                 canvas.renderAll();
 
 
-                const dataUrl =
+                const dataURL =
                     canvas.toDataURL({
                         format: "png",
-                        quality: 1,
                         multiplier: 1
                     });
 
 
                 const link =
-                    document.createElement(
-                        "a"
-                    );
-
-
-                link.download =
-                    "ads-maker-free.png";
+                    document.createElement("a");
 
 
                 link.href =
-                    dataUrl;
+                    dataURL;
+
+                link.download =
+                    "ads-maker-free-ad.png";
+
+
+                document.body.appendChild(
+                    link
+                );
 
 
                 link.click();
 
+                link.remove();
+
             }
         );
 
+    }
 
-    // ==========================================
-    // CANVAS EVENTS
-    // ==========================================
 
-    canvas.on(
-        "object:modified",
-        saveState
+    /* =====================================================
+       KEYBOARD DELETE
+    ===================================================== */
+
+    document.addEventListener(
+        "keydown",
+        (event) => {
+
+            const active =
+                canvas.getActiveObject();
+
+
+            if (!active) {
+                return;
+            }
+
+
+            if (
+                event.key === "Delete" ||
+                event.key === "Backspace"
+            ) {
+
+                if (
+                    active.isEditing
+                ) {
+                    return;
+                }
+
+
+                canvas.remove(active);
+
+                canvas.discardActiveObject();
+
+                canvas.renderAll();
+
+                saveHistory();
+
+            }
+
+
+            if (
+                (event.ctrlKey ||
+                 event.metaKey) &&
+                event.key.toLowerCase() === "z"
+            ) {
+
+                event.preventDefault();
+
+                if (event.shiftKey) {
+                    redo();
+                } else {
+                    undo();
+                }
+
+            }
+
+        }
     );
 
 
-    // ==========================================
-    // INITIALIZE
-    // ==========================================
+    /* =====================================================
+       LEFT TOOL BUTTONS
+    ===================================================== */
+
+    const templatesButton =
+        document.getElementById(
+            "templatesBtn"
+        );
+
+    if (templatesButton) {
+
+        templatesButton.onclick =
+            () => {
+
+                window.location.href =
+                    "templates.html";
+
+            };
+
+    }
+
+
+    const uploadButton =
+        document.getElementById(
+            "uploadBtn"
+        );
+
+    if (uploadButton) {
+
+        uploadButton.onclick =
+            () => {
+
+                productInput?.click();
+
+            };
+
+    }
+
+
+    const textButton =
+        document.getElementById(
+            "textBtn"
+        );
+
+    if (textButton) {
+
+        textButton.onclick =
+            () => {
+
+                headlineButton?.click();
+
+            };
+
+    }
+
+
+    /* =====================================================
+       MOBILE BUTTONS
+    ===================================================== */
+
+    const mobileUpload =
+        document.getElementById(
+            "mobileUploadBtn"
+        );
+
+    if (mobileUpload) {
+
+        mobileUpload.onclick =
+            () => {
+
+                productInput?.click();
+
+            };
+
+    }
+
+
+    const mobileTemplates =
+        document.getElementById(
+            "mobileTemplatesBtn"
+        );
+
+    if (mobileTemplates) {
+
+        mobileTemplates.onclick =
+            () => {
+
+                window.location.href =
+                    "templates.html";
+
+            };
+
+    }
+
+
+    const mobileText =
+        document.getElementById(
+            "mobileTextBtn"
+        );
+
+    if (mobileText) {
+
+        mobileText.onclick =
+            () => {
+
+                headlineButton?.click();
+
+            };
+
+    }
+
+
+    /* =====================================================
+       LOAD TEMPLATE
+    ===================================================== */
+
+    loadTemplate(
+        selectedTemplate
+    );
+
+
+    /* =====================================================
+       FINAL RENDER
+    ===================================================== */
 
     canvas.renderAll();
-
-    saveState();
 
 });
