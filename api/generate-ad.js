@@ -1,7 +1,8 @@
 // ==========================================
 // ADS MAKER FREE
-// AI PREMIUM AD GENERATOR
-// CLOUDFLARE WORKERS AI - FLUX.2 KLEIN 9B
+// PREMIUM AI AD GENERATOR
+// CLOUDFLARE WORKERS AI
+// FLUX.2 KLEIN 9B
 // ==========================================
 
 export default async function handler(req, res) {
@@ -22,7 +23,8 @@ export default async function handler(req, res) {
 
         if (!token || !accountId) {
             return res.status(500).json({
-                error: "Cloudflare AI credentials are missing."
+                error:
+                    "Cloudflare AI credentials are missing."
             });
         }
 
@@ -40,13 +42,14 @@ export default async function handler(req, res) {
 
         if (!image) {
             return res.status(400).json({
-                error: "No product image was provided."
+                error:
+                    "No product image was provided."
             });
         }
 
-        // --------------------------------------
-        // Convert data URL to image Blob
-        // --------------------------------------
+        // ======================================
+        // IMAGE
+        // ======================================
 
         const match = image.match(
             /^data:(image\/[a-zA-Z0-9.+-]+);base64,(.+)$/
@@ -54,16 +57,19 @@ export default async function handler(req, res) {
 
         if (!match) {
             return res.status(400).json({
-                error: "Invalid product image."
+                error:
+                    "Invalid product image."
             });
         }
 
         const mimeType = match[1];
-
         const base64Data = match[2];
 
         const imageBuffer =
-            Buffer.from(base64Data, "base64");
+            Buffer.from(
+                base64Data,
+                "base64"
+            );
 
         const imageBlob =
             new Blob(
@@ -73,63 +79,170 @@ export default async function handler(req, res) {
                 }
             );
 
-        // --------------------------------------
-        // Professional advertising prompt
-        // --------------------------------------
+        // ======================================
+        // STYLE
+        // ======================================
 
-        const prompt = `
-Create a premium professional square product advertisement.
+        let stylePrompt = "";
 
-Use the uploaded product image as the main product.
-Keep the product recognizable, realistic and commercially attractive.
+        if (style === "sale") {
 
-IMPORTANT:
-- Do not replace the product.
-- Do not invent a different product.
-- Keep the product shape and important details.
-- Make the product large and visually dominant.
-- Create a realistic professional advertising environment.
-- High-end commercial photography.
-- Studio lighting.
-- Beautiful reflections and realistic shadows.
-- Premium color grading.
-- Strong visual hierarchy.
-- Modern Nigerian e-commerce advertising style.
-- Clean composition.
-- 1080x1080 social media advertisement.
-- Leave enough clean space around the product for advertising information.
-
-Advertisement information:
-
-Headline: ${headline || "NEW ARRIVAL"}
-
-Description: ${description || "PREMIUM STYLE • EVERYDAY COMFORT"}
-
-Current price: ${price || ""}
-
-Old price: ${oldPrice || ""}
-
-Discount: ${discount || ""}
-
-WhatsApp / Phone: ${phone || ""}
-
-Button: ${buttonText || "SHOP NOW"}
-
-Design style: ${style || "premium"}
-
-Make the final image look like a professionally designed advertisement from a major fashion/e-commerce brand.
-
-Do not create watermarks.
-Do not create logos that were not provided.
-Do not add random text.
+            stylePrompt = `
+Create an energetic SALE campaign.
+Strong commercial lighting.
+Bold red and warm tones.
+Premium retail campaign feeling.
+Urgent but elegant.
 `;
 
-        // --------------------------------------
-        // Cloudflare Workers AI
-        // FLUX.2 Klein 9B
-        // --------------------------------------
+        } else if (style === "minimal") {
 
-        const formData = new FormData();
+            stylePrompt = `
+Create an elegant minimalist advertisement.
+Clean white or soft neutral background.
+Very subtle shadows.
+Luxury editorial photography.
+Lots of clean negative space.
+`;
+
+        } else {
+
+            stylePrompt = `
+Create a luxury premium advertisement.
+Dark sophisticated background.
+Beautiful studio lighting.
+Soft cinematic highlights.
+Realistic reflections.
+Elegant premium e-commerce atmosphere.
+`;
+
+        }
+
+        // ======================================
+        // PROFESSIONAL AI PROMPT
+        // ======================================
+
+        const prompt = `
+You are a world-class commercial advertising art director.
+
+Create a premium 1:1 square product advertisement
+using INPUT IMAGE 0 as the exact product reference.
+
+PRODUCT PRESERVATION IS EXTREMELY IMPORTANT.
+
+The product shown in INPUT IMAGE 0 must remain
+the same product.
+
+Do NOT replace the product.
+
+Do NOT invent another product.
+
+Do NOT change the product category.
+
+Do NOT change its important physical features.
+
+Do NOT add extra products.
+
+Keep the original product recognizable.
+
+Make the product the hero of the advertisement.
+
+Place it naturally inside a beautiful professional
+commercial environment.
+
+Use realistic studio photography.
+
+Use premium cinematic lighting.
+
+Use realistic contact shadows.
+
+Use subtle reflections where appropriate.
+
+Use professional depth of field.
+
+Use realistic materials.
+
+Use sophisticated color grading.
+
+Create strong visual hierarchy.
+
+Leave clean space for advertisement information.
+
+${stylePrompt}
+
+PRODUCT:
+
+Headline:
+${headline || "NEW ARRIVAL"}
+
+Description:
+${description || "PREMIUM STYLE • EVERYDAY COMFORT"}
+
+Current Price:
+${price || ""}
+
+Old Price:
+${oldPrice || ""}
+
+Discount:
+${discount || ""}
+
+WhatsApp / Phone:
+${phone || ""}
+
+CTA:
+${buttonText || "SHOP NOW"}
+
+IMPORTANT:
+
+The uploaded product is the most important object.
+
+Preserve its identity.
+
+Do not turn a chair into a sofa.
+
+Do not turn shoes into another type of shoes.
+
+Do not turn a phone into another phone.
+
+Do not turn furniture into another furniture.
+
+Do not add people unless absolutely necessary.
+
+Do not add random objects.
+
+Do not create fake brand logos.
+
+Do not create watermarks.
+
+Do not create unrelated text.
+
+Make it look like a professional advertisement
+from a major Nigerian e-commerce brand.
+
+Final composition:
+
+1080 x 1080 square advertisement.
+
+Product large and visually dominant.
+
+Premium background.
+
+Professional lighting.
+
+Commercial photography.
+
+Clean composition.
+
+High-end advertising quality.
+`;
+
+        // ======================================
+        // CLOUDFLARE FORM DATA
+        // ======================================
+
+        const formData =
+            new FormData();
 
         formData.append(
             "prompt",
@@ -147,10 +260,19 @@ Do not add random text.
         );
 
         formData.append(
+            "guidance",
+            "4"
+        );
+
+        formData.append(
             "input_image_0",
             imageBlob,
             "product.png"
         );
+
+        // ======================================
+        // CLOUDFLARE AI
+        // ======================================
 
         const response =
             await fetch(
@@ -163,9 +285,14 @@ Do not add random text.
                             `Bearer ${token}`
                     },
 
-                    body: formData
+                    body:
+                        formData
                 }
             );
+
+        // ======================================
+        // ERROR
+        // ======================================
 
         if (!response.ok) {
 
@@ -185,14 +312,15 @@ Do not add random text.
                 details:
                     errorText
             });
+
         }
+
+        // ======================================
+        // RESULT
+        // ======================================
 
         const result =
             await response.json();
-
-        // --------------------------------------
-        // Cloudflare returns Base64 image
-        // --------------------------------------
 
         const generatedImage =
             result?.result?.image;
@@ -200,7 +328,7 @@ Do not add random text.
         if (!generatedImage) {
 
             console.error(
-                "Unexpected Cloudflare response:",
+                "Cloudflare response:",
                 result
             );
 
@@ -208,7 +336,12 @@ Do not add random text.
                 error:
                     "Cloudflare did not return an image."
             });
+
         }
+
+        // ======================================
+        // RETURN IMAGE
+        // ======================================
 
         return res.status(200).json({
 
@@ -237,4 +370,5 @@ Do not add random text.
         });
 
     }
+
 }
