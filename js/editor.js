@@ -1,73 +1,65 @@
 /* =========================================================
    ADS MAKER FREE
-   REAL AD GENERATOR
-   Fabric.js 6
+   AI AD GENERATOR
+   Background Removal + Professional Design
 ========================================================= */
 
 document.addEventListener("DOMContentLoaded", () => {
 
-    // -----------------------------------------------------
-    // CHECK FABRIC
-    // -----------------------------------------------------
-
     if (typeof fabric === "undefined") {
-        console.error("Fabric.js bai load ba.");
+        alert("Fabric.js bai load ba.");
         return;
     }
-
-
-    // -----------------------------------------------------
-    // CANVAS
-    // -----------------------------------------------------
 
     const canvas = new fabric.Canvas("designCanvas", {
         width: 1080,
         height: 1080,
-        selection: true,
-        preserveObjectStacking: true
+        backgroundColor: "#061b4f",
+        preserveObjectStacking: true,
+        selection: true
     });
 
     window.adsMakerCanvas = canvas;
 
 
-    // -----------------------------------------------------
-    // GET ELEMENTS
-    // -----------------------------------------------------
+    /* =====================================================
+       ELEMENTS
+    ===================================================== */
 
-    const productUploadBtn =
+    const uploadBtn =
         document.getElementById("productUploadBtn");
 
-    const productImageInput =
+    const imageInput =
         document.getElementById("productImageInput");
 
-    const productPreview =
+    const preview =
         document.getElementById("productPreview");
 
-    const headlineInput =
+    const headline =
         document.getElementById("headlineInput");
 
-    const subheadlineInput =
+    const subheadline =
         document.getElementById("subheadlineInput");
 
-    const priceInput =
+    const price =
         document.getElementById("priceInput");
 
-    const oldPriceInput =
+    const oldPrice =
         document.getElementById("oldPriceInput");
 
-    const discountInput =
+    const discount =
         document.getElementById("discountInput");
 
-    const phoneInput =
+    const phone =
         document.getElementById("phoneInput");
 
-    const buttonTextInput =
+    const buttonText =
         document.getElementById("buttonTextInput");
 
-    const backgroundColor =
+    const bgColor =
         document.getElementById("backgroundColor");
 
-    const generateAdBtn =
+    const generateBtn =
         document.getElementById("generateAdBtn");
 
     const resetBtn =
@@ -76,230 +68,281 @@ document.addEventListener("DOMContentLoaded", () => {
     const downloadBtn =
         document.getElementById("downloadBtn");
 
-    const downloadBtnBottom =
+    const downloadBottom =
         document.getElementById("downloadBtnBottom");
 
     const styleButtons =
         document.querySelectorAll(".style-option");
 
 
-    // -----------------------------------------------------
-    // STATE
-    // -----------------------------------------------------
+    /* =====================================================
+       STATE
+    ===================================================== */
 
-    let uploadedImageURL = null;
+    let originalImage = null;
+
+    let cleanImage = null;
 
     let selectedStyle = "premium";
 
 
-    // -----------------------------------------------------
-    // DEFAULT VALUES
-    // -----------------------------------------------------
+    /* =====================================================
+       DEFAULT VALUES
+    ===================================================== */
 
-    if (headlineInput) {
-        headlineInput.value = "NEW ARRIVAL";
-    }
+    headline.value =
+        "NEW ARRIVAL";
 
-    if (subheadlineInput) {
-        subheadlineInput.value = "STYLE MEETS COMFORT";
-    }
+    subheadline.value =
+        "PREMIUM STYLE • EVERYDAY COMFORT";
 
-    if (priceInput) {
-        priceInput.value = "₦35,000";
-    }
+    price.value =
+        "₦35,000";
 
-    if (oldPriceInput) {
-        oldPriceInput.value = "₦50,000";
-    }
+    oldPrice.value =
+        "₦50,000";
 
-    if (discountInput) {
-        discountInput.value = "30% OFF";
-    }
+    discount.value =
+        "30% OFF";
 
-    if (phoneInput) {
-        phoneInput.value = "080 1234 5678";
-    }
+    phone.value =
+        "080 1234 5678";
+
+    buttonText.value =
+        "SHOP NOW";
 
 
-    // -----------------------------------------------------
-    // UPLOAD BUTTON
-    // -----------------------------------------------------
+    /* =====================================================
+       UPLOAD
+    ===================================================== */
 
-    if (productUploadBtn && productImageInput) {
-
-        productUploadBtn.addEventListener("click", () => {
-            productImageInput.click();
-        });
-
-    }
+    uploadBtn.addEventListener(
+        "click",
+        () => imageInput.click()
+    );
 
 
-    // -----------------------------------------------------
-    // IMAGE UPLOAD
-    // -----------------------------------------------------
+    imageInput.addEventListener(
+        "change",
+        (event) => {
 
-    if (productImageInput) {
+            const file =
+                event.target.files[0];
 
-        productImageInput.addEventListener(
-            "change",
-            (event) => {
-
-                const file =
-                    event.target.files[0];
-
-                if (!file) {
-                    return;
-                }
+            if (!file) return;
 
 
-                if (!file.type.startsWith("image/")) {
+            if (!file.type.startsWith("image/")) {
 
-                    alert(
-                        "Da fatan zaɓi hoto PNG, JPG ko WEBP."
-                    );
+                alert(
+                    "Please select a valid image."
+                );
 
-                    return;
-                }
-
-
-                const reader =
-                    new FileReader();
-
-
-                reader.onload = () => {
-
-                    uploadedImageURL =
-                        reader.result;
-
-
-                    showProductPreview(
-                        uploadedImageURL
-                    );
-
-
-                    productUploadBtn.classList.add(
-                        "has-image"
-                    );
-
-
-                    productUploadBtn.innerHTML = `
-                        <span class="upload-icon">✓</span>
-                        <strong>Product Image Added</strong>
-                        <small>Click to change image</small>
-                    `;
-
-                };
-
-
-                reader.readAsDataURL(file);
-
+                return;
             }
-        );
-
-    }
 
 
-    // -----------------------------------------------------
-    // PREVIEW IMAGE
-    // -----------------------------------------------------
+            const reader =
+                new FileReader();
 
-    function showProductPreview(imageURL) {
 
-        if (!productPreview) {
-            return;
+            reader.onload = () => {
+
+                originalImage =
+                    reader.result;
+
+                cleanImage = null;
+
+                showPreview(
+                    originalImage
+                );
+
+                uploadBtn.classList.add(
+                    "has-image"
+                );
+
+                uploadBtn.innerHTML = `
+                    <span class="upload-icon">✓</span>
+                    <strong>Product Image Added</strong>
+                    <small>Click to change image</small>
+                `;
+
+            };
+
+
+            reader.readAsDataURL(file);
+
         }
+    );
 
 
-        productPreview.innerHTML = "";
+    /* =====================================================
+       PREVIEW
+    ===================================================== */
 
+    function showPreview(src) {
+
+        preview.innerHTML = "";
 
         const img =
             document.createElement("img");
 
+        img.src = src;
 
-        img.src = imageURL;
+        img.alt =
+            "Product image";
 
-        img.alt = "Product preview";
+        img.style.width =
+            "100%";
+
+        img.style.height =
+            "180px";
+
+        img.style.objectFit =
+            "contain";
+
+        img.style.borderRadius =
+            "14px";
+
+        preview.appendChild(img);
+
+    }
 
 
-        img.style.width = "100%";
+    /* =====================================================
+       STYLE
+    ===================================================== */
 
-        img.style.height = "180px";
+    styleButtons.forEach(
+        (button) => {
 
-        img.style.objectFit = "contain";
+            button.addEventListener(
+                "click",
+                () => {
 
-        img.style.borderRadius = "14px";
+                    styleButtons.forEach(
+                        (item) =>
+                            item.classList.remove(
+                                "active"
+                            )
+                    );
+
+                    button.classList.add(
+                        "active"
+                    );
+
+                    selectedStyle =
+                        button.dataset.style ||
+                        "premium";
+
+                }
+            );
+
+        }
+    );
 
 
-        productPreview.appendChild(img);
+    /* =====================================================
+       REMOVE BACKGROUND API
+    ===================================================== */
+
+    async function removeBackground(
+        imageData
+    ) {
+
+        setGenerateText(
+            "✨ Removing background..."
+        );
+
+
+        const response =
+            await fetch(
+                imageData
+            );
+
+
+        const blob =
+            await response.blob();
+
+
+        const formData =
+            new FormData();
+
+
+        formData.append(
+            "image",
+            blob,
+            "product.png"
+        );
+
+
+        const apiResponse =
+            await fetch(
+                "/api/remove-background",
+                {
+                    method: "POST",
+                    body: formData
+                }
+            );
+
+
+        const result =
+            await apiResponse.json();
+
+
+        if (!apiResponse.ok) {
+
+            throw new Error(
+                result.error ||
+                "Background removal failed."
+            );
+
+        }
+
+
+        if (
+            !result.image
+        ) {
+
+            throw new Error(
+                "No transparent image returned."
+            );
+
+        }
+
+
+        return result.image;
 
     }
 
 
-    // -----------------------------------------------------
-    // STYLE BUTTONS
-    // -----------------------------------------------------
-
-    styleButtons.forEach((button) => {
-
-        button.addEventListener("click", () => {
-
-            styleButtons.forEach((item) => {
-                item.classList.remove("active");
-            });
-
-
-            button.classList.add("active");
-
-
-            selectedStyle =
-                button.dataset.style ||
-                "premium";
-
-        });
-
-    });
-
-
-    // -----------------------------------------------------
-    // HELPERS
-    // -----------------------------------------------------
-
-    function removeAllObjects() {
-
-        canvas.getObjects().forEach((object) => {
-            canvas.remove(object);
-        });
-
-        canvas.discardActiveObject();
-
-    }
-
+    /* =====================================================
+       CREATE TEXT
+    ===================================================== */
 
     function addText(
         text,
         options = {}
     ) {
 
-        const textObject =
+        const object =
             new fabric.Textbox(
                 text || "",
                 {
 
                     left:
-                        options.left ?? 70,
+                        options.left ?? 60,
 
                     top:
-                        options.top ?? 70,
+                        options.top ?? 60,
 
                     width:
-                        options.width ?? 900,
+                        options.width ?? 800,
 
                     fontSize:
                         options.fontSize ?? 50,
 
                     fontFamily:
-                        options.fontFamily ||
                         "Arial",
 
                     fontWeight:
@@ -319,28 +362,29 @@ document.addEventListener("DOMContentLoaded", () => {
                         1.05,
 
                     selectable:
-                        options.selectable ??
                         false,
 
                     evented:
-                        options.evented ??
-                        false,
-
-                    editable:
                         false
 
                 }
             );
 
 
-        canvas.add(textObject);
+        canvas.add(object);
 
-        return textObject;
+        return object;
 
     }
 
 
-    function addRect(options = {}) {
+    /* =====================================================
+       RECTANGLE
+    ===================================================== */
+
+    function addRect(
+        options = {}
+    ) {
 
         const rect =
             new fabric.Rect({
@@ -358,20 +402,21 @@ document.addEventListener("DOMContentLoaded", () => {
                     options.height ?? 100,
 
                 fill:
-                    options.fill ?? "#ffffff",
+                    options.fill ||
+                    "#ffffff",
 
                 rx:
-                    options.rx ?? 0,
+                    options.rx ||
+                    0,
 
                 ry:
-                    options.ry ?? 0,
+                    options.ry ||
+                    0,
 
                 selectable:
-                    options.selectable ??
                     false,
 
                 evented:
-                    options.evented ??
                     false
 
             });
@@ -384,7 +429,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    function addCircle(options = {}) {
+    /* =====================================================
+       CIRCLE
+    ===================================================== */
+
+    function addCircle(
+        options = {}
+    ) {
 
         const circle =
             new fabric.Circle({
@@ -399,28 +450,26 @@ document.addEventListener("DOMContentLoaded", () => {
                     options.radius ?? 50,
 
                 fill:
-                    options.fill ?? "#ffffff",
+                    options.fill ||
+                    "#ffffff",
 
                 stroke:
                     options.stroke,
 
                 strokeWidth:
-                    options.strokeWidth ?? 0,
+                    options.strokeWidth ||
+                    0,
 
                 originX:
-                    options.originX ||
-                    "left",
+                    "center",
 
                 originY:
-                    options.originY ||
-                    "top",
+                    "center",
 
                 selectable:
-                    options.selectable ??
                     false,
 
                 evented:
-                    options.evented ??
                     false
 
             });
@@ -433,38 +482,43 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    // -----------------------------------------------------
-    // GRADIENT BACKGROUND
-    // -----------------------------------------------------
+    /* =====================================================
+       BACKGROUND
+    ===================================================== */
 
     function createBackground() {
 
-        let color =
-            backgroundColor?.value ||
+        let first =
+            bgColor.value ||
             "#061b4f";
 
-
-        let secondColor =
+        let second =
             "#020617";
 
 
-        if (selectedStyle === "sale") {
+        if (
+            selectedStyle ===
+            "sale"
+        ) {
 
-            color =
-                "#8b0000";
+            first =
+                "#a90000";
 
-            secondColor =
-                "#190000";
+            second =
+                "#210000";
 
         }
 
 
-        if (selectedStyle === "minimal") {
+        if (
+            selectedStyle ===
+            "minimal"
+        ) {
 
-            color =
-                "#f4f4f4";
+            first =
+                "#eeeeee";
 
-            secondColor =
+            second =
                 "#ffffff";
 
         }
@@ -487,27 +541,32 @@ document.addEventListener("DOMContentLoaded", () => {
                         type: "linear",
 
                         coords: {
+
                             x1: 0,
+
                             y1: 0,
+
                             x2: 1080,
+
                             y2: 1080
+
                         },
 
                         colorStops: [
 
                             {
                                 offset: 0,
-                                color: color
+                                color: first
                             },
 
                             {
-                                offset: 0.55,
-                                color: color
+                                offset: 0.5,
+                                color: first
                             },
 
                             {
                                 offset: 1,
-                                color: secondColor
+                                color: second
                             }
 
                         ]
@@ -523,120 +582,210 @@ document.addEventListener("DOMContentLoaded", () => {
 
         canvas.add(background);
 
-        canvas.sendObjectToBack(background);
+        canvas.sendObjectToBack(
+            background
+        );
 
     }
 
 
-    // -----------------------------------------------------
-    // DECORATIVE GLOW
-    // -----------------------------------------------------
+    /* =====================================================
+       GLOW
+    ===================================================== */
 
     function createGlow() {
 
-        if (selectedStyle === "minimal") {
+        if (
+            selectedStyle ===
+            "minimal"
+        ) {
             return;
         }
 
 
         addCircle({
 
-            left: 800,
+            left: 850,
 
-            top: 340,
+            top: 350,
 
-            radius: 260,
+            radius: 250,
 
             fill:
-                selectedStyle === "sale"
-                    ? "rgba(255,70,30,0.12)"
-                    : "rgba(0,130,255,0.15)",
-
-            originX: "center",
-
-            originY: "center"
+                selectedStyle ===
+                "sale"
+                    ? "rgba(255,50,30,.15)"
+                    : "rgba(30,120,255,.15)"
 
         });
 
 
         addCircle({
 
-            left: 260,
+            left: 220,
 
-            top: 700,
+            top: 760,
 
-            radius: 230,
+            radius: 220,
 
             fill:
-                selectedStyle === "sale"
-                    ? "rgba(255,20,20,0.12)"
-                    : "rgba(30,70,255,0.12)",
-
-            originX: "center",
-
-            originY: "center"
+                selectedStyle ===
+                "sale"
+                    ? "rgba(255,20,20,.12)"
+                    : "rgba(100,60,255,.12)"
 
         });
 
     }
 
 
-    // -----------------------------------------------------
-    // DISCOUNT BADGE
-    // -----------------------------------------------------
+    /* =====================================================
+       PRODUCT
+    ===================================================== */
+
+    async function addProduct(
+        imageURL
+    ) {
+
+        const image =
+            await fabric.Image.fromURL(
+                imageURL
+            );
+
+
+        const maxWidth =
+            760;
+
+        const maxHeight =
+            500;
+
+
+        const scale =
+            Math.min(
+                maxWidth /
+                    image.width,
+
+                maxHeight /
+                    image.height
+            );
+
+
+        image.set({
+
+            left: 540,
+
+            top: 580,
+
+            originX:
+                "center",
+
+            originY:
+                "center",
+
+            scaleX:
+                scale,
+
+            scaleY:
+                scale,
+
+            selectable:
+                true,
+
+            evented:
+                true,
+
+            cornerColor:
+                "#7437ff",
+
+            borderColor:
+                "#7437ff",
+
+            transparentCorners:
+                false,
+
+            padding:
+                8,
+
+            shadow:
+                new fabric.Shadow({
+
+                    color:
+                        "rgba(0,0,0,.45)",
+
+                    blur:
+                        30,
+
+                    offsetX:
+                        0,
+
+                    offsetY:
+                        20
+
+                })
+
+        });
+
+
+        canvas.add(image);
+
+        canvas.bringObjectToFront(
+            image
+        );
+
+    }
+
+
+    /* =====================================================
+       DISCOUNT
+    ===================================================== */
 
     function createDiscount() {
 
-        const discount =
-            discountInput?.value.trim();
+        const value =
+            discount.value.trim();
+
+        if (!value) return;
 
 
-        if (!discount) {
-            return;
-        }
+        addCircle({
 
+            left: 880,
 
-        const badge =
-            addCircle({
+            top: 190,
 
-                left: 850,
+            radius: 78,
 
-                top: 230,
+            fill: "#ffd21a",
 
-                radius: 82,
+            stroke: "#ffffff",
 
-                fill: "#ffd21a",
+            strokeWidth: 4
 
-                stroke: "#ffffff",
-
-                strokeWidth: 4,
-
-                originX: "center",
-
-                originY: "center"
-
-            });
+        });
 
 
         addText(
 
-            discount,
+            value,
 
             {
 
-                left: 775,
+                left: 805,
 
-                top: 198,
+                top: 160,
 
                 width: 150,
 
-                fontSize: 29,
+                fontSize: 27,
 
-                fontWeight: "900",
+                fontWeight:
+                    "900",
 
-                fill: "#111111",
+                fill:
+                    "#111111",
 
-                textAlign: "center"
+                textAlign:
+                    "center"
 
             }
 
@@ -645,165 +794,65 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    // -----------------------------------------------------
-    // PRODUCT IMAGE
-    // -----------------------------------------------------
+    /* =====================================================
+       PRICE
+    ===================================================== */
 
-    function addProductImage(imageURL) {
+    function createPrice() {
 
-        return fabric.Image
-            .fromURL(imageURL)
-            .then((image) => {
+        const currentPrice =
+            price.value.trim();
 
-                if (!image.width || !image.height) {
-                    return;
-                }
+        const previousPrice =
+            oldPrice.value.trim();
 
 
-                const maxWidth = 780;
-
-                const maxHeight = 510;
+        if (!currentPrice) return;
 
 
-                const scaleX =
-                    maxWidth / image.width;
+        addRect({
 
+            left: 55,
 
-                const scaleY =
-                    maxHeight / image.height;
+            top: 820,
 
+            width: 390,
 
-                const scale =
-                    Math.min(
-                        scaleX,
-                        scaleY
-                    );
+            height: 105,
 
+            fill:
+                selectedStyle ===
+                "minimal"
+                    ? "#111111"
+                    : "#ffd21a",
 
-                image.set({
+            rx: 20,
 
-                    left: 540,
+            ry: 20
 
-                    top: 570,
-
-                    originX: "center",
-
-                    originY: "center",
-
-                    scaleX: scale,
-
-                    scaleY: scale,
-
-                    angle: 0,
-
-                    selectable: true,
-
-                    evented: true,
-
-                    cornerColor: "#7437ff",
-
-                    borderColor: "#7437ff",
-
-                    transparentCorners: false,
-
-                    padding: 8
-
-                });
-
-
-                canvas.add(image);
-
-                canvas.bringObjectToFront(image);
-
-
-                // Soft shadow
-
-                image.set({
-
-                    shadow:
-                        new fabric.Shadow({
-
-                            color:
-                                "rgba(0,0,0,0.45)",
-
-                            blur: 28,
-
-                            offsetX: 0,
-
-                            offsetY: 18
-
-                        })
-
-                });
-
-
-                return image;
-
-            });
-
-    }
-
-
-    // -----------------------------------------------------
-    // PRICE AREA
-    // -----------------------------------------------------
-
-    function createPriceArea() {
-
-        const price =
-            priceInput?.value.trim();
-
-
-        const oldPrice =
-            oldPriceInput?.value.trim();
-
-
-        if (!price) {
-            return;
-        }
-
-
-        const priceBox =
-            addRect({
-
-                left: 55,
-
-                top: 820,
-
-                width: 390,
-
-                height: 105,
-
-                fill:
-                    selectedStyle === "minimal"
-                        ? "#111111"
-                        : "#ffd21a",
-
-                rx: 22,
-
-                ry: 22
-
-            });
+        });
 
 
         addText(
 
-            price,
+            currentPrice,
 
             {
 
-                left: 80,
+                left: 78,
 
                 top: 838,
 
-                width: 340,
+                width: 345,
 
-                fontSize: 56,
+                fontSize: 55,
 
-                fontWeight: "900",
+                fontWeight:
+                    "900",
 
                 fill:
-                    selectedStyle === "minimal"
+                    selectedStyle ===
+                    "minimal"
                         ? "#ffffff"
                         : "#111111"
 
@@ -812,25 +861,27 @@ document.addEventListener("DOMContentLoaded", () => {
         );
 
 
-        if (oldPrice) {
+        if (previousPrice) {
 
             addText(
 
-                oldPrice,
+                previousPrice,
 
                 {
 
-                    left: 470,
+                    left: 475,
 
                     top: 850,
 
                     width: 230,
 
-                    fontSize: 30,
+                    fontSize: 29,
 
-                    fontWeight: "700",
+                    fontWeight:
+                        "700",
 
-                    fill: "#ffffff"
+                    fill:
+                        "#ffffff"
 
                 }
 
@@ -841,14 +892,14 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    // -----------------------------------------------------
-    // SHOP BUTTON
-    // -----------------------------------------------------
+    /* =====================================================
+       CTA
+    ===================================================== */
 
-    function createShopButton() {
+    function createCTA() {
 
-        const buttonText =
-            buttonTextInput?.value.trim() ||
+        const text =
+            buttonText.value.trim() ||
             "SHOP NOW";
 
 
@@ -856,40 +907,43 @@ document.addEventListener("DOMContentLoaded", () => {
 
             left: 55,
 
-            top: 955,
+            top: 950,
 
-            width: 275,
+            width: 260,
 
-            height: 72,
+            height: 70,
 
             fill: "#ffd21a",
 
-            rx: 36,
+            rx: 35,
 
-            ry: 36
+            ry: 35
 
         });
 
 
         addText(
 
-            buttonText,
+            text,
 
             {
 
-                left: 82,
+                left: 75,
 
-                top: 976,
+                top: 970,
 
                 width: 220,
 
-                fontSize: 27,
+                fontSize: 26,
 
-                fontWeight: "900",
+                fontWeight:
+                    "900",
 
-                fill: "#111111",
+                fill:
+                    "#111111",
 
-                textAlign: "center"
+                textAlign:
+                    "center"
 
             }
 
@@ -898,34 +952,27 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    // -----------------------------------------------------
-    // WHATSAPP
-    // -----------------------------------------------------
+    /* =====================================================
+       PHONE
+    ===================================================== */
 
-    function createWhatsApp() {
+    function createPhone() {
 
-        const phone =
-            phoneInput?.value.trim();
+        const number =
+            phone.value.trim();
 
-
-        if (!phone) {
-            return;
-        }
+        if (!number) return;
 
 
         addCircle({
 
             left: 390,
 
-            top: 991,
+            top: 985,
 
-            radius: 32,
+            radius: 31,
 
-            fill: "#20d366",
-
-            originX: "center",
-
-            originY: "center"
+            fill: "#20d366"
 
         });
 
@@ -936,19 +983,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
             {
 
-                left: 366,
+                left: 365,
 
-                top: 1005,
+                top: 999,
 
-                width: 48,
+                width: 50,
 
-                fontSize: 17,
+                fontSize: 16,
 
-                fontWeight: "900",
+                fontWeight:
+                    "900",
 
-                fill: "#ffffff",
+                fill:
+                    "#ffffff",
 
-                textAlign: "center"
+                textAlign:
+                    "center"
 
             }
 
@@ -957,21 +1007,23 @@ document.addEventListener("DOMContentLoaded", () => {
 
         addText(
 
-            phone,
+            number,
 
             {
 
                 left: 440,
 
-                top: 995,
+                top: 992,
 
-                width: 470,
+                width: 500,
 
-                fontSize: 29,
+                fontSize: 27,
 
-                fontWeight: "700",
+                fontWeight:
+                    "700",
 
-                fill: "#ffffff"
+                fill:
+                    "#ffffff"
 
             }
 
@@ -980,13 +1032,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    // -----------------------------------------------------
-    // GENERATE AD
-    // -----------------------------------------------------
+    /* =====================================================
+       GENERATE
+    ===================================================== */
 
     async function generateAd() {
 
-        if (!uploadedImageURL) {
+        if (!originalImage) {
 
             alert(
                 "Da farko ka upload product image."
@@ -997,29 +1049,46 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
 
-        if (generateAdBtn) {
-
-            generateAdBtn.disabled = true;
-
-            generateAdBtn.innerHTML =
-                "✨ Generating Ad...";
-
-        }
+        generateBtn.disabled =
+            true;
 
 
         try {
 
-            removeAllObjects();
+            /*
+             * REAL AI BACKGROUND REMOVAL
+             */
 
+            cleanImage =
+                await removeBackground(
+                    originalImage
+                );
+
+
+            setGenerateText(
+                "✨ Creating your ad..."
+            );
+
+
+            /*
+             * CLEAR CANVAS
+             */
+
+            canvas.clear();
+
+
+            /*
+             * BACKGROUND
+             */
 
             createBackground();
 
             createGlow();
 
 
-            // ---------------------------------------------
-            // TOP BADGE
-            // ---------------------------------------------
+            /*
+             * BADGE
+             */
 
             addRect({
 
@@ -1027,14 +1096,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 top: 50,
 
-                width: 185,
+                width: 190,
 
                 height: 45,
 
                 fill:
-                    selectedStyle === "minimal"
+                    selectedStyle ===
+                    "minimal"
                         ? "#111111"
-                        : "#ef3028",
+                        : "#ed3028",
 
                 rx: 8,
 
@@ -1045,7 +1115,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
             addText(
 
-                selectedStyle === "sale"
+                selectedStyle ===
+                "sale"
                     ? "BIG SALE"
                     : "NEW ARRIVAL",
 
@@ -1055,84 +1126,85 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     top: 61,
 
-                    width: 150,
+                    width: 160,
 
-                    fontSize: 21,
+                    fontSize: 20,
 
-                    fontWeight: "900",
+                    fontWeight:
+                        "900",
 
-                    fill: "#ffffff"
+                    fill:
+                        "#ffffff"
 
                 }
 
             );
 
 
-            // ---------------------------------------------
-            // HEADLINE
-            // ---------------------------------------------
-
-            const headline =
-                headlineInput?.value.trim() ||
-                "NEW ARRIVAL";
-
+            /*
+             * HEADLINE
+             */
 
             addText(
 
-                headline,
+                headline.value.trim() ||
+                "NEW ARRIVAL",
 
                 {
 
                     left: 55,
 
-                    top: 120,
+                    top: 125,
 
                     width: 720,
 
-                    fontSize: 72,
+                    fontSize: 67,
 
-                    fontWeight: "900",
+                    fontWeight:
+                        "900",
 
                     fill:
-                        selectedStyle === "minimal"
+                        selectedStyle ===
+                        "minimal"
                             ? "#111111"
                             : "#ffffff",
 
-                    lineHeight: 0.95
+                    lineHeight:
+                        .95
 
                 }
 
             );
 
 
-            // ---------------------------------------------
-            // SUBHEADLINE
-            // ---------------------------------------------
+            /*
+             * DESCRIPTION
+             */
 
-            const subheadline =
-                subheadlineInput?.value.trim();
-
-
-            if (subheadline) {
+            if (
+                subheadline.value.trim()
+            ) {
 
                 addText(
 
-                    subheadline,
+                    subheadline.value.trim(),
 
                     {
 
                         left: 60,
 
-                        top: 300,
+                        top: 295,
 
                         width: 650,
 
-                        fontSize: 27,
+                        fontSize: 25,
 
-                        fontWeight: "600",
+                        fontWeight:
+                            "600",
 
                         fill:
-                            selectedStyle === "minimal"
+                            selectedStyle ===
+                            "minimal"
                                 ? "#333333"
                                 : "#eeeeee"
 
@@ -1143,122 +1215,123 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
 
-            // ---------------------------------------------
-            // DISCOUNT
-            // ---------------------------------------------
+            /*
+             * DISCOUNT
+             */
 
             createDiscount();
 
 
-            // ---------------------------------------------
-            // PRODUCT
-            // ---------------------------------------------
+            /*
+             * CLEAN PRODUCT
+             */
 
-            await addProductImage(
-                uploadedImageURL
+            await addProduct(
+                cleanImage
             );
 
 
-            // ---------------------------------------------
-            // PRICE
-            // ---------------------------------------------
+            /*
+             * PRICE
+             */
 
-            createPriceArea();
-
-
-            // ---------------------------------------------
-            // SHOP NOW
-            // ---------------------------------------------
-
-            createShopButton();
+            createPrice();
 
 
-            // ---------------------------------------------
-            // WHATSAPP
-            // ---------------------------------------------
+            /*
+             * CTA
+             */
 
-            createWhatsApp();
+            createCTA();
 
 
-            // ---------------------------------------------
-            // FINISH
-            // ---------------------------------------------
+            /*
+             * WHATSAPP
+             */
+
+            createPhone();
+
 
             canvas.renderAll();
+
+
+            setGenerateText(
+                "✨ Generate Professional Ad"
+            );
 
 
         } catch (error) {
 
             console.error(
-                "Generate error:",
+                "Ad generation error:",
                 error
             );
 
 
             alert(
-                "An samu matsala wajen ƙirƙirar advert."
+                "An samu matsala: " +
+                error.message
+            );
+
+
+            setGenerateText(
+                "✨ Generate Professional Ad"
             );
 
         } finally {
 
-            if (generateAdBtn) {
-
-                generateAdBtn.disabled = false;
-
-                generateAdBtn.innerHTML =
-                    "✨ Generate Professional Ad";
-
-            }
+            generateBtn.disabled =
+                false;
 
         }
 
     }
 
 
-    // -----------------------------------------------------
-    // GENERATE BUTTON
-    // -----------------------------------------------------
+    /* =====================================================
+       GENERATE BUTTON TEXT
+    ===================================================== */
 
-    if (generateAdBtn) {
+    function setGenerateText(
+        text
+    ) {
 
-        generateAdBtn.addEventListener(
-            "click",
-            generateAd
-        );
+        if (generateBtn) {
+            generateBtn.innerHTML =
+                text;
+        }
 
     }
 
 
-    // -----------------------------------------------------
-    // DOWNLOAD
-    // -----------------------------------------------------
+    generateBtn.addEventListener(
+        "click",
+        generateAd
+    );
+
+
+    /* =====================================================
+       DOWNLOAD
+    ===================================================== */
 
     function downloadAd() {
-
-        if (canvas.getObjects().length === 0) {
-
-            alert(
-                "Da farko ka danna Generate Professional Ad."
-            );
-
-            return;
-
-        }
-
 
         canvas.discardActiveObject();
 
         canvas.renderAll();
 
 
-        const dataURL =
+        const data =
             canvas.toDataURL({
 
-                format: "png",
+                format:
+                    "png",
 
-                quality: 1,
+                quality:
+                    1,
 
-                multiplier: 1
+                multiplier:
+                    1
 
             });
 
@@ -1267,13 +1340,18 @@ document.addEventListener("DOMContentLoaded", () => {
             document.createElement("a");
 
 
-        link.href = dataURL;
+        link.href =
+            data;
+
 
         link.download =
-            "ads-maker-free-ad.png";
+            "ads-maker-free.png";
 
 
-        document.body.appendChild(link);
+        document.body.appendChild(
+            link
+        );
+
 
         link.click();
 
@@ -1282,139 +1360,65 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    if (downloadBtn) {
-
-        downloadBtn.addEventListener(
-            "click",
-            downloadAd
-        );
-
-    }
+    downloadBtn?.addEventListener(
+        "click",
+        downloadAd
+    );
 
 
-    if (downloadBtnBottom) {
-
-        downloadBtnBottom.addEventListener(
-            "click",
-            downloadAd
-        );
-
-    }
+    downloadBottom?.addEventListener(
+        "click",
+        downloadAd
+    );
 
 
-    // -----------------------------------------------------
-    // RESET
-    // -----------------------------------------------------
+    /* =====================================================
+       RESET
+    ===================================================== */
 
-    if (resetBtn) {
+    resetBtn?.addEventListener(
+        "click",
+        () => {
 
-        resetBtn.addEventListener(
-            "click",
-            () => {
+            originalImage = null;
 
-                removeAllObjects();
-
-                canvas.renderAll();
-
-                uploadedImageURL = null;
+            cleanImage = null;
 
 
-                if (productPreview) {
+            canvas.clear();
 
-                    productPreview.innerHTML = `
-                        <span>No image selected</span>
-                    `;
-
-                }
+            canvas.backgroundColor =
+                "#f1f3f7";
 
 
-                if (productUploadBtn) {
-
-                    productUploadBtn.classList.remove(
-                        "has-image"
-                    );
-
-                    productUploadBtn.innerHTML = `
-                        <span class="upload-icon">↑</span>
-                        <strong>Upload Product Image</strong>
-                        <small>PNG, JPG or WEBP</small>
-                    `;
-
-                }
+            canvas.renderAll();
 
 
-                if (productImageInput) {
-                    productImageInput.value = "";
-                }
-
-            }
-        );
-
-    }
+            imageInput.value = "";
 
 
-    // -----------------------------------------------------
-    // BACKGROUND COLOR
-    // -----------------------------------------------------
-
-    if (backgroundColor) {
-
-        backgroundColor.addEventListener(
-            "input",
-            () => {
-
-                // Idan an riga an generate,
-                // sake generate domin sabon color.
-
-                if (uploadedImageURL) {
-                    generateAd();
-                }
-
-            }
-        );
-
-    }
+            preview.innerHTML =
+                "<span>No image selected</span>";
 
 
-    // -----------------------------------------------------
-    // INPUT LIVE GENERATION
-    // -----------------------------------------------------
-
-    const detailInputs = [
-        headlineInput,
-        subheadlineInput,
-        priceInput,
-        oldPriceInput,
-        discountInput,
-        phoneInput,
-        buttonTextInput
-    ];
+            uploadBtn.classList.remove(
+                "has-image"
+            );
 
 
-    detailInputs.forEach((input) => {
+            uploadBtn.innerHTML = `
+                <span class="upload-icon">↑</span>
+                <strong>Upload Product Image</strong>
+                <small>PNG, JPG or WEBP</small>
+            `;
 
-        if (!input) {
-            return;
         }
+    );
 
 
-        input.addEventListener(
-            "change",
-            () => {
-
-                if (uploadedImageURL) {
-                    generateAd();
-                }
-
-            }
-        );
-
-    });
-
-
-    // -----------------------------------------------------
-    // INITIAL EMPTY CANVAS
-    // -----------------------------------------------------
+    /* =====================================================
+       START
+    ===================================================== */
 
     canvas.backgroundColor =
         "#f1f3f7";
@@ -1423,7 +1427,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     console.log(
-        "Ads Maker Free Real Ad Generator ready."
+        "Ads Maker Free AI Generator ready."
     );
 
 });
